@@ -1,0 +1,114 @@
+#:import utils kivy.utils
+#:import Factory kivy.factory.Factory
+<categoryGroupsWindow>
+    name: "categoryGroups"
+    BoxLayout:
+        padding: 10
+        spacing: 20
+        orientation: "vertical"
+        size: root.width, root.height
+        pos_hint:{'center_y': 0.5}
+
+        HeaderLabel:
+            text: "SCategory Groups"
+
+        BoxLayout:
+            orientation: "horizontal"
+            size: root.width, root.height
+            pos_hint:{'center_y': 0.5}
+            padding:20
+
+            BoxLayout:
+                orientation: "horizontal"
+                size: root.width, root.height
+                pos_hint:{'center_y': 0.5}
+#            open_fileBoxLayout:
+                Label:
+                    text: "Edit the file --> "
+                    font_size: 32
+                    bold: True
+                    size_hint_y: None
+                    height:80
+                    size_hint_x: None
+                    width:240
+                    pos_hint:{'center_y': 0.5}
+
+                openFileButton:
+                    on_release: Factory.MenuWindow().openFile(root.name)
+
+            MySpinner:
+                id: langNum
+                size_hint_x: None
+                width: 300
+                text: "Choose number of languages"
+                values: ['1','2','3','4']
+
+
+        GridLayout:
+            cols: 2
+            pos_hint:{'center_y': 0.5}
+            padding:20
+
+            UserInputBox:
+                UserInputLabel:
+                    text: "Language 1"
+                UserInput:
+                    id: language1
+
+            UserInputBox:
+                UserInputLabel:
+                    text: "Language 2"
+                UserInput:
+                    id: language2
+
+            UserInputBox:
+                UserInputLabel:
+                    text: "Language 3"
+                UserInput:
+                    id: language3
+
+            UserInputBox:
+                UserInputLabel:
+                    text: "Language 4"
+                UserInput:
+                    id: language4
+
+        MyFileChooserBox:
+            MyFileChooserGrid:
+                MyFileChooserLabel:
+                    text: "Solution path:"
+
+                MyFileChooserExmp:
+                    id: solutionPath
+                    text: "C:\\GIT\\solution\\biz-units\\perso-biz\\Projects\\solution$QA"
+
+            BoxLayout
+                orientation: "horizontal"
+                spacing: 30
+                MyFileChooser:
+                    id: solutionChooser
+
+                fileChooserButton:
+                    on_release: root.selected("s",solutionChooser.path)
+
+
+
+
+
+        #menu
+        tailBoxLayout:
+            RoundedButton:
+                text: "Back"
+                on_release:
+                    app.root.current = "menu"
+                    root.manager.transition.direction = "right"
+
+            RoundedButton:
+                text: "Help"
+                on_release: Factory.MenuWindow().openKB(root)
+
+
+            RoundedButton:
+                text: "Run"
+                pos_hint: {'center_x': 0.5}
+                on_release: root.runFunc()

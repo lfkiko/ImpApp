@@ -1,0 +1,434 @@
+#:import utils kivy.utils
+#:import Factory kivy.factory.Factory
+
+WindowManger:
+    MenuWindow:
+    enableInsightsWindow:
+    categoryGroupsWindow:
+    newFieldToFactWindow:
+    batchesWindow:
+    batchesDataWindow:
+    dataLibraryWindow:
+    sEditorVisibleWindow:
+    newProjectWindow:
+    SettingsWindow:
+
+<WindowManger>
+    size: root.width, root.height
+    canvas.before:
+        Color:
+            rgba: (200/255,200/255,200/255,1)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<MenuWindow>
+    name: "menu"
+    BoxLayout:
+        padding: 10
+        orientation: "vertical"
+        size: root.width, root.height
+
+        Label:
+            text: "Menu"
+            font_size: 64
+            bold: True
+            color: (0,0,0)
+            size_hint_y: None
+            height:50
+            size_hint_x: None
+            width:100
+            pos_hint: {'center_x': 0.5}
+        GridLayout:
+            cols: 3
+            padding:10
+            spacing: 20
+            size: root.width, root.height
+#            canvas:
+#                Color:
+#                    rgba: 1,1,1, .9
+#                Line:
+#                    width: 2.
+#                    rectangle: (self.x, self.y, self.width, self.height)
+            Button:
+                text: "Enable Insights"
+                on_release:
+                    app.root.current = "enableInsights"
+                    root.manager.transition.direction = "left"
+            Button:
+                text: "SCategory Groups"
+                on_release:
+                    app.root.current = "categoryGroups"
+                    root.manager.transition.direction = "left"
+            Button:
+                text: "New Field To Fact"
+                on_release:
+                    app.root.current = "newFieldToFact"
+                    root.manager.transition.direction = "left"
+            Button:
+                text: "Batches"
+                on_release:
+                    app.root.current = "batches"
+                    root.manager.transition.direction = "left"
+            Button:
+                text: "Demo data"
+                on_release:
+                    app.root.current = "batches"
+                    root.manager.transition.direction = "left"
+            Button:
+                text: "Data Library"
+                on_release:
+                    app.root.current = "dataLibrary"
+                    root.manager.transition.direction = "left"
+            Button:
+                text: "SEditorVisible creator"
+                on_release:
+                    app.root.current = "sEditorVisible"
+                    root.manager.transition.direction = "left"
+            Button:
+                text: "New Project"
+                on_release:
+                    app.root.current = "newProject"
+                    root.manager.transition.direction = "left"
+
+
+        tailBoxLayout:
+            RoundedButton:
+                text: "Settings"
+                pos_hint: {'center_x': 0.5}
+                on_release:
+                    app.root.current = "settings"
+                    root.manager.transition.direction = "up"
+
+            RoundedExitButton:
+                text: "Exit"
+                bold: True
+                pos_hint: {'center_x': 0.5}
+                on_release: app.stop()
+
+
+
+<SettingsWindow>
+    name: "settings"
+
+    BoxLayout:
+        padding: 20
+        orientation: "vertical"
+        size: root.width, root.height
+        pos_hint:{'center_y': 0.5}
+        HeaderLabel:
+            text: "Settings"
+
+        Label:
+            text: "Current default path:"
+            font_size: 32
+            bold: True
+            size_hint: None, None
+            size: self.texture_size
+            halign:'left'
+
+        Label:
+            id: defaultPath
+            text: root.currentDefaultPath
+            font_size: 24
+            color: (0,0,0)
+            size_hint: None, None
+            size: self.texture_size
+
+        UserInputBox
+            UserInputLabel:
+                text: "Enter new path:"
+            UserInput:
+                id: defaultNewPath
+            fileChooserButton:
+                text: "Submit"
+                spacing: 20
+                on_press: root.dpath(defaultNewPath.text, 'm')
+
+        Label:
+            text: "Current IntelliJ path:"
+            font_size: 32
+            bold: True
+            size_hint: None, None
+            size: self.texture_size
+            halign:'left'
+
+        Label:
+            id: IntelliJPath
+            text: root.currentIntelliJPath
+            font_size: 24
+            color: (0,0,0)
+            size_hint: None, None
+            size: self.texture_size
+
+        UserInputBox
+            UserInputLabel:
+                text: "Enter new IntelliJ path:"
+            UserInput:
+                id: NewIntelliJPath
+            fileChooserButton:
+                text: "Submit"
+                spacing: 20
+                on_press: root.dpath(IntelliJPath.text, 'j')
+
+        #menu
+        tailBoxLayout:
+            RoundedButton:
+                text: "Back"
+                pos_hint: {'center_x': 0.5}
+                on_release:
+                    app.root.current = "menu"
+                    root.manager.transition.direction = "down"
+
+            RoundedButton:
+                text: "Help"
+                pos_hint: {'center_x': 0.5}
+                on_release:
+                    app.root.current = "menu"
+                    root.manager.transition.direction = "right"
+
+
+<BreakingChangeWindow>
+    name: "func1"
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+        padding: 50
+        spacing: 20
+    Label:
+        text: "FUNC1"
+        font_size: 32
+    BoxLayout:
+        orientation: "horizontal"
+        padding: 50
+        spacing: 20
+        RoundedButton:
+            text: "Back"
+            pos_hint: {'center_x': 0.5}
+            size_hint: (0.5,0.3)
+            on_release:
+                app.root.current = "menu"
+                root.manager.transition.direction = "right"
+
+        RoundedButton:
+            text: "Help"
+            pos_hint: {'center_x': 0.5}
+            size_hint: (0.5,0.3)
+            on_release:
+                app.root.current = "menu"
+                root.manager.transition.direction = "right"
+
+        RoundedButton:
+            text: "Run"
+            pos_hint: {'center_x': 0.5}
+
+<Button>
+    font_size: 32
+    size_hint_y: None
+    height:100
+    background_normal: ''
+    background_color: utils.get_color_from_hex('#ff0083')
+
+
+<RoundedButton@Button>
+    background_color: (0,0,0,0)
+    background_normal: ''
+    canvas.before:
+        Color:
+            rgba: utils.get_color_from_hex('#ff0083')
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [25]
+    pos_hint: {'center_y': 0.5}
+
+
+
+<RoundedExitButton@RoundedButton>
+    background_color: (0,0,0,0)
+    background_normal: ''
+    canvas.before:
+        Color:
+            rgba: utils.get_color_from_hex('#c2320e')
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [25]
+    pos_hint: {'center_y': 0.5}
+
+# Window layout ###############
+
+<windowlayoutBoxLayout@BoxLayout>
+    orientation: "vertical"
+    padding: 10
+    spacing: 20
+#    size: root.width, root.height
+
+###############################
+
+#\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/#
+
+### File chooser components ###
+
+<MyFileChooserBox@BoxLayout>
+    orientation: "vertical"
+
+<MyFileChooserGrid@GridLayout>
+    cols: 2
+    spacing: 20
+    pos_hint:{'x': 0}
+    size_hint_y: None
+    height:50
+
+<MyFileChooserLabel@Label>
+    font_size: 32
+    bold: True
+    size_hint: None, None
+    size: self.texture_size
+    halign:'left'
+
+<MyFileChooserExmp@Label>
+    font_size: 20
+    color: (0,0,0)
+    size_hint: None, None
+    size: self.texture_size
+
+
+<MyFileChooser@FileChooserListView>
+    id: mainFileChooser
+    spacing: 20
+    rootpath: Factory.SettingsWindow().currentDefaultPath
+    canvas.before:
+        Color:
+            rgba: (0,0,0,1)
+        Rectangle:
+            size: self.size
+
+<fileChooserButton@Button>
+    text: "choose"
+    background_color: (0,0,0,0)
+    background_normal: ''
+    canvas.before:
+        Color:
+            rgba: utils.get_color_from_hex('#ff0083')
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [25]
+    font_size: 24
+    size_hint_y: None
+    height:50
+    size_hint_x: None
+    width:100
+    pos_hint: {'center_y': 0.5}
+    spacing: 20
+
+###############################
+
+### File editor  ##############
+
+<open_fileBoxLayout@BoxLayout>
+    orientation: "horizontal"
+    pos_hint:{'center_y': 0.5}
+
+<openFileButton@Button>
+    text: "OPEN"
+    background_color: (0,0,0,0)
+    background_normal: ''
+    canvas.before:
+        Color:
+            rgba: utils.get_color_from_hex('#ff0083')
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [25]
+    font_size: 24
+    size_hint_y: None
+    height:50
+    size_hint_x: None
+    width:100
+    pos_hint: {'center_x': 0.5,'center_y': 0.5}
+    spacing: 20
+
+###############################
+
+
+<tailBoxLayout@BoxLayout>
+    orientation: "horizontal"
+    size_hint_y: None
+    height:150
+    padding: 20
+    spacing: 20
+#    canvas:
+#        Color:
+#            rgba: 1,1,1, .9
+#        Line:
+#            width: 2.
+#            rectangle: (self.x, self.y, self.width, self.height)
+
+
+<HeaderLabel@Label>
+    font_size: 45
+    bold: True
+    color: (0,0,0)
+    size_hint: None, None
+    size: self.texture_size
+    halign:'left'
+
+
+
+
+
+
+
+
+
+
+<UserInputBox@BoxLayout>
+    orientation: "horizontal"
+    spacing:10
+
+<UserInputLabel@Label>
+    font_size: 20
+    bold: True
+    focus: True
+    color: (0,0,0)
+    size_hint_x: None
+    width: 200
+    pos_hint: {'center_y': 0.5}
+
+<UserInput@TextInput>
+    font_size: 20
+    multiline: False
+    pos_hint: {'center_y': 0.5}
+    size_hint_y: None
+    height:50
+    valign: 'bottom'
+
+<MySpinner@Spinner>
+    font_size: 20
+    values_font_size:20
+    pos_hint:{'center_y': 0.5}
+    size_hint_y: None
+    height:60
+    size_hint_x: None
+    width:200
+    background_color: (0,0,0,0)
+    background_normal: ''
+    canvas.before:
+        Color:
+            rgba: utils.get_color_from_hex('#ff0083')
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [25]
+
+<MyCheckBox@CheckBox>
+    canvas:
+        Clear:
+        Color:
+            rgba: (0,0,0,1)
+        Rectangle:
+            source: self._checkbox_image
+            size: sp(32), sp(32)
+            pos: int(self.center_x - sp(16)), int(self.center_y - sp(16))

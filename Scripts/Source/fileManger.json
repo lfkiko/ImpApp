@@ -1,0 +1,10 @@
+{
+    "categoryGroups_raw": "Scripts/Source/categoryGroups/CategoryGroupsInput.xlsm",
+    "dataLibrary_raw": "Scripts/Source/dataLibrary/DataLibrary.xlsm",
+    "enableInsights": "Scripts/Source/enableInsights/input_insights.csv",
+    "enableInsights_raw": "Scripts/Source/enableInsights/input_insights.xlsm",
+    "sEditorVisible": "Scripts/Source/sEditorVisible/input_insights.csv",
+    "sEditorVisible_raw": "Scripts/Source/sEditorVisible/input_insights.xlsm",
+    "projectProperties": "Scripts/Source/newProject/personetics.properties",
+    "settings": "Scripts/Source/pathRoot.json"
+}

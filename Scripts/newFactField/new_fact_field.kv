@@ -1,0 +1,89 @@
+#:import utils kivy.utils
+<newFieldToFactWindow>
+
+    fact:fact
+    field:field
+    description:description
+    type:type
+
+    name: "newFieldToFact"
+    BoxLayout:
+        padding: 10
+        spacing: 20
+        orientation: "vertical"
+        size: root.width, root.height
+        HeaderLabel:
+            text: "New Field To Fact"
+
+        MyFileChooserBox:
+            GridLayout:
+                cols: 2
+                pos_hint:{'x': 0}
+                size_hint_y: None
+                height:50
+                Label:
+                    text: "Solution path:"
+                    font_size: 32
+                    bold: True
+                    size_hint_x: None
+                    width:210
+
+                Label:
+                    id: solutionPath
+                    text: "Choossen path"
+                    font_size: 24
+                    color: (0,0,0)
+
+            BoxLayout
+                orientation: "horizontal"
+                spacing: 30
+                MyFileChooser:
+                    id: solutionChooser
+
+                fileChooserButton:
+                    spacing: 20
+                    on_release: Factory.MenuWindow().selected(root,"s",solutionChooser.path)
+
+            GridLayout:
+                cols:2
+                UserInputBox:
+                    UserInputLabel:
+                        text: "Fact to modify"
+                    UserInput:
+                        id: fact
+
+                UserInputBox:
+                    UserInputLabel:
+                        text: "New field"
+                    UserInput:
+                        id: field
+
+                UserInputBox:
+                    UserInputLabel:
+                        text: "Description"
+                    UserInput:
+                        id: description
+
+                UserInputBox
+                    UserInputLabel:
+                        text: "Type"
+                    UserInput:
+                        id: type
+
+        tailBoxLayout:
+            RoundedButton:
+                text: "Back"
+                pos_hint: {'center_x': 0.5}
+                on_release:
+                    app.root.current = "menu"
+                    root.manager.transition.direction = "right"
+
+            RoundedButton:
+                text: "Help"
+                pos_hint: {'center_x': 0.5}
+                on_release: Factory.MenuWindow().openKB(root)
+
+            RoundedButton:
+                text: "Run"
+                pos_hint: {'center_x': 0.5}
+                on_release: root.runFunc(solutionPath.text)
