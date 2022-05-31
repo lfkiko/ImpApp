@@ -1,0 +1,132 @@
+#:import utils kivy.utils
+
+<demoDataWindow>
+    name: "demoData"
+    BoxLayout:
+        padding: 10
+        spacing: 20
+        orientation: "vertical"
+        size: root.width, root.height
+
+        HeaderLabel:
+            text: "Demo data"
+
+        # core path
+        MyFileChooserBox
+            MyFileChooserGrid:
+                MyFileChooserLabel:
+                    text: "Core path:"
+                MyFileChooserExmp:
+                    id: corePath
+                    text: "C:\\GIT\\perso-core"
+
+            BoxLayout
+                orientation: "horizontal"
+                spacing: 30
+                MyFileChooser:
+                    id: coreChooser
+
+                fileChooserButton:
+                    spacing: 20
+                    on_release: Factory.MenuWindow().selected(root,"c",coreChooser.path)
+
+
+        #Solution path
+        MyFileChooserBox:
+            MyFileChooserGrid:
+                MyFileChooserLabel:
+                    text: "Solution path:"
+
+                MyFileChooserExmp:
+                    id: solutionPath
+                    text: "C:\\GIT\\solution\\biz-units\\perso-biz\\Projects\\solution$QA"
+
+            BoxLayout
+                orientation: "horizontal"
+                spacing: 30
+                MyFileChooser:
+                    id: solutionChooser
+                fileChooserButton:
+                    on_release: Factory.MenuWindow().selected(root,"s",solutionChooser.path)
+        GridLayout:
+            cols: 2
+            pos_hint:{'center_y': 0.5}
+            padding:20
+
+            UserInputBox:
+                UserInputLabel:
+                    text: "Local currency:"
+                UserInput:
+                    id: LocalCurrency
+
+            UserInputBox:
+                UserInputLabel:
+                    text: "Foreign currency:"
+                UserInput:
+                    id: ForeignCurrency
+
+            UserInputBox:
+                UserInputLabel:
+                    text: "Country name:"
+                UserInput:
+                    id: CountryName
+
+            UserInputBox:
+                UserInputLabel:
+                    text: "Country code:"
+                UserInput:
+                    id: CountryCode
+
+        GridLayout:
+            id: checkBoxs
+            text: ""
+            cols: 2
+            UserInputBox:
+                UserInputLabel:
+                    text: "B_users:"
+                MyCheckBox:
+                    id: B_users
+                    on_active: root.checkBoxClick('data-assets')
+
+
+            UserInputBox:
+                UserInputLabel:
+                    text: "modified:"
+                MyCheckBox:
+                    id: modified
+                    on_active: root.checkBoxClick('modified')
+
+
+            UserInputBox:
+                UserInputLabel:
+                    text: "ACT:"
+                MyCheckBox:
+                    id: ACT
+                    on_active: root.checkBoxClick('ACT')
+
+            UserInputBox:
+                UserInputLabel:
+                    text: "purging:"
+                MyCheckBox:
+                    id: purging
+                    on_active: root.checkBoxClick('purging')
+
+
+
+
+
+        #menu
+        tailBoxLayout:
+            RoundedButton:
+                text: "Back"
+                on_release:
+                    app.root.current = "menu"
+                    root.manager.transition.direction = "right"
+
+            RoundedButton:
+                text: "Help"
+                on_release: Factory.MenuWindow().openKB(root)
+
+            RoundedButton:
+                text: "Run"
+                on_release: root.runFunc()

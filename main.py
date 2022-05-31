@@ -79,20 +79,28 @@ class batchesWindow(Screen):
     corePath = ObjectProperty(None)
     solutionPath = ObjectProperty(None)
     
-    def checkBoxClick(self, batch):
-        ImplementationApp.batch_use = batch
+    def checkBoxClick(self, instance, batch):
+        print(self.ids.checkBoxs.text)
+        self.ids.checkBoxs.text = batch
+        print(self.ids.checkBoxs.text)
     
-    def update(self, me):
+    def update(self, me, check):
+        # print(check)
         if ImplementationApp.batch_use == 'data-assets':
             me.ids.batchId.text = 'data-assets'
             me.ids.batchId.hint_text = 'data-assets'
             print(me.ids.batchId.text)
+            
     
     pass
 
+class demoDataWindow(Screen):
+    Builder.load_file('Scripts/demoData/demoData.kv')
+    pass
 
-class batchesDataWindow(Screen):
-    Builder.load_file('Scripts/batches/batches.kv')
+class batchesPropertiesWindow(Screen):
+    Builder.load_file('Scripts/batches/batchesProperties.kv')
+    
     batchId = ObjectProperty(None)
     disabled = BooleanProperty(False)
     
@@ -148,7 +156,6 @@ class newProjectWindow(Screen):
 class SettingsWindow(Screen):
     currentDefaultPath = readJson(getFile('settings'))['pathRoot']
     currentIntelliJPath = readJson(getFile('settings'))['intelliJRoot']
-    def restart
     
     def dpath(self, path, path_filter):
         if path_filter == 'm':
@@ -168,8 +175,6 @@ class WindowManger(ScreenManager):
 
 
 class ImplementationApp(App):
-    batch_use = str()
-    
     def build(self):
         return Builder.load_file('main.kv')
 

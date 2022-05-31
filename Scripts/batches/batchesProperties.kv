@@ -1,0 +1,170 @@
+#:import utils kivy.utils
+<batchesPropertiesWindow>
+    name: "batchesProperties"
+    BoxLayout:
+        padding: 10
+        spacing: 20
+        orientation: "vertical"
+        size: root.width, root.height
+        size_hint_x: None
+        HeaderLabel:
+            text: "Batches"
+
+        ScrollView:
+#            size_hint_y: 0.73
+#            pos_hint: {'x': 0, 'y': 0.11}
+            do_scroll_x: False
+            do_scroll_y: True
+            GridLayout:
+                cols:1
+                size: root.width, root.height
+                BoxLayout:
+                    orientation: "vertical"
+                    GridLayout:
+                        cols:2
+                        spacing: 20
+                        padding: 20
+                        UserInputBox
+                            UserInputLabel:
+                                text: "id:"
+                            UserInput:
+                                id: batchId
+                                hint_text: self.text
+
+                        UserInputBox:
+                            UserInputLabel:
+                                text: "QA Batch?:"
+                            MyCheckBox:
+                                id: QaBatch
+                                active: False
+
+                        UserInputBox
+                            UserInputLabel:
+                                text: "startingTime:"
+                            UserInput:
+                                id: startingTime
+                                text: '11:01:00'
+
+                        UserInputBox
+                            UserInputLabel:
+                                text: "endingTime:"
+                            UserInput:
+                                id: endingTime
+                                text: '13:00:00'
+
+                        UserInputBox
+                            UserInputLabel:
+                                text: "excludeDays:"
+                            UserInput:
+                                id: excludeDays
+
+                        UserInputBox
+                            UserInputLabel:
+                                text: "recurrencePattern:"
+                            UserInput:
+                                id: recurrencePattern
+                                text: 'MINUTES'
+
+                        UserInputBox
+                            UserInputLabel:
+                                text: "flowId:"
+                            UserInput:
+                                id: flowId
+                                text: ''
+
+                        UserInputBox
+                            UserInputLabel:
+                                text: "maxResult:"
+                            UserInput:
+                                id: maxResult
+                                text: '50'
+
+                        UserInputBox
+                            UserInputLabel:
+                                text: "importPagingSize:"
+                            UserInput:
+                                id: importPagingSize
+                                text: '50'
+
+                        UserInputBox
+                            UserInputLabel:
+                                text: "threadSplitter:"
+                            UserInput:
+                                id: threadSplitter
+                                text: '1'
+
+                        UserInputBox
+                            UserInputLabel:
+                                text: "importMethods:"
+                            MySpinner:
+                                id: importMethods
+                                text: "choose"
+                                values: 'whiteList','autoRegister', 'userSettings'
+                                on_text: root.methods_update(importMethods.text)
+
+                        UserInputBox
+                            UserInputLabel:
+                                text: "taskType:"
+                            MySpinner:
+                                id: taskType
+                                text: "choose"
+                                values: 'data assets','push', 'ACT', 'purging'
+
+                        UserInputBox
+                            UserInputLabel:
+                                text: "intervalInMin:"
+                            UserInput:
+                                id: intervalInMin
+                                text: '20160'
+
+                        UserInputBox
+                            UserInputLabel:
+                                text: "groupName:"
+                            UserInput:
+                                id: groupName
+
+                        UserInputBox
+                            UserInputLabel:
+                                text: "channel:"
+                            UserInput:
+                                id: channel
+
+                        UserInputBox
+                            UserInputLabel:
+                                text: "pushNotificationOptIn:"
+                            UserInput:
+                                id: pushNotificationOptIn
+                                text: 'True'
+
+                        UserInputBox
+                            UserInputLabel:
+                                text: "Auto register API:"
+                            MySpinner:
+                                id: API
+                                disabled: True
+                                text: "choose"
+                                values: 'getInsights','genereateInsights', 'executeFlow', 'getNumberOfInsights'
+
+                        UserInputBox
+                            UserInputLabel:
+                                text: "Context for this API:"
+                            UserInput:
+                                id: Context
+                                disabled: True
+
+
+                #menu
+                tailBoxLayout:
+                    RoundedButton:
+                        text: "Back"
+                        on_release:
+                            app.root.current = "batches"
+                            root.manager.transition.direction = "right"
+
+                    RoundedButton:
+                        text: "Help"
+                        on_release: Factory.MenuWindow().openKB(root)
+
+                    RoundedButton:
+                        text: "Run"
+                        on_release: root.runFunc()

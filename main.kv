@@ -7,7 +7,8 @@ WindowManger:
     categoryGroupsWindow:
     newFieldToFactWindow:
     batchesWindow:
-    batchesDataWindow:
+    batchesPropertiesWindow:
+    demoDataWindow:
     dataLibraryWindow:
     sEditorVisibleWindow:
     newProjectWindow:
@@ -73,7 +74,7 @@ WindowManger:
             Button:
                 text: "Demo data"
                 on_release:
-                    app.root.current = "batches"
+                    app.root.current = "demoData"
                     root.manager.transition.direction = "left"
             Button:
                 text: "Data Library"
@@ -401,8 +402,6 @@ WindowManger:
     font_size: 20
     multiline: False
     pos_hint: {'center_y': 0.5}
-    size_hint_y: None
-    height:50
     valign: 'bottom'
 
 <MySpinner@Spinner>
