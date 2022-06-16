@@ -18,15 +18,10 @@
                 MyFileChooserExmp:
                     id: solutionPath
                     text: "C:\\GIT\\solution\\biz-units\\perso-biz\\Projects\\solution$QA"
-            BoxLayout
-                orientation: "horizontal"
-                spacing: 30
-                MyFileChooser:
-                    id: solutionChooser
-                    on_selection: Factory.MenuWindow().refreshPath(root, "s", solutionChooser.path)
 
-                fileChooserButton:
-                    on_release: Factory.MenuWindow().selected(root, "s", solutionChooser.path)
+            fileChooserButton:
+                spacing: 20
+                on_release: Factory.MenuWindow().selected(root, "s", solutionChooser.path)
 
         BoxLayout:
             orientation: "horizontal"

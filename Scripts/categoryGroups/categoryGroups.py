@@ -15,30 +15,36 @@ def createLanguages(fileName):
     return langages
 
 
-def createSCategoryGroups(categories, direction, languages, numOfLang, listOfLanguages):
+def createSCategoryGroups(categories, direction, languages, numOfLang, listOfLanguages, type):
     langs = int(numOfLang)
-    data = {'categoryGroups': []}
+    if type is 'SCategoryGroups':
+        data = {'categoryGroups': []}
+    elif type is 'SSubCategories':
+        data = {'subCategories': []}
     for i in range(len(categories)):
         new_cg = {'id': categories[i],
-                  'description': {'langMap': {}},
-                  'clientCategoryId': "C" + categories[i]}
+                  'description': {'langMap': {}}}
         for j in range(langs):
             new_cg['description']['langMap'][listOfLanguages[j]] = languages[i][j]
-        if direction[i] in ["Both", "Income", "Expenses"]:
-            new_cg['direction'] = direction[i]
-        data['categoryGroups'].append(new_cg)
+        if type == "SCategoryGroups":
+            if direction[i] in ["Both", "Income", "Expenses"]:
+                new_cg['direction'] = direction[i]
+            data['categoryGroups'].append(new_cg)
+        elif type == "SSubCategories":
+            continue
     return data
 
 
 def main(argv):
     path = fixPath(FindDir(argv[0], 'SEntities'))
-    json_name = path + "/SCategoryGroups.json"
+    json_name = path + "/"+argv[4]+".json"
+    print(json_name)
     categories = getCol(argv[1], 'CG')
     direction = getCol(argv[1], 'direction')
     languages = createLanguages(argv[1])
     lang_num = argv[2]
     lan_names = argv[3]
-    s_category_groups = createSCategoryGroups(categories, direction, languages, lang_num, lan_names)
+    s_category_groups = createSCategoryGroups(categories, direction, languages, lang_num, lan_names, argv[4])
     json_data = json.dumps(s_category_groups, indent=4)
     writeJson(json_name, json_data)
 
@@ -46,4 +52,4 @@ def main(argv):
 if __name__ == "__main__":
     main(sys.argv[1:])
     
-    # [Path, excel file, number of languages, list of languages]
+    # [Path, excel file, number of languages, list of languages, type]

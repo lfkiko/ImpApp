@@ -52,10 +52,10 @@ def valPath(path):
     if 'perso-core' in path:
         return True
     elif 'bank-biz' in path:
-        Factory.ERROR1().open()
+        # Factory.ERROR1().open()
         return False
     elif path == readJson(getFile('settings'))['pathRoot']:
-        Factory.ERROR2().open()
+        # Factory.ERROR2().open()
         return False
     else:
         return True

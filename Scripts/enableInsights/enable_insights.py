@@ -82,7 +82,7 @@ def main(argv):
     core = os.path.join(argv[0], 'product-bizpack')
     product = os.path.join(argv[1], 'Insights')
     if not valPath(product):
-        return
+        return "fuck my life"
     input_file = argv[2]
     df = readCsv(input_file)
     run_over_insights(core, product, df)

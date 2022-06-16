@@ -1,6 +1,7 @@
 import os
 import win32timezone
-
+import tkinter as tk
+from tkinter import filedialog
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.properties import ObjectProperty, BooleanProperty
@@ -8,6 +9,7 @@ from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 
 from Scripts import newFactField
+from Scripts.addingUsers import demoData
 from Scripts.categoryGroups import categoryGroups
 from Scripts.enableInsights import enable_insights, transfer, sEditorVisible
 from Scripts.newFactField import fact_update
@@ -17,6 +19,9 @@ from Scripts.toolBoox.toolBoox import rewriteText, verifyPath, openKB, getFile, 
 MST = win32timezone.TimeZoneInfo('Mountain Standard Time')
 
 Builder.load_file('Scripts/Source/alerts.kv')
+root = tk.Tk()
+root.withdraw()
+root.destroy()
 
 
 class MenuWindow(Screen):
@@ -24,8 +29,9 @@ class MenuWindow(Screen):
     def openFile(self, name):
         os.startfile(os.path.normpath(getFile(name + "_raw")), 'edit')
     
-    def selected(self, name, filterX, path):
-        verifyPath(name, filterX, path)
+    def selected(self, name, filterX):
+        verifyPath(name, filterX,
+                   filedialog.askdirectory(initialdir=os.path.normpath(SettingsWindow().currentDefaultPath)))
     
     def refreshPath(self, name, filterX, path):
         currentPath(name, filterX, path)
@@ -54,12 +60,25 @@ class categoryGroupsWindow(Screen):
     Builder.load_file('Scripts/categoryGroups/categoryGroups.kv')
     solutionPath = ObjectProperty(None)
     
+    def checkBoxClick(self, instance):
+        self.ids.checkBoxs.text = instance
+    
     def runFunc(self):
+        canRun = False
         num_of_lang = self.ids.langNum.text
         languages = [
             self.ids.language1.text, self.ids.language2.text, self.ids.language3.text, self.ids.language4.text
         ]
-        categoryGroups.main([self.ids.solutionPath.text, getFile(self.name + "_raw"), num_of_lang, languages])
+        if self.ids.checkBoxs.text != "" and languages.count("") != 4:
+            canRun = True
+        
+        if canRun:
+            categoryGroups.main(
+                [self.ids.solutionPath.text, getFile(self.name + "_raw"), num_of_lang, languages,
+                 self.ids.checkBoxs.text]
+            )
+        else:
+            print("Please fill up relevant values")
     
     pass
 
@@ -90,13 +109,26 @@ class batchesWindow(Screen):
             me.ids.batchId.text = 'data-assets'
             me.ids.batchId.hint_text = 'data-assets'
             print(me.ids.batchId.text)
-            
     
     pass
 
+
 class demoDataWindow(Screen):
-    Builder.load_file('Scripts/demoData/demoData.kv')
+    Builder.load_file('Scripts/addingUsers/demoData.kv')
+    corePath = ObjectProperty(None)
+    solutionPath = ObjectProperty(None)
+    
+    def runFunc(self):
+        bUsers = self.ids.BUsers.active
+        modified = self.ids.modified.active
+        properties = {"LocalCurrency": self.ids.LocalCurrency.text, "ForeignCurrency": self.ids.ForeignCurrency.text,
+                      "CountryName": self.ids.CountryName.text, "CountryCode": self.ids.CountryCode.text}
+        
+        demoData.main([self.ids.corePath.text, self.ids.solutionPath.text, properties, bUsers, modified,
+                       getFile(self.name + "_raw")])
+    
     pass
+
 
 class batchesPropertiesWindow(Screen):
     Builder.load_file('Scripts/batches/batchesProperties.kv')

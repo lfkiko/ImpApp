@@ -1,5 +1,6 @@
 #:import utils kivy.utils
 #:import Factory kivy.factory.Factory
+
 <categoryGroupsWindow>
     name: "categoryGroups"
     BoxLayout:
@@ -19,29 +20,52 @@
             padding:20
 
             BoxLayout:
-                orientation: "horizontal"
-                size: root.width, root.height
-                pos_hint:{'center_y': 0.5}
-#            open_fileBoxLayout:
-                Label:
-                    text: "Edit the file --> "
-                    font_size: 32
-                    bold: True
-                    size_hint_y: None
-                    height:80
-                    size_hint_x: None
-                    width:240
+                orientation: "vertical"
+                BoxLayout:
+                    orientation: "horizontal"
+                    size: root.width, root.height
                     pos_hint:{'center_y': 0.5}
+                    Label:
+                        text: "Edit the file --> "
+                        font_size: 32
+                        bold: True
+                        size_hint_y: None
+                        height:80
+                        size_hint_x: None
+                        width:240
+                        pos_hint:{'center_y': 0.5}
 
-                openFileButton:
-                    on_release: Factory.MenuWindow().openFile(root.name)
+                    openFileButton:
+                        on_release: Factory.MenuWindow().openFile(root.name)
 
-            MySpinner:
-                id: langNum
-                size_hint_x: None
-                width: 300
-                text: "Choose number of languages"
-                values: ['1','2','3','4']
+                MySpinner:
+                    id: langNum
+                    size_hint_x: None
+                    width: 300
+                    text: "Choose number of languages"
+                    values: ['1','2','3','4']
+
+            BoxLayout:
+                id: checkBoxs
+                text: ""
+                orientation: "vertical"
+                UserInputBox:
+                    UserInputLabel:
+                        text: "SCategoryGroups: "
+                    MyCheckBox:
+                        id: SCategoryGroups
+                        group: 'categories'
+                        on_release: root.checkBoxClick('SCategoryGroups')
+
+
+                UserInputBox:
+                    UserInputLabel:
+                        text: "SSubCategories:"
+                    MyCheckBox:
+                        id: SSubCategories
+                        group: 'categories'
+                        on_release: root.checkBoxClick('SSubCategories')
+
 
 
         GridLayout:
@@ -80,17 +104,11 @@
 
                 MyFileChooserExmp:
                     id: solutionPath
-                    text: "C:\\GIT\\solution\\biz-units\\perso-biz\\Projects\\solution$QA"
+                    text: "C:\\GIT\\solution\\biz-units\\perso-biz\\Projects\\solution"
 
-            BoxLayout
-                orientation: "horizontal"
-                spacing: 30
-                MyFileChooser:
-                    id: solutionChooser
-
-                fileChooserButton:
-                    on_release: root.selected("s",solutionChooser.path)
-
+            fileChooserButton:
+                spacing: 20
+                on_release: Factory.MenuWindow().selected(root,"s")
 
 
 

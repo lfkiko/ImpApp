@@ -28,7 +28,7 @@ def editProperties(file_name, channel):
         d = f.readlines()
         f.seek(0)
         for line in d:
-            if line != '\n':
+            if line != '\n' and '=' in line:
                 p, v = line.split('=')
                 if p in ['KB_RELOAD_PROJECTS', 'KB_RELOAD_CHANNELS', 'BACKGROUND_TASK_CHANNEL']:
                     v = channel

@@ -6,5 +6,6 @@
     "sEditorVisible": "Scripts/Source/sEditorVisible/input_insights.csv",
     "sEditorVisible_raw": "Scripts/Source/sEditorVisible/input_insights.xlsm",
     "projectProperties": "Scripts/Source/newProject/personetics.properties",
+    "demoData_raw": "Scripts/Source/demoData/dempData.xlsm",
     "settings": "Scripts/Source/pathRoot.json"
 }

@@ -2,15 +2,19 @@ import os
 import shutil
 import sys
 
-from Scripts.toolBoox.toolBoox import readJson, readCsv, writeCsv
+from Scripts.toolBoox.toolBoox import readJson, readCsv, writeCsv, getCol
 
 
-def find_relevant_users(core_path):
+def find_relevant_users(core_path, extraUsers, Busers, modified):
     relevant_user = []
     core_demo_data_path = core_path + "\\product-demo-data-biz-unit\\Core\\DemoData"
-    for file in os.listdir(core_demo_data_path):
-        if file.startswith("B_1") or file.startswith("B_2"):
-            relevant_user.append(file)
+    if Busers:
+        for file in os.listdir(core_demo_data_path):
+            if file.startswith("B_1") or file.startswith("B_2"):
+                relevant_user.append(file)
+    if modified:
+        for x in extraUsers:
+            relevant_user.append(x)
     return relevant_user
 
 
@@ -75,27 +79,21 @@ def modify_users_in_solution(solution_qa_path, users, input_json):
 
 def main(argv):
     print("Starting....")
-    # NEXT LINE NEEDS TO BE CHANGED!!!!
-    input_file = 'input.json'
     core = argv[0]
     product = argv[1] + "$QA"
-    input_json = readJson(input_file)
-    # find_relevant_users METHOD NEEDS TO BE FIXED!!!!
-    relevant_user = ['BudgetSuperstar_1', 'BudgetTracker_1', 'BudgetTracker_2', 'ConsistAbove_1',
-                     'ConsistBelow_1', 'Milestones_1', 'Milestones_3', 'RecommendBudget_1', 'RecommendBudget_3',
-                     'RecommendBudget_5', 'RecommendBudget_7', 'RecommendBudget_9', 'RecommendBudget_11',
-                     'RecommendBudgetEvents_1', 'RecommendBudgetEvents_2', 'RecommendBudgetEvents_3',
-                     'RecommendBudgetEvents_4', 'RecommendBudgetEvents_5', 'RecommendBudgetEvents_7',
-                     'RecommendBudgetEvents_8']
-    # find_relevant_users(core)
+    extraUsers = getCol(argv[5], 'USERS')
+    relevant_user = find_relevant_users(core, extraUsers, argv[3], argv[4])
     copy_users(relevant_user, core, product)
-    modify_users_in_solution(product, relevant_user, input_json)
+    modify_users_in_solution(product, os.listdir(product + "\DemoData"), argv[2])
     print("Overwriting finished")
 
 
 if __name__ == "__main__":
     main(sys.argv[1:])
 
-# core_path = C:\GIT\perso-core\product-bizpack
-# solution = C:\GIT\boc\biz-units\perso-biz\Projects\BOC$QA
-#
+# 0 core_path = C:\GIT\perso-core\product-bizpack
+# 1 solution = C:\GIT\boc\biz-units\perso-biz\Projects\BOC$QA
+# 2 properties dictionary
+# 3 B_users checkBox bool
+# 4 modified checkBox bool
+# 5 file name

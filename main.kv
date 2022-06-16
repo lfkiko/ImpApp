@@ -272,12 +272,13 @@ WindowManger:
 ### File chooser components ###
 
 <MyFileChooserBox@BoxLayout>
-    orientation: "vertical"
+    orientation: "horizontal"
+    pos_hint:{'y': 0.5}
 
 <MyFileChooserGrid@GridLayout>
     cols: 2
     spacing: 20
-    pos_hint:{'x': 0}
+    pos_hint:{'x': 0, 'y': 0.5}
     size_hint_y: None
     height:50
 

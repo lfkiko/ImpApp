@@ -20,15 +20,10 @@
                     id: corePath
                     text: "C:\\GIT\\perso-core"
 
-            BoxLayout
-                orientation: "horizontal"
-                spacing: 30
-                MyFileChooser:
-                    id: coreChooser
 
-                fileChooserButton:
-                    spacing: 20
-                    on_release: Factory.MenuWindow().selected(root,"c",coreChooser.path)
+            fileChooserButton:
+                spacing: 20
+                on_release: Factory.MenuWindow().selected(root,"c")
 
 
         #Solution path
@@ -41,13 +36,9 @@
                     id: solutionPath
                     text: "C:\\GIT\\solution\\biz-units\\perso-biz\\Projects\\solution$QA"
 
-            BoxLayout
-                orientation: "horizontal"
-                spacing: 30
-                MyFileChooser:
-                    id: solutionChooser
-                fileChooserButton:
-                    on_release: Factory.MenuWindow().selected(root,"s",solutionChooser.path)
+            fileChooserButton:
+                spacing: 20
+                on_release: Factory.MenuWindow().selected(root,"s")
 
         #data file
         BoxLayout:

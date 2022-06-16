@@ -74,8 +74,9 @@ def main(argv):
     file_name = getFile(argv[0])
     insights = activated_insights(file_raw, argv[1])
     ucs = ucs_activation(file_raw, insights)
-    insights_list = reformatList(ucs)
-    write_input_insights(insights_list, file_name)
+    # insights_list = reformatList(ucs)
+    # print(insights_list)
+    write_input_insights(ucs, file_name)
 
 
 if __name__ == "__main__":
