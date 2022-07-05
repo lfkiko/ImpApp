@@ -12,6 +12,7 @@ WindowManger:
     dataLibraryWindow:
     sEditorVisibleWindow:
     newProjectWindow:
+    breakingChangeWindow:
     SettingsWindow:
 
 <WindowManger>
@@ -91,6 +92,11 @@ WindowManger:
                 on_release:
                     app.root.current = "newProject"
                     root.manager.transition.direction = "left"
+            Button:
+                text: "Breaking Changes"
+                on_release:
+                    app.root.current = "breakingChange"
+                    root.manager.transition.direction = "left"
 
 
         tailBoxLayout:
@@ -144,7 +150,7 @@ WindowManger:
             fileChooserButton:
                 text: "Submit"
                 spacing: 20
-                on_press: root.dpath(defaultNewPath.text, 'm')
+                on_press: root.dpath(defaultNewPath.text, 'pathRoot')
 
         Label:
             text: "Current IntelliJ path:"
@@ -170,7 +176,25 @@ WindowManger:
             fileChooserButton:
                 text: "Submit"
                 spacing: 20
-                on_press: root.dpath(IntelliJPath.text, 'j')
+                on_press: root.dpath(NewIntelliJPath.text, 'intelliJRoot')
+
+        Label:
+            id:CorePath
+            text: root.currentCorePath
+            font_size: 24
+            color: (0,0,0)
+            size_hint: None, None
+            size: self.texture_size
+
+        UserInputBox
+            UserInputLabel:
+                text: "Enter new \nperso-core path:"
+            UserInput:
+                id: NewCorePath
+            fileChooserButton:
+                text: "Submit"
+                spacing: 20
+                on_press: root.dpath(NewCorePath.text, 'corePath')
 
         #menu
         tailBoxLayout:
@@ -189,39 +213,39 @@ WindowManger:
                     root.manager.transition.direction = "right"
 
 
-<BreakingChangeWindow>
-    name: "func1"
-    BoxLayout:
-        orientation: "vertical"
-        size: root.width, root.height
-        padding: 50
-        spacing: 20
-    Label:
-        text: "FUNC1"
-        font_size: 32
-    BoxLayout:
-        orientation: "horizontal"
-        padding: 50
-        spacing: 20
-        RoundedButton:
-            text: "Back"
-            pos_hint: {'center_x': 0.5}
-            size_hint: (0.5,0.3)
-            on_release:
-                app.root.current = "menu"
-                root.manager.transition.direction = "right"
-
-        RoundedButton:
-            text: "Help"
-            pos_hint: {'center_x': 0.5}
-            size_hint: (0.5,0.3)
-            on_release:
-                app.root.current = "menu"
-                root.manager.transition.direction = "right"
-
-        RoundedButton:
-            text: "Run"
-            pos_hint: {'center_x': 0.5}
+#<BreakingChangeWindow>
+#    name: "func1"
+#    BoxLayout:
+#        orientation: "vertical"
+#        size: root.width, root.height
+#        padding: 50
+#        spacing: 20
+#    Label:
+#        text: "FUNC1"
+#        font_size: 32
+#    BoxLayout:
+#        orientation: "horizontal"
+#        padding: 50
+#        spacing: 20
+#        RoundedButton:
+#            text: "Back"
+#            pos_hint: {'center_x': 0.5}
+#            size_hint: (0.5,0.3)
+#            on_release:
+#                app.root.current = "menu"
+#                root.manager.transition.direction = "right"
+#
+#        RoundedButton:
+#            text: "Help"
+#            pos_hint: {'center_x': 0.5}
+#            size_hint: (0.5,0.3)
+#            on_release:
+#                app.root.current = "menu"
+#                root.manager.transition.direction = "right"
+#
+#        RoundedButton:
+#            text: "Run"
+#            pos_hint: {'center_x': 0.5}
 
 <Button>
     font_size: 32

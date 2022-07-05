@@ -31,14 +31,13 @@ def createSCategoryGroups(categories, direction, languages, numOfLang, listOfLan
                 new_cg['direction'] = direction[i]
             data['categoryGroups'].append(new_cg)
         elif type == "SSubCategories":
-            continue
+            data['subCategories'].append(new_cg)
     return data
 
 
 def main(argv):
     path = fixPath(FindDir(argv[0], 'SEntities'))
     json_name = path + "/"+argv[4]+".json"
-    print(json_name)
     categories = getCol(argv[1], 'CG')
     direction = getCol(argv[1], 'direction')
     languages = createLanguages(argv[1])

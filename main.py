@@ -87,8 +87,8 @@ class newFieldToFactWindow(Screen):
     Builder.load_file('Scripts/newFactField/new_fact_field.kv')
     solutionPath = ObjectProperty(None)
     
-    def runFunc(self, path):
-        newFactField.fact_update.main([path, self.fact.text, self.field.text, self.type.text, self.description.text])
+    def runFunc(self):
+        newFactField.fact_update.main([self.ids.solutionPath.text, self.fact.text, self.field.text, self.type.text, self.description.text])
     
     pass
 
@@ -171,6 +171,17 @@ class sEditorVisibleWindow(Screen):
     pass
 
 
+class breakingChangeWindow(Screen):
+    Builder.load_file('Scripts/breakingChange/breakingChange.kv')
+    
+    # def runFunc(self, path):
+    #     if valPath(path):
+    #         status = sEditorVisible.main([path, self.name])
+    #         print(status)
+    
+    pass
+
+
 class newProjectWindow(Screen):
     Builder.load_file('Scripts/newProject/newProject.kv')
     solutionPath = ObjectProperty(None)
@@ -178,7 +189,8 @@ class newProjectWindow(Screen):
     def checkBoxClick(self, check):
         pass
     
-    def runFunc(self, path):
+    def runFunc(self):
+        path = self.ids.solutionPath.text
         if valPath(path):
             newProject.main([path, self.ids.channel.text, self.ids.projectDir.text])
     
@@ -188,14 +200,11 @@ class newProjectWindow(Screen):
 class SettingsWindow(Screen):
     currentDefaultPath = readJson(getFile('settings'))['pathRoot']
     currentIntelliJPath = readJson(getFile('settings'))['intelliJRoot']
+    currentCorePath = readJson(getFile('settings'))['corePath']
     
     def dpath(self, path, path_filter):
-        if path_filter == 'm':
-            self.ids.defaultPath.text = path
-            rewriteText(getFile(self.name), path, path_filter)
-        elif path_filter == 'j':
-            rewriteText(getFile(self.name), path, path_filter)
-            pass
+        rewriteText(getFile(self.name), path, path_filter)
+    pass
 
 
 class WindowManger(ScreenManager):

@@ -67,13 +67,13 @@ def checkEndCode(file_name):
 
 
 def readCsv(file_name):
-    df = pd.read_csv(file_name, encoding=checkEndCode(file_name))
+    df = pd.read_csv(file_name, keep_default_na=False, encoding=checkEndCode(file_name))
     return df
 
 
 def writeCsv(file_name, df):
     df.to_csv(file_name, index=False, encoding=checkEndCode(file_name))
-
+    
 
 def printExcel(file_name):
     data = pd.read_excel(file_name)
@@ -82,10 +82,7 @@ def printExcel(file_name):
 
 def rewriteText(file_name, new_text, path_filter):
     data = readJson(file_name)
-    if path_filter == 'm':
-        data["pathRoot"] = new_text
-    elif path_filter == 'j':
-        data["pathRoot"] = new_text
+    data[path_filter] = new_text
     print(data)
     updateJson(file_name, data)
 
