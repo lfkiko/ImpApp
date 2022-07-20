@@ -13,6 +13,7 @@ WindowManger:
     sEditorVisibleWindow:
     newProjectWindow:
     breakingChangeWindow:
+    PostManWindow:
     SettingsWindow:
 
 <WindowManger>
@@ -96,6 +97,11 @@ WindowManger:
                 text: "Breaking Changes"
                 on_release:
                     app.root.current = "breakingChange"
+                    root.manager.transition.direction = "left"
+            Button:
+                text: "Post-man"
+                on_release:
+                    app.root.current = "PostMan"
                     root.manager.transition.direction = "left"
 
 
@@ -212,40 +218,6 @@ WindowManger:
                     app.root.current = "menu"
                     root.manager.transition.direction = "right"
 
-
-#<BreakingChangeWindow>
-#    name: "func1"
-#    BoxLayout:
-#        orientation: "vertical"
-#        size: root.width, root.height
-#        padding: 50
-#        spacing: 20
-#    Label:
-#        text: "FUNC1"
-#        font_size: 32
-#    BoxLayout:
-#        orientation: "horizontal"
-#        padding: 50
-#        spacing: 20
-#        RoundedButton:
-#            text: "Back"
-#            pos_hint: {'center_x': 0.5}
-#            size_hint: (0.5,0.3)
-#            on_release:
-#                app.root.current = "menu"
-#                root.manager.transition.direction = "right"
-#
-#        RoundedButton:
-#            text: "Help"
-#            pos_hint: {'center_x': 0.5}
-#            size_hint: (0.5,0.3)
-#            on_release:
-#                app.root.current = "menu"
-#                root.manager.transition.direction = "right"
-#
-#        RoundedButton:
-#            text: "Run"
-#            pos_hint: {'center_x': 0.5}
 
 <Button>
     font_size: 32

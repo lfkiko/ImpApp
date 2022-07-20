@@ -7,12 +7,22 @@
         orientation: "vertical"
         size: root.width, root.height
         size_hint_x: None
-        HeaderLabel:
-            text: "Batches"
+        GridLayout:
+            cols:2
+            padding: 10
+            spacing: 20
+            size_hint: None, 0.05
+            HeaderLabel:
+                text: "Batches"
+            openFileButton:
+                text: "Auto-fill"
+                on_release: root.autoFill()
+
+
 
         ScrollView:
-#            size_hint_y: 0.73
-#            pos_hint: {'x': 0, 'y': 0.11}
+            size_hint_y: 0.73
+            pos_hint: {'x': 0, 'y': 0.11}
             do_scroll_x: False
             do_scroll_y: True
             GridLayout:
@@ -108,7 +118,7 @@
                             MySpinner:
                                 id: taskType
                                 text: "choose"
-                                values: 'data assets','push', 'ACT', 'purging'
+                                values: 'schedule','adhoc'
 
                         UserInputBox
                             UserInputLabel:
@@ -136,6 +146,13 @@
                                 id: pushNotificationOptIn
                                 text: 'True'
 
+                        UserInputBox
+                            UserInputLabel:
+                                text: "autoGenerate:"
+                            UserInput:
+                                id: autoGenerate
+                                text: 'False'
+                        UserInputBox
                         UserInputBox
                             UserInputLabel:
                                 text: "Auto register API:"

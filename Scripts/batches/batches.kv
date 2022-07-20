@@ -29,12 +29,6 @@
                     text: "Choose a Method"
                     values: 'New Batch','Modify existing batch'
 
-#                MySpinner:
-#                    id: batch
-#                    text: "Choose batch"
-#                    values: 'data-assets','push', 'ACT', 'purging'
-
-
                 GridLayout:
                     id: checkBoxs
                     text: ""
@@ -43,18 +37,18 @@
                         UserInputLabel:
                             text: "data-assets:"
                         MyCheckBox:
-                            id: data-assets
+                            id: DataAssets
                             group: 'batches'
-                            on_active: root.checkBoxClick('data-assets')
+                            on_release: root.checkBoxClick('data-assets')
 
 
                     UserInputBox:
                         UserInputLabel:
                             text: "push:"
                         MyCheckBox:
-                            id: push
+                            id: Push
                             group: 'batches'
-                            on_active: root.checkBoxClick('push')
+                            on_release: root.checkBoxClick('push')
 
 
                     UserInputBox:
@@ -63,15 +57,15 @@
                         MyCheckBox:
                             id: ACT
                             group: 'batches'
-                            on_active: root.checkBoxClick('ACT')
+                            on_release: root.checkBoxClick('ACT')
 
                     UserInputBox:
                         UserInputLabel:
                             text: "purging:"
                         MyCheckBox:
-                            id: purging
+                            id: Purging
                             group: 'batches'
-                            on_active: root.checkBoxClick('purging')
+                            on_release: root.checkBoxClick('purging')
 
             # core path
             MyFileChooserBox
@@ -124,7 +118,7 @@
 
             RoundedButton:
                 text: "Next"
-                on_press: root.update(Factory.batchesPropertiesWindow(),self.ids.checkBoxs.text)
+#                on_press: root.update(Factory.batchesPropertiesWindow(),self.ids.checkBoxs.text)
                 on_release:
                     app.root.current = "batchesProperties"
                     root.manager.transition.direction = "left"

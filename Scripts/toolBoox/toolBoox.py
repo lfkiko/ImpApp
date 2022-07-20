@@ -67,13 +67,13 @@ def checkEndCode(file_name):
 
 
 def readCsv(file_name):
-    df = pd.read_csv(file_name, keep_default_na=False, encoding=checkEndCode(file_name))
+    df = pd.read_csv(file_name, keep_default_na=False, encoding=checkEndCode(file_name), dtype=object)
     return df
 
 
 def writeCsv(file_name, df):
     df.to_csv(file_name, index=False, encoding=checkEndCode(file_name))
-    
+
 
 def printExcel(file_name):
     data = pd.read_excel(file_name)
@@ -95,11 +95,12 @@ def currentPath(self, filterX, path):
 
 
 def verifyPath(self, filterX, path):
+    fixedPath = os.path.normpath(path)
     if filterX == 'c':
-        self.ids.corePath.text = path
+        self.ids.corePath.text = fixedPath
     elif filterX == 's':
-        if valPath(path):
-            self.ids.solutionPath.text = path
+        if valPath(fixedPath):
+            self.ids.solutionPath.text = fixedPath
 
 
 def openKB(self):

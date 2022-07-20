@@ -1,0 +1,53 @@
+{
+    "data-assets": {
+        "batchId": "data-assets",
+        "startingTime": "11:01:00",
+        "endingTime": "13:00:00",
+        "excludeDays": "",
+        "recurrencePattern": "MINUTES",
+        "flowId": "data-assets-flow",
+        "maxResult": "50",
+        "importPagingSize": "50",
+        "threadSplitter": "1",
+        "intervalInMin": "20160",
+        "groupName": "",
+        "channel": "",
+        "pushNotificationOptIn": "True",
+        "Context": ""
+    },
+    "push": {
+        "batchId": "push-notification-only-send",
+        "startingTime": "14:00:00",
+        "endingTime": "17:00:00",
+        "excludeDays": "",
+        "recurrencePattern": "MINUTES",
+        "flowId": "push-notification-only-send-flow",
+        "maxResult": "50",
+        "importPagingSize": "50",
+        "threadSplitter": "1",
+        "intervalInMin": "20160",
+        "groupName": "",
+        "channel": "",
+        "pushNotificationOptIn": "True",
+        "Context": "",
+        "autoGenerate": "False"
+    },
+    "ACT": {},
+    "purging": {
+        "batchId": "purging",
+        "startingTime": "01:02:02",
+        "endingTime": "23:23:23",
+        "excludeDays": "",
+        "recurrencePattern": "MINUTES",
+        "flowId": "purging-flow",
+        "maxResult": "50",
+        "importPagingSize": "50",
+        "threadSplitter": "1",
+        "intervalInMin": "720",
+        "groupName": "",
+        "channel": "",
+        "pushNotificationOptIn": "True",
+        "Context": "insightsDefault",
+        "autoGenerate": "False"
+    }
+}

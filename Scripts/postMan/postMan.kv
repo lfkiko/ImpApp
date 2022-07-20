@@ -1,0 +1,85 @@
+#:import utils kivy.utils
+
+<PostManWindow>
+    name: "PostMan"
+    BoxLayout:
+        padding: 10
+        spacing: 20
+        orientation: "vertical"
+        size: root.width, root.height
+
+        HeaderLabel:
+            text: "Post-man"
+
+        GridLayout:
+            cols: 2
+            pos_hint:{'center_y': 0.5}
+            padding:20
+
+            UserInputBox:
+                UserInputLabel:
+                    text: "IP"
+                UserInput:
+                    id: ipAddress
+
+            UserInputBox:
+                UserInputLabel:
+                    text: "Channel"
+                UserInput:
+                    id: channel
+
+        GridLayout:
+                    id: checkBoxs
+                    text: ""
+                    cols: 2
+                    UserInputBox:
+                        UserInputLabel:
+                            text: "01/03/2017"
+                        MyCheckBox:
+                            id: defaultJan
+                            group: 'dates'
+                            on_release: root.checkBoxClick('data-assets')
+
+
+                    UserInputBox:
+                        UserInputLabel:
+                            text: "push:"
+                        MyCheckBox:
+                            id: Push
+                            group: 'dates'
+                            on_release: root.checkBoxClick('push')
+
+
+                    UserInputBox:
+                        UserInputLabel:
+                            text: "ACT:"
+                        MyCheckBox:
+                            id: ACT
+                            group: 'dates'
+                            on_release: root.checkBoxClick('ACT')
+
+                    UserInputBox:
+                        UserInputLabel:
+                            text: "purging:"
+                        MyCheckBox:
+                            id: Purging
+                            group: 'batches'
+                            on_release: root.checkBoxClick('purging')
+
+
+
+    #menu
+        tailBoxLayout:
+            RoundedButton:
+                text: "Back"
+                on_release:
+                    app.root.current = "menu"
+                    root.manager.transition.direction = "right"
+
+            RoundedButton:
+                text: "Help"
+                on_release: Factory.MenuWindow().openKB(root)
+
+            RoundedButton:
+                text: "Run"
+                on_release: root.runFunc()

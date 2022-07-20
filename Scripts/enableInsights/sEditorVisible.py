@@ -3,7 +3,7 @@ import os
 import sys
 
 from Scripts.enableInsights import transfer
-from Scripts.toolBoox.toolBoox import getFile, readCsv, FindDir, rewriteText, fixPath
+from Scripts.toolBoox.toolBoox import getFile, readCsv, FindDir, rewriteText, fixPath, writeJson
 
 
 def createJson(file_name):
@@ -22,12 +22,15 @@ def createJson(file_name):
 
 
 def main(argv):
-    path = FindDir(argv[0], 'SEditorDefinition')
+    path = fixPath(FindDir(argv[0], 'SEditorDefinition'))
     transfer.main([argv[1], 'visible'])
     file_name = getFile(argv[1])
     json_data = json.dumps(createJson(file_name), indent=4)
     json_name = fixPath(os.path.join(path, 'SEditorVisible.json'))
-    rewriteText(json_name, json_data)
+    if os.path.exists(path + "\\" + json_name):
+        rewriteText(json_name, json_data, path)
+    else:
+        writeJson(json_name, json_data)
     return "Overwriting finished"
 
 

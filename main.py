@@ -16,7 +16,7 @@ from Scripts.newFactField import fact_update
 from Scripts.newProject import newProject
 from Scripts.toolBoox.toolBoox import rewriteText, verifyPath, openKB, getFile, currentPath, valPath, readJson
 
-MST = win32timezone.TimeZoneInfo('Mountain Standard Time')
+# MST = win32timezone.TimeZoneInfo('Mountain Standard Time')
 
 Builder.load_file('Scripts/Source/alerts.kv')
 root = tk.Tk()
@@ -88,7 +88,8 @@ class newFieldToFactWindow(Screen):
     solutionPath = ObjectProperty(None)
     
     def runFunc(self):
-        newFactField.fact_update.main([self.ids.solutionPath.text, self.fact.text, self.field.text, self.type.text, self.description.text])
+        newFactField.fact_update.main(
+            [self.ids.solutionPath.text, self.fact.text, self.field.text, self.type.text, self.description.text])
     
     pass
 
@@ -97,14 +98,15 @@ class batchesWindow(Screen):
     Builder.load_file('Scripts/batches/batches.kv')
     corePath = ObjectProperty(None)
     solutionPath = ObjectProperty(None)
+    checkBoxs = ObjectProperty(None)
     
-    def checkBoxClick(self, instance, batch):
+    def checkBoxClick(self, batch):
         print(self.ids.checkBoxs.text)
         self.ids.checkBoxs.text = batch
+        checkBoxs = batch
         print(self.ids.checkBoxs.text)
     
     def update(self, me, check):
-        # print(check)
         if ImplementationApp.batch_use == 'data-assets':
             me.ids.batchId.text = 'data-assets'
             me.ids.batchId.hint_text = 'data-assets'
@@ -132,11 +134,11 @@ class demoDataWindow(Screen):
 
 class batchesPropertiesWindow(Screen):
     Builder.load_file('Scripts/batches/batchesProperties.kv')
-    
     batchId = ObjectProperty(None)
     disabled = BooleanProperty(False)
     
     def methods_update(self, value):
+        print(self)
         if value == "autoRegister":
             self.ids.API.disabled = False
             self.ids.Context.disabled = False
@@ -145,6 +147,10 @@ class batchesPropertiesWindow(Screen):
             self.ids.Context.disabled = True
         
         pass
+    
+    def autoFill(self):
+        data = readJson(getFile(self.name))
+        print(batchesWindow.ids.checkBoxs.text)
     
     def runFunc(self):
         print(ImplementationApp.batch_use)
@@ -196,6 +202,9 @@ class newProjectWindow(Screen):
     
     pass
 
+class PostManWindow(Screen):
+    Builder.load_file('Scripts/postMan/postMan.kv')
+
 
 class SettingsWindow(Screen):
     currentDefaultPath = readJson(getFile('settings'))['pathRoot']
@@ -204,6 +213,7 @@ class SettingsWindow(Screen):
     
     def dpath(self, path, path_filter):
         rewriteText(getFile(self.name), path, path_filter)
+    
     pass
 
 
