@@ -11,6 +11,19 @@
         HeaderLabel:
             text: "Post-man"
 
+        MyFileChooserBox:
+            MyFileChooserGrid:
+                MyFileChooserLabel:
+                    text: "Solution path:"
+
+                MyFileChooserExmp:
+                    id: solutionPath
+                    text: "C:\\GIT\\solution\\biz-units\\perso-biz\\Projects\\solution"
+
+            fileChooserButton:
+                spacing: 20
+                on_release: Factory.MenuWindow().selected(root,"s")
+
         GridLayout:
             cols: 2
             pos_hint:{'center_y': 0.5}
@@ -28,43 +41,56 @@
                 UserInput:
                     id: channel
 
+            UserInputBox:
+                UserInputLabel:
+                    text: "Context"
+                UserInput:
+                    id: context
+
+            UserInputBox:
+                UserInputLabel:
+                    text: "User Id"
+                UserInput:
+                    id: user
+
         GridLayout:
-                    id: checkBoxs
-                    text: ""
-                    cols: 2
-                    UserInputBox:
-                        UserInputLabel:
-                            text: "01/03/2017"
-                        MyCheckBox:
-                            id: defaultJan
-                            group: 'dates'
-                            on_release: root.checkBoxClick('data-assets')
+            id: checkBoxs
+            text: ""
+            cols: 2
+            UserInputBox:
+                MyCheckBox:
+                    id: defaultJan
+                    group: 'dates'
+                    on_release: root.checkBoxDate('01/03/2017')
+                UserInputLabel:
+                    text: "01/03/2017"
 
 
-                    UserInputBox:
-                        UserInputLabel:
-                            text: "push:"
-                        MyCheckBox:
-                            id: Push
-                            group: 'dates'
-                            on_release: root.checkBoxClick('push')
+            UserInputBox:
+                MyCheckBox:
+                    id: defaultDec
+                    group: 'dates'
+                    on_release: root.checkBoxDate('12/22/2016')
+                UserInputLabel:
+                    text: "12/22/2016"
 
 
-                    UserInputBox:
-                        UserInputLabel:
-                            text: "ACT:"
-                        MyCheckBox:
-                            id: ACT
-                            group: 'dates'
-                            on_release: root.checkBoxClick('ACT')
+            UserInputBox:
+                MyCheckBox:
+                    id: otherDate
+                    group: 'dates'
+                    on_release: root.checkBoxDate(date.text)
+                UserInputLabel:
+                    text: "Other date:"
 
-                    UserInputBox:
-                        UserInputLabel:
-                            text: "purging:"
-                        MyCheckBox:
-                            id: Purging
-                            group: 'batches'
-                            on_release: root.checkBoxClick('purging')
+            UserInputBox:
+                UserInput:
+                    id: date
+                    disabled: True
+                fileChooserButton:
+                    text: "Submit"
+                    spacing: 20
+                    on_press: root.submit(date.text)
 
 
 
@@ -81,5 +107,8 @@
                 on_release: Factory.MenuWindow().openKB(root)
 
             RoundedButton:
-                text: "Run"
-                on_release: root.runFunc()
+                text: "Next"
+                on_release:
+                    root.checkDate(checkBoxs.text)
+                    app.root.current = "Requests"
+                    root.manager.transition.direction = "left"

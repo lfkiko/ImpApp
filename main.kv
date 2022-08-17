@@ -14,6 +14,8 @@ WindowManger:
     newProjectWindow:
     breakingChangeWindow:
     PostManWindow:
+    RequestsWindow:
+    ThFactorWindow:
     SettingsWindow:
 
 <WindowManger>
@@ -42,6 +44,21 @@ WindowManger:
             size_hint_x: None
             width:100
             pos_hint: {'center_x': 0.5}
+
+        MyFileChooserBox:
+            MyFileChooserGrid:
+                MyFileChooserLabel:
+                    text: "Solution path:"
+
+                MyFileChooserExmp:
+                    id: solutionPath
+                    text: "C:\\GIT\\solution"
+
+            fileChooserButton:
+                spacing: 20
+                on_release: Factory.MenuWindow().selected(root,"s")
+
+
         GridLayout:
             cols: 3
             padding:10
@@ -102,6 +119,12 @@ WindowManger:
                 text: "Post-man"
                 on_release:
                     app.root.current = "PostMan"
+                    root.manager.transition.direction = "left"
+
+            Button:
+                text: "TH factor"
+                on_release:
+                    app.root.current = "ThFactor"
                     root.manager.transition.direction = "left"
 
 
@@ -270,37 +293,43 @@ WindowManger:
 <MyFileChooserBox@BoxLayout>
     orientation: "horizontal"
     pos_hint:{'y': 0.5}
+    size_hint: 1, None
+    padding: 10
+#    spacing: 20
+#    canvas:
+#        Color:
+#            rgba: 1,1,1, .9
+#        Line:
+#            width: 2.
+#            rectangle: (self.x, self.y, self.width, self.height)
+#    halign:'left'
 
 <MyFileChooserGrid@GridLayout>
     cols: 2
+#    padding: 10
     spacing: 20
-    pos_hint:{'x': 0, 'y': 0.5}
+    pos_hint:{'y': 0.25}
     size_hint_y: None
     height:50
+#    canvas:
+#        Color:
+#            rgba: 1,1,1, .9
+#        Line:
+#            width: 2.
+#            rectangle: (self.x, self.y, self.width, self.height)
 
 <MyFileChooserLabel@Label>
     font_size: 32
     bold: True
     size_hint: None, None
     size: self.texture_size
-    halign:'left'
+#    halign:'left'
 
 <MyFileChooserExmp@Label>
-    font_size: 20
+    font_size: 32
     color: (0,0,0)
     size_hint: None, None
     size: self.texture_size
-
-
-<MyFileChooser@FileChooserListView>
-    id: mainFileChooser
-    spacing: 20
-    rootpath: Factory.SettingsWindow().currentDefaultPath
-    canvas.before:
-        Color:
-            rgba: (0,0,0,1)
-        Rectangle:
-            size: self.size
 
 <fileChooserButton@Button>
     text: "choose"
@@ -320,6 +349,7 @@ WindowManger:
     width:100
     pos_hint: {'center_y': 0.5}
     spacing: 20
+
 
 ###############################
 
@@ -355,14 +385,8 @@ WindowManger:
     orientation: "horizontal"
     size_hint_y: None
     height:150
-    padding: 20
+    padding: 10
     spacing: 20
-#    canvas:
-#        Color:
-#            rgba: 1,1,1, .9
-#        Line:
-#            width: 2.
-#            rectangle: (self.x, self.y, self.width, self.height)
 
 
 <HeaderLabel@Label>

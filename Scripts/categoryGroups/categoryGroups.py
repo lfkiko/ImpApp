@@ -2,7 +2,7 @@ import codecs
 import json
 import sys
 
-from Scripts.toolBoox.toolBoox import getCol, fixPath, FindDir
+from Scripts.toolBoox.toolBoox import getCol, fixPath, findDir
 
 
 def createLanguages(fileName):
@@ -50,7 +50,7 @@ def writeCategoriesJson(file_name, json_object):
 
 
 def main(argv):
-    path = fixPath(FindDir(argv[0], 'SEntities'))
+    path = fixPath(findDir(argv[0], 'SEntities'))
     json_name = path + "/" + argv[4] + ".json"
     categories = getCol(argv[1], 'CG')
     direction = getCol(argv[1], 'direction')

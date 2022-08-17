@@ -1,0 +1,34 @@
+#:import utils kivy.utils
+
+<RequestsWindow>
+    name: "Requests"
+    BoxLayout:
+        padding: 10
+        spacing: 20
+        orientation: "vertical"
+        size: root.width, root.height
+
+        HeaderLabel:
+            text: "Post-man requests"
+
+        GridLayout:
+            cols: 3
+            padding:10
+            spacing: 20
+            size: root.width, root.height
+
+            Button:
+                text: "getInsights"
+                on_release: root.runFunc('getInsights')
+
+    #menu
+        tailBoxLayout:
+            RoundedButton:
+                text: "Back"
+                on_release:
+                    app.root.current = "PostMan"
+                    root.manager.transition.direction = "right"
+
+            RoundedButton:
+                text: "Help"
+                on_release: Factory.MenuWindow().openKB(root)

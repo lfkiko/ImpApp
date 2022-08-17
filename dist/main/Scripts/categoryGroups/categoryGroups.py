@@ -1,7 +1,7 @@
 import json
 import sys
 
-from Scripts.toolBoox.toolBoox import getCol, fixPath, writeJson, valPath, FindDir
+from Scripts.toolBoox.toolBoox import getCol, fixPath, writeJson, valPath, findDir
 
 
 def createLanguages(fileName):
@@ -31,7 +31,7 @@ def createSCategoryGroups(categories, direction, languages, numOfLang, listOfLan
 
 
 def main(argv):
-    path = fixPath(FindDir(argv[0], 'SEntities'))
+    path = fixPath(findDir(argv[0], 'SEntities'))
     json_name = path + "/SCategoryGroups.json"
     categories = getCol(argv[1], 'CG')
     direction = getCol(argv[1], 'direction')

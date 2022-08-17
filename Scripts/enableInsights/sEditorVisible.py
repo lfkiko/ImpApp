@@ -3,7 +3,7 @@ import os
 import sys
 
 from Scripts.enableInsights import transfer
-from Scripts.toolBoox.toolBoox import getFile, readCsv, FindDir, rewriteText, fixPath, writeJson
+from Scripts.toolBoox.toolBoox import getFile, readCsv, findDir, rewriteText, fixPath, writeJson
 
 
 def createJson(file_name):
@@ -22,7 +22,7 @@ def createJson(file_name):
 
 
 def main(argv):
-    path = fixPath(FindDir(argv[0], 'SEditorDefinition'))
+    path = fixPath(findDir(argv[0], 'SEditorDefinition'))
     transfer.main([argv[1], 'visible'])
     file_name = getFile(argv[1])
     json_data = json.dumps(createJson(file_name), indent=4)

@@ -1,0 +1,49 @@
+#:import utils kivy.utils
+
+<ThFactorWindow>
+    name: "ThFactor"
+    BoxLayout:
+        padding: 10
+        spacing: 20
+        orientation: "vertical"
+        size: root.width, root.height
+
+        HeaderLabel:
+            text: "TH Factor"
+
+        MyFileChooserBox:
+            MyFileChooserGrid:
+                MyFileChooserLabel:
+                    text: "Solution path:"
+
+                MyFileChooserExmp:
+                    id: solutionPath
+                    text: "C:\\GIT\\solution"
+
+            fileChooserButton:
+                spacing: 20
+                on_release: Factory.MenuWindow().selected(root,"s")
+
+        UserInputBox:
+            UserInputLabel:
+                text: "FACTOR"
+            UserInput:
+                id: factor
+
+
+
+    #menu
+        tailBoxLayout:
+            RoundedButton:
+                text: "Back"
+                on_release:
+                    app.root.current = "menu"
+                    root.manager.transition.direction = "right"
+
+            RoundedButton:
+                text: "Help"
+                on_release: Factory.MenuWindow().openKB(root)
+
+            RoundedButton:
+                text: "Next"
+                on_release: root.runFunc()

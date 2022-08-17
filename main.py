@@ -1,12 +1,14 @@
+import datetime
 import os
-import win32timezone
 import tkinter as tk
 from tkinter import filedialog
-from kivy.app import App
+from kaki.app import App
+from kivy.app import App as KvApp
 from kivy.core.window import Window
 from kivy.properties import ObjectProperty, BooleanProperty
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.factory import Factory
 
 from Scripts import newFactField
 from Scripts.addingUsers import demoData
@@ -14,9 +16,8 @@ from Scripts.categoryGroups import categoryGroups
 from Scripts.enableInsights import enable_insights, transfer, sEditorVisible
 from Scripts.newFactField import fact_update
 from Scripts.newProject import newProject
+from Scripts.thFactor import thFactor
 from Scripts.toolBoox.toolBoox import rewriteText, verifyPath, openKB, getFile, currentPath, valPath, readJson
-
-# MST = win32timezone.TimeZoneInfo('Mountain Standard Time')
 
 Builder.load_file('Scripts/Source/alerts.kv')
 root = tk.Tk()
@@ -25,6 +26,9 @@ root.destroy()
 
 
 class MenuWindow(Screen):
+    # Builder.load_file('main.kv')
+    Window.minimum_width, Window.minimum_height = (860, 660)
+    solutionPath = ObjectProperty(None)
     
     def openFile(self, name):
         os.startfile(os.path.normpath(getFile(name + "_raw")), 'edit')
@@ -101,10 +105,7 @@ class batchesWindow(Screen):
     checkBoxs = ObjectProperty(None)
     
     def checkBoxClick(self, batch):
-        print(self.ids.checkBoxs.text)
         self.ids.checkBoxs.text = batch
-        checkBoxs = batch
-        print(self.ids.checkBoxs.text)
     
     def update(self, me, check):
         if ImplementationApp.batch_use == 'data-assets':
@@ -202,8 +203,49 @@ class newProjectWindow(Screen):
     
     pass
 
+
 class PostManWindow(Screen):
     Builder.load_file('Scripts/postMan/postMan.kv')
+    solutionPath = ObjectProperty(None)
+    
+    def checkBoxDate(self, date):
+        if date in ('01/03/2017', '12/22/2016'):
+            self.ids.checkBoxs.text = date
+        else:
+            self.ids.date.disabled = False
+    
+    def submit(self, date):
+        self.ids.checkBoxs.text = date
+    
+    def checkDate(self, date):
+        dateFormat = '%m/%d/%Y'
+        try:
+            datetime.datetime.strptime(date, dateFormat)
+        except ValueError:
+            print("Incorrect data format, should be MM-DD-YYYY")
+
+
+class RequestsWindow(Screen):
+    Builder.load_file('Scripts/postMan/requests.kv')
+    
+    def runFunc(self, api):
+        path = PostManWindow.solutionPath.text
+        print(path)
+        # print(api)
+    
+    pass
+
+
+class ThFactorWindow(Screen):
+    Builder.load_file('Scripts/thFactor/thFactor.kv')
+    solutionPath = ObjectProperty(None)
+    
+    def runFunc(self):
+        path = self.ids.solutionPath.text
+        factor = float(self.ids.factor.text)
+        thFactor.main([path, factor])
+    
+    pass
 
 
 class SettingsWindow(Screen):
@@ -218,14 +260,49 @@ class SettingsWindow(Screen):
 
 
 class WindowManger(ScreenManager):
-    Window.size = 1000, 800
-    Window.minimum_height = 660
-    Window.minimum_width = 860
+    Window.size = (1000, 800)
+    Window.minimum_height, Window.minimum_width = (660,860)
     
     pass
 
 
-class ImplementationApp(App):
+class ImplementationApp(App, KvApp):
+    # KV_FILES = [
+    #     os.path.join(os.getcwd(), 'main.kv'),
+    #     "Scripts/enableInsights/enableInsights.kv",
+    #     'Scripts/categoryGroups/categoryGroups.kv',
+    #     'Scripts/newFactField/new_fact_field.kv',
+    #     'Scripts/batches/batches.kv',
+    #     'Scripts/addingUsers/demoData.kv',
+    #     'Scripts/batches/batchesProperties.kv',
+    #     'Scripts/dataLibrary/dataLibrary.kv',
+    #     'Scripts/enableInsights/sEditorVisible.kv',
+    #     'Scripts/breakingChange/breakingChange.kv',
+    # ]
+    # CLASSES = {
+    #     "WindowManger": "main",
+    #     "MenuWindow": "main",
+    #     "enableInsightsWindow": "main",
+    #     "categoryGroupsWindow": "main",
+    #     "newFieldToFactWindow": "main",
+    #     "batchesWindow": "main",
+    #     "demoDataWindow": "main",
+    #     "batchesPropertiesWindow": "main",
+    #     "dataLibraryWindow": "main",
+    #     "sEditorVisibleWindow": "main",
+    #     "breakingChangeWindow": "main",
+    #     "newProjectWindow": "main",
+    #     "PostManWindow": "main",
+    #     "RequestsWindow": "main",
+    #     "ThFactorWindow": "main",
+    #     "SettingsWindow": "main"
+    # }
+    # AUTORELOADER_PATHS = [
+    #     (".", {"recursive": True})
+    # ]
+    #
+    # def build_app(self, first=False):
+    #     return Factory.WindowManger()
     def build(self):
         return Builder.load_file('main.kv')
 

@@ -19,7 +19,7 @@ def getCol(fileName, colCategories):
 
 
 def readJson(input_file):
-    with open(input_file, "r") as f:
+    with open(input_file, "r", encoding=checkEndCode(input_file)) as f:
         input_json = json.load(f)
     return input_json
 
@@ -112,7 +112,7 @@ def getFile(file_name):
     return file[file_name]
 
 
-def FindDir(path, direction):
+def findDir(path, direction):
     path_back = str()
     dirs = direction.split('/')
     for i in dirs:
@@ -122,3 +122,17 @@ def FindDir(path, direction):
         else:
             os.mkdir(path_back)
     return path_back
+
+
+def getInsightsDir(path):
+    projectName = path.split('\\')[-1].upper()
+    currPath = os.path.join(path, 'biz-units\\perso-biz\\Projects')
+    if os.path.exists(currPath):
+        for x in os.listdir(currPath):
+            if x == projectName:
+                currPath = os.path.join(currPath, projectName + '\\Insights')
+                try:
+                    os.path.exists(currPath)
+                    return currPath
+                except FileNotFoundError:
+                    print("Directory: {0} does not exist".format(currPath))
