@@ -21,9 +21,9 @@ def createLanguages(fileName):
 def createSCategoryGroups(categories, direction, languages, numOfLang, listOfLanguages, CType):
     langs = int(numOfLang)
     data = {}
-    if CType is 'SCategoryGroups':
+    if CType == 'SCategoryGroups':
         data = {'categoryGroups': []}
-    elif CType is 'SSubCategories':
+    elif CType == 'SSubCategories':
         data = {'subCategories': []}
     for i in range(len(categories)):
         new_cg = {'id': categories[i],
