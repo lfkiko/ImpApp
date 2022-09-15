@@ -1,23 +1,20 @@
 import codecs
 import json
+import os
 import sys
+from logging import info, error
 
-from Scripts.toolBoox.toolBoox import getCol, fixPath, findDir
+from Scripts.toolBoox.toolBoox import getCol, getPath, getSolution
 
 
 def createLanguages(fileName):
     langages = list()
     lang1 = getCol(fileName, 'language 1')
-    # print(lang1)
     lang2 = getCol(fileName, 'language 2')
-    # print(lang2)
     lang3 = getCol(fileName, 'language 3')
-    # print(lang3)
     lang4 = getCol(fileName, 'language 4')
-    # print(lang4)
     for i in range(len(lang1)):
         langages.append([lang1[i], lang2[i], lang3[i], lang4[i]])
-    # print(langages)
     return langages
 
 
@@ -50,19 +47,31 @@ def writeCategoriesJson(file_name, json_object):
 
 
 def main(argv):
-    path = fixPath(findDir(argv[0], 'SEntities'))
-    json_name = path + "/" + argv[4] + ".json"
-    categories = getCol(argv[1], 'CG')
-    direction = getCol(argv[1], 'direction')
-    languages = createLanguages(argv[1])
-    lang_num = argv[2]
-    lan_names = argv[3]
-    s_category_groups = createSCategoryGroups(categories, direction, languages, lang_num, lan_names, argv[4])
-    # json_data = json.dumps(s_category_groups, ensure_ascii=False, indent=4)
+    info("Creating new SCategoryGroups.json override")
+    try:
+        solution = os.path.join(getSolution(getPath('solution')), 'SEntities')
+        try:
+            os.path.exists(solution)
+        except:
+            os.mkdir(solution)
+    except:
+        error(getPath('solution') + ' is not a correct path Demo data didn\'t run')
+        return
+    
+    json_name = os.path.join(solution, argv[3] + ".json")
+    categories = getCol(argv[0], 'CG')
+    direction = getCol(argv[0], 'direction')
+    languages = createLanguages(argv[0])
+    lang_num = argv[1]
+    lan_names = argv[2]
+    s_category_groups = createSCategoryGroups(categories, direction, languages, lang_num, lan_names, argv[3])
     writeCategoriesJson(json_name, s_category_groups)
 
 
 if __name__ == "__main__":
     main(sys.argv[1:])
     
-    # [Path, excel file, number of languages, list of languages, type]
+    # 0 excel file
+    # 1 number of languages
+    # 2 list of languages
+    # 3 type
