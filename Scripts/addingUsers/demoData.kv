@@ -11,34 +11,6 @@
         HeaderLabel:
             text: "Demo data"
 
-        # core path
-        MyFileChooserBox
-            MyFileChooserGrid:
-                MyFileChooserLabel:
-                    text: "Core path:"
-                MyFileChooserExmp:
-                    id: corePath
-                    text: "C:\\GIT\\perso-core\\product-bizpack"
-
-            fileChooserButton:
-                spacing: 20
-                on_release: Factory.MenuWindow().selected(root,"c")
-
-
-        #Solution path
-        MyFileChooserBox:
-            MyFileChooserGrid:
-                MyFileChooserLabel:
-                    text: "Solution path:"
-
-                MyFileChooserExmp:
-                    id: solutionPath
-                    text: "C:\\GIT\\solution\\biz-units\\perso-biz\\Projects\\solution"
-
-            fileChooserButton:
-                spacing: 20
-                on_release: Factory.MenuWindow().selected(root,"s")
-
         GridLayout:
             cols: 2
             pos_hint:{'center_y': 0.5}
@@ -71,6 +43,13 @@
                 UserInput:
                     text: "USA"
                     id: CountryCode
+
+            UserInputBox:
+                UserInputLabel:
+                    text: "Project's factor:"
+                UserInput:
+                    text: "1"
+                    id: Factor
 
         GridLayout:
             id: checkBoxs

@@ -1,115 +1,142 @@
 import os
 import shutil
 import sys
+from logging import info, warning, error
 
-from Scripts.toolBoox.toolBoox import readJson, readCsv, writeCsv, getCol
+from Scripts.toolBoox.toolBoox import readCsv, writeCsv, getCol, createPath, getSolution, getPath
 
 
 def find_relevant_users(core_path, extraUsers, Busers, modified):
     relevant_user = []
-    core_demo_data_path = core_path + "\\product-demo-data-biz-unit\\Core\\DemoData"
+    core_demo_data_path = createPath(core_path, 'product-demo-data-biz-unit\\Core\\DemoData')
     if Busers:
-        for file in os.listdir(core_demo_data_path):
-            if file.startswith("B_1") or file.startswith("B_2"):
-                relevant_user.append(file)
+        for d in os.listdir(core_demo_data_path):
+            if d.startswith("B_1") or d.startswith("B_2"):
+                relevant_user.append(d)
     if modified:
         for x in extraUsers:
             relevant_user.append(x)
+    info('Relevant users list:')
+    info(relevant_user)
     return relevant_user
 
 
 def copy_users(relevant_user, core_path, solution_qa_path):
-    solution_demodata = solution_qa_path + "\\DemoData"
-    core_demo_data_path = core_path + "\\product-demo-data-biz-unit\\Core\\DemoData"
+    errors = False
+    solution_demodata = createPath(solution_qa_path, "DemoData")
+    core_demo_data_path = createPath(core_path, "product-demo-data-biz-unit\\Core\\DemoData")
     try:
         os.mkdir(solution_demodata)
     except:
-        pass
+        info(solution_demodata + ' all ready exist')
     
     for user in relevant_user:
-        if os.path.exists(solution_demodata + "\\" + user):
-            print("User: " + user + " is all ready in the solution level")
-        else:
+        try:
+            os.mkdir(os.path.join(solution_demodata, user))
             try:
-                shutil.copytree(core_demo_data_path + "\\" + user, solution_demodata + "\\" + user)
+                shutil.copytree(os.path.join(core_demo_data_path, user), os.path.join(solution_demodata, user))
             except:
-                raise Exception("insight use case is not presented in the core: " + user)
+                error("Something went wrong while copping: " + user)
+        except:
+            warning("User: " + user + " is all ready exists in the solution level")
+    
+    if errors:
+        info("Copying users finished with warnings")
+    else:
+        info("Copying users finished")
 
 
-def modify_user(solution_qa_path, user, local_currency, foreign_currency, country_name, country_code):
-    def update_currency(current_currency):
-        if current_currency == "USD":
-            return local_currency
-        elif current_currency == "EUR":
-            return foreign_currency
+def modify_user(usersPath, user, localCurrency, foreignCurrency, countryName, countryCode, factor):
+    def updateCurrency(currentCurrency):
+        if currentCurrency == "USD":
+            return localCurrency
+        elif currentCurrency == "EUR":
+            return foreignCurrency
         else:
-            return current_currency
+            return currentCurrency
     
-    def update_country_code(current_country):
-        if current_country != country_code:
-            return country_code
+    def updateCountryCode(currentCountry):
+        if currentCountry != countryCode:
+            return countryCode
         else:
-            return current_country
+            return currentCountry
     
-    def update_country_name(current_country):
-        if current_country != country_name:
-            return country_name
+    def updateCountryName(currentCountry):
+        if currentCountry != countryName:
+            return countryName
         else:
-            return current_country
+            return currentCountry
     
-    def update_column(column, file, func):
+    def updateFactor():
+        pass
+    
+    def updateColumn(column, file, func):
         reWrite = False
         try:
-            df = readCsv(solution_qa_path + "\\" + user + "\\" + file)
-            for i in range(len(df[column])):
-                check = df.loc[i, column]
-                df.loc[i, column] = func(df[column][i])
-                if check == df.loc[i, column]:
-                    reWrite = True
-            if reWrite:
-                writeCsv(solution_qa_path + "\\" + user + "\\" + file, df)
+            df = readCsv(os.path.join(usersPath, file))
         except:
-            print(solution_qa_path + "\\" + user + "\\" + file, "col " + column + " does not exist")
+            info('col ' + column + ' don\'t exists in - ' + os.path.join(usersPath, file))
+            return
+        
+        for i in range(len(df[column])):
+            check = df.loc[i, column]
+            df.loc[i, column] = func(df[column][i])
+            if check == df.loc[i, column]:
+                reWrite = True
+        if reWrite:
+            writeCsv(os.path.join(usersPath, file), df)
     
-    for thisFile in os.listdir(solution_qa_path + "\\" + user):
-        csvFile = readCsv(solution_qa_path + "\\" + user + "\\" + thisFile)
-        for col in ['currencyCd', 'currencyCdOriginal', 'countryCd', 'countryName']:
+    for thisFile in os.listdir(usersPath):
+        try:
+            csvFile = readCsv(os.path.join(usersPath, thisFile))
+        except:
+            error('Problem opening ' + thisFile + ' for ' + user)
+            continue
+        
+        for col in ['currencyCd', 'currencyCdOriginal', 'countryCd', 'countryName', 'availableBalance',
+                    'availableCredit', 'availableCreditCash', 'amount', 'amountChargeCurrency',
+                    'amountLocalCurrency', 'amountOriginal', 'amountOriginalCurrency']:
             if col in csvFile:
                 if 'currency' in col:
-                    update_column(col, thisFile, update_currency)
+                    updateColumn(col, thisFile, updateCurrency)
                 else:
                     if 'Cd' in col:
-                        update_column(col, thisFile, update_country_code)
+                        updateColumn(col, thisFile, updateCountryCode)
                     elif 'Name' in col:
-                        update_column(col, thisFile, update_country_name)
+                        updateColumn(col, thisFile, updateCountryName)
+                    elif factor != 1:
+                        updateColumn(col, thisFile, updateFactor)
 
 
-def modify_users_in_solution(solution_qa_path, users, input_json):
-    for user in users:
-        modify_user(solution_qa_path + "\\DemoData", user, input_json["LocalCurrency"], input_json["ForeignCurrency"],
-                    input_json["CountryName"], input_json["CountryCode"])
+def modify_users_in_solution(solutionDemoDataPath, input_json):
+    for user in os.listdir(solutionDemoDataPath):
+        modify_user(os.path.join(solutionDemoDataPath, user), user, input_json['LocalCurrency'],
+                    input_json['ForeignCurrency'], input_json['CountryName'], input_json['CountryCode'],
+                    input_json['Factor'])
 
 
 def main(argv):
-    print("Starting....")
-    core = argv[0]
-    product = argv[1] + "$QA"
-    extraUsers = getCol(argv[5], 'USERS')
-    relevant_user = find_relevant_users(core, extraUsers, argv[3], argv[4])
+    info("Starting Demo data override")
+    core = os.path.join(getPath('corePath'), 'product-bizpack')
+    try:
+        product = getSolution(getPath('solution')) + '$QA'
+    except:
+        error(getPath('solution') + ' is not a correct path Demo data didn\'t run')
+        return
+    
+    extraUsers = getCol(argv[3], 'USERS')
+    relevant_user = find_relevant_users(core, extraUsers, argv[1], argv[2])
     copy_users(relevant_user, core, product)
-    print("Copying users finished")
-    modify_users_in_solution(product, relevant_user, argv[2])
-    print("Overwriting finished")
+    modify_users_in_solution(os.path.join(product, 'DemoData'), argv[0])
+    info("Demo data finished overwriting the users")
 
 
 if __name__ == "__main__":
     main(sys.argv[1:])
 
-# 0 core_path = C:\GIT\perso-core\product-bizpack
-# 1 solution = C:\GIT\boc\biz-units\perso-biz\Projects\BOC$QA
-# 2 properties dictionary
-# 3 B_users checkBox bool
-# 4 modified checkBox bool
-# 5 file name
+# 0 properties dictionary
+# 1 B_users checkBox bool
+# 2 modified checkBox bool
+# 3 file name
 
 # os.listdir(product + "\\DemoData")
