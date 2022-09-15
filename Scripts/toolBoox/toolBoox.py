@@ -1,12 +1,9 @@
 import json
 import os
 import webbrowser
-
 import pandas as pd
-from kivy.factory import Factory
-from kivy.properties import ObjectProperty
+from bs4 import BeautifulSoup
 
-solutionPath = ObjectProperty(None)
 fileManger = 'Scripts/Source/fileManger.json'
 
 
@@ -24,24 +21,24 @@ def readJson(input_file):
     return input_json
 
 
-def writeJson(file_name, json_object):
-    with open(file_name, "w") as f:
+def writeJson(filePath, json_object):
+    with open(filePath, "w") as f:
         f.write(json_object)
 
 
-def updateJson(file_name, json_object):
-    with open(file_name, "w") as f:
+def updateJson(filePath, json_object):
+    with open(filePath, "w") as f:
         json.dump(json_object, f, indent=4)
 
 
-def createDirectory(solution_path, path):
+def createDirectory(solutionsPath, path):
     directories = path.split(os.sep)
     for p in directories:
         try:
-            os.mkdir(solution_path + os.sep + p)
+            os.mkdir(solutionsPath + os.sep + p)
         except:
             pass
-        solution_path = solution_path + os.sep + p
+        solutionsPath = solutionsPath + os.sep + p
 
 
 def fixPath(path):
@@ -61,30 +58,30 @@ def valPath(path):
         return True
 
 
-def checkEndCode(file_name):
-    with open(file_name) as raw_data:
+def checkEndCode(filePath):
+    with open(filePath) as raw_data:
         return raw_data.encoding
 
 
-def readCsv(file_name):
-    df = pd.read_csv(file_name, keep_default_na=False, encoding=checkEndCode(file_name), dtype=object)
+def readCsv(filePath):
+    df = pd.read_csv(filePath, keep_default_na=False, encoding=checkEndCode(filePath), dtype=object)
     return df
 
 
-def writeCsv(file_name, df):
-    df.to_csv(file_name, index=False, encoding=checkEndCode(file_name))
+def writeCsv(filePath, df):
+    df.to_csv(filePath, index=False, encoding=checkEndCode(filePath))
 
 
-def printExcel(file_name):
-    data = pd.read_excel(file_name)
+def printExcel(filePath):
+    data = pd.read_excel(filePath)
     print(data)
 
 
-def rewriteText(file_name, new_text, path_filter):
-    data = readJson(file_name)
+def rewriteText(filePath, new_text, path_filter):
+    data = readJson(filePath)
     data[path_filter] = new_text
     print(data)
-    updateJson(file_name, data)
+    updateJson(filePath, data)
 
 
 def currentPath(self, filterX, path):
@@ -107,9 +104,9 @@ def openKB(self):
     webbrowser.open('https://track.personetics.com/youtrack/articles/S-A-306/Solution-Imp--')
 
 
-def getFile(file_name):
+def getFile(filePath):
     file = readJson(fileManger)
-    return file[file_name]
+    return file[filePath]
 
 
 def findDir(path, direction):
@@ -122,6 +119,46 @@ def findDir(path, direction):
         else:
             os.mkdir(path_back)
     return path_back
+
+
+def createPath(path, extra):
+    newPath = path
+    addOns = extra.rsplit('\\')
+    for x in addOns:
+        newPath = os.path.join(newPath, x)
+    return newPath
+
+
+def getSolution(path):
+    solutionsPath = path
+    dirs = ['biz-units', 'perso-biz', 'Projects']
+    for d in dirs:
+        if d in os.listdir(solutionsPath):
+            solutionsPath = os.path.join(solutionsPath, d)
+    for x in os.listdir(solutionsPath):
+        checkPath = os.path.join(solutionsPath, x)
+        if os.path.isdir(checkPath) and '$' not in x:
+            return os.path.join(solutionsPath, x)
+    return path
+
+
+def getPath(pathName):
+    if pathName == 'corePath':
+        return readJson(getFile('settings'))['intelliJRoot']
+    elif pathName == 'modelPath':
+        return readJson(getFile('settings'))['modelPath']
+
+
+def modelVersion(projectPath):
+    if 'pom.xml' in os.listdir(projectPath):
+        with open(os.path.join(projectPath, 'pom.xml'), 'r') as f:
+            pom = f.read()
+            data = str(BeautifulSoup(pom, 'xml').find('version'))
+            version = data[(data.find('>')) + 1: data.find('<', 1)].split('.')
+            if version[0] > 5 and version[1] > 5:
+                return True
+            
+            return False
 
 
 def getInsightsDir(path):

@@ -2,8 +2,7 @@ import datetime
 import os
 import tkinter as tk
 from tkinter import filedialog
-from kaki.app import App
-from kivy.app import App as KvApp
+from kivy.app import App
 from kivy.core.window import Window
 from kivy.properties import ObjectProperty, BooleanProperty
 from kivy.lang import Builder
@@ -25,17 +24,20 @@ root.withdraw()
 root.destroy()
 
 
+def projectPath():
+    currPath = App.get_running_app().root.ids.Menu_Window.ids.solutionPath.text
+    return currPath
+
+
 class MenuWindow(Screen):
-    # Builder.load_file('main.kv')
-    Window.minimum_width, Window.minimum_height = (860, 660)
     solutionPath = ObjectProperty(None)
     
     def openFile(self, name):
         os.startfile(os.path.normpath(getFile(name + "_raw")), 'edit')
     
     def selected(self, name, filterX):
-        verifyPath(name, filterX,
-                   filedialog.askdirectory(initialdir=os.path.normpath(SettingsWindow().currentDefaultPath)))
+        checkPath = filedialog.askdirectory(initialdir=os.path.normpath(SettingsWindow().currentDefaultPath))
+        verifyPath(name, filterX, checkPath)
     
     def refreshPath(self, name, filterX, path):
         currentPath(name, filterX, path)
@@ -48,21 +50,17 @@ class MenuWindow(Screen):
 
 class enableInsightsWindow(Screen):
     Builder.load_file('Scripts/enableInsights/enableInsights.kv')
-    corePath = ObjectProperty(None)
-    solutionPath = ObjectProperty(None)
     
-    def runFunc(self, corePath, solutionPath):
-        if valPath(corePath) and valPath(solutionPath):
-            transfer.main([self.name, 'active'])
-            status = enable_insights.main([corePath, solutionPath, getFile(self.name)])
-            self.ids.corePath.text = status
+    def runFunc(self):
+        transfer.main([self.name, 'active'])
+        enable_insights.main([getFile(self.name)])
+        # self.ids.corePath.text = status
     
     pass
 
 
 class categoryGroupsWindow(Screen):
     Builder.load_file('Scripts/categoryGroups/categoryGroups.kv')
-    solutionPath = ObjectProperty(None)
     
     def checkBoxClick(self, instance):
         self.ids.checkBoxs.text = instance
@@ -78,8 +76,7 @@ class categoryGroupsWindow(Screen):
         
         if canRun:
             categoryGroups.main(
-                [self.ids.solutionPath.text, getFile(self.name + "_raw"), num_of_lang, languages,
-                 self.ids.checkBoxs.text]
+                [getFile(self.name + "_raw"), num_of_lang, languages, self.ids.checkBoxs.text]
             )
         else:
             print("Please fill up relevant values")
@@ -118,16 +115,14 @@ class batchesWindow(Screen):
 
 class demoDataWindow(Screen):
     Builder.load_file('Scripts/addingUsers/demoData.kv')
-    corePath = ObjectProperty(None)
-    solutionPath = ObjectProperty(None)
     
     def runFunc(self):
         bUsers = self.ids.BUsers.active
         modified = self.ids.modified.active
         properties = {"LocalCurrency": self.ids.LocalCurrency.text, "ForeignCurrency": self.ids.ForeignCurrency.text,
-                      "CountryName": self.ids.CountryName.text, "CountryCode": self.ids.CountryCode.text}
-        
-        demoData.main([self.ids.corePath.text, self.ids.solutionPath.text, properties, bUsers, modified,
+                      "CountryName": self.ids.CountryName.text, "CountryCode": self.ids.CountryCode.text,
+                      "Factor": int(self.ids.Factor.text)}
+        demoData.main([properties, bUsers, modified,
                        getFile(self.name + "_raw")])
     
     pass
@@ -168,12 +163,10 @@ class dataLibraryWindow(Screen):
 
 class sEditorVisibleWindow(Screen):
     Builder.load_file('Scripts/enableInsights/sEditorVisible.kv')
-    solutionPath = ObjectProperty(None)
     
     def runFunc(self, path):
         if valPath(path):
-            status = sEditorVisible.main([path, self.name])
-            print(status)
+            sEditorVisible.main([self.name])
     
     pass
 
@@ -252,6 +245,7 @@ class SettingsWindow(Screen):
     currentDefaultPath = readJson(getFile('settings'))['pathRoot']
     currentIntelliJPath = readJson(getFile('settings'))['intelliJRoot']
     currentCorePath = readJson(getFile('settings'))['corePath']
+    currentModelPath = readJson(getFile('settings'))['modelPath']
     
     def dpath(self, path, path_filter):
         rewriteText(getFile(self.name), path, path_filter)
@@ -261,48 +255,13 @@ class SettingsWindow(Screen):
 
 class WindowManger(ScreenManager):
     Window.size = (1000, 800)
-    Window.minimum_height, Window.minimum_width = (660,860)
+    Window.minimum_height = 660
+    Window.minimum_width = 860
     
     pass
 
 
-class ImplementationApp(App, KvApp):
-    # KV_FILES = [
-    #     os.path.join(os.getcwd(), 'main.kv'),
-    #     "Scripts/enableInsights/enableInsights.kv",
-    #     'Scripts/categoryGroups/categoryGroups.kv',
-    #     'Scripts/newFactField/new_fact_field.kv',
-    #     'Scripts/batches/batches.kv',
-    #     'Scripts/addingUsers/demoData.kv',
-    #     'Scripts/batches/batchesProperties.kv',
-    #     'Scripts/dataLibrary/dataLibrary.kv',
-    #     'Scripts/enableInsights/sEditorVisible.kv',
-    #     'Scripts/breakingChange/breakingChange.kv',
-    # ]
-    # CLASSES = {
-    #     "WindowManger": "main",
-    #     "MenuWindow": "main",
-    #     "enableInsightsWindow": "main",
-    #     "categoryGroupsWindow": "main",
-    #     "newFieldToFactWindow": "main",
-    #     "batchesWindow": "main",
-    #     "demoDataWindow": "main",
-    #     "batchesPropertiesWindow": "main",
-    #     "dataLibraryWindow": "main",
-    #     "sEditorVisibleWindow": "main",
-    #     "breakingChangeWindow": "main",
-    #     "newProjectWindow": "main",
-    #     "PostManWindow": "main",
-    #     "RequestsWindow": "main",
-    #     "ThFactorWindow": "main",
-    #     "SettingsWindow": "main"
-    # }
-    # AUTORELOADER_PATHS = [
-    #     (".", {"recursive": True})
-    # ]
-    #
-    # def build_app(self, first=False):
-    #     return Factory.WindowManger()
+class ImplementationApp(App):
     def build(self):
         return Builder.load_file('main.kv')
 

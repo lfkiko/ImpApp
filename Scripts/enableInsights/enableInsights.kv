@@ -11,35 +11,6 @@
         HeaderLabel:
             text: "Enable Insights"
 
-        # core path
-        MyFileChooserBox
-            MyFileChooserGrid:
-                MyFileChooserLabel:
-                    text: "Core path:"
-                MyFileChooserExmp:
-                    id: corePath
-                    text: "C:\\GIT\\perso-core"
-
-
-            fileChooserButton:
-                spacing: 20
-                on_release: Factory.MenuWindow().selected(root,"c")
-
-
-        #Solution path
-        MyFileChooserBox:
-            MyFileChooserGrid:
-                MyFileChooserLabel:
-                    text: "Solution path:"
-
-                MyFileChooserExmp:
-                    id: solutionPath
-                    text: "C:\\GIT\\solution\\biz-units\\perso-biz\\Projects\\solution$QA"
-
-            fileChooserButton:
-                spacing: 20
-                on_release: Factory.MenuWindow().selected(root,"s")
-
         #data file
         BoxLayout:
             orientation: "vertical"
@@ -73,4 +44,4 @@
             RoundedButton:
                 text: "Run"
                 pos_hint: {'center_x': 0.5}
-                on_release: root.runFunc(corePath.text,solutionPath.text)
+                on_release: root.runFunc()

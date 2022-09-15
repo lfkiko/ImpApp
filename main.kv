@@ -2,7 +2,10 @@
 #:import Factory kivy.factory.Factory
 
 WindowManger:
+    id: Window_Manger
     MenuWindow:
+        name: "menu"
+        id: Menu_Window
     enableInsightsWindow:
     categoryGroupsWindow:
     newFieldToFactWindow:
@@ -28,7 +31,6 @@ WindowManger:
             size: self.size
 
 <MenuWindow>
-    name: "menu"
     BoxLayout:
         padding: 10
         orientation: "vertical"
@@ -224,6 +226,24 @@ WindowManger:
                 text: "Submit"
                 spacing: 20
                 on_press: root.dpath(NewCorePath.text, 'corePath')
+
+        Label:
+            id:ModelPath
+            text: root.currentModelPath
+            font_size: 24
+            color: (0,0,0)
+            size_hint: None, None
+            size: self.texture_size
+
+        UserInputBox
+            UserInputLabel:
+                text: "Enter new \nperso-model path:"
+            UserInput:
+                id: NewModelPath
+            fileChooserButton:
+                text: "Submit"
+                spacing: 20
+                on_press: root.dpath(NewModelPath.text, 'modelPath')
 
         #menu
         tailBoxLayout:

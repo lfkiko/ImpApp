@@ -2,11 +2,14 @@ import json
 import os
 import shutil
 import sys
+from logging import info, error
 
-from Scripts.toolBoox.toolBoox import valPath, readCsv
+from Scripts.toolBoox.toolBoox import valPath, readCsv, getSolution, modelVersion, getPath
+from main import projectPath
 
-searched_folders = ["product-subscriptions-biz-unit", "product-budgets-biz-unit", "product-debt-biz-unit",
-                    os.path.join("product-engage-biz-unit", "Projects"), "product-pa-biz-unit"]
+searchedCoreFolders = ["product-subscriptions-biz-unit", "product-budgets-biz-unit", "product-debt-biz-unit",
+                       os.path.join("product-engage-biz-unit", "Projects"), "product-pa-biz-unit"]
+searchedModleFolders = ['product-subscriptions-biz-unit', 'product-portfolio-biz-unit']
 
 
 def valid_insight(insight_name):
@@ -42,55 +45,71 @@ def build_sinsights(insight_name, ucs, insight_product_path):
         json.dump(sinsight, f, indent=4)
 
 
-def search_insight_in_core(core, insight_name):
-    for core_folder in searched_folders:
-        curr_folder = os.path.join(core, core_folder, "Core", "Insights")
+def search_insight_in_core(core, modelPath, insight_name, useModel):
+    for core_folder in searchedCoreFolders:
+        try:
+            curr_folder = os.path.join(core, core_folder, "Core", "Insights")
+        except:
+            if useModel:
+                curr_folder = os.path.join(modelPath, core_folder, "Core", "Insights")
+            else:
+                error('Couldn\'t find ' + core_folder + 'in the perso-core')
+        
         if insight_name in os.listdir(curr_folder):
             return os.path.join(curr_folder, insight_name)
 
 
-def overwrite_insight(core, product, insight_name, ucs):
-    insight_core_path = search_insight_in_core(core, insight_name)
+def overwrite_insight(core, solution, modelPath, insight_name, ucs, useModel):
+    insight_core_path = search_insight_in_core(core, modelPath, insight_name, useModel)
     try:
-        os.mkdir(os.path.join(product, insight_name))
+        os.mkdir(os.path.join(solution, insight_name))
     except:
+        info(os.path.join(solution, insight_name) + ' already exits')
         pass
     ucs_list = get_ucs_list(insight_name, ucs)
     for uc in ucs_list:
         try:
-            shutil.copytree(os.path.join(insight_core_path, uc), os.path.join(product, insight_name, uc))
+            shutil.copytree(os.path.join(insight_core_path, uc), os.path.join(solution, insight_name, uc))
         except Exception as e:
             if len(e.args) > 1 and 'Cannot create a file when that file already exists' == e.args[1]:
                 print('insight uc already exists in solution', os.path.join(insight_core_path, uc))
             else:
                 print("insight is not presented in the core: " + insight_name)
-    build_sinsights(insight_name, ucs_list, os.path.join(product, insight_name))
+    build_sinsights(insight_name, ucs_list, os.path.join(solution, insight_name))
 
 
-def run_over_insights(core, product, df):
-    for i in df.index:
-        insight_name = df['insight'][i]
-        if not valid_insight(insight_name):
-            print("insight name is illegal: {}".format(insight_name), "row: {}".format(i + 2))
-        ucs = df['UC'][i]
+def runOverInsights(core, product, modelPath, enableCsv, useModel):
+    for i in enableCsv.index:
+        insightName = enableCsv['insight'][i]
+        if not valid_insight(insightName):
+            print("insight name is illegal: {}".format(insightName), "row: {}".format(i + 2))
+        ucs = enableCsv['UC'][i]
         
-        overwrite_insight(core, product, insight_name, ucs)
+        overwrite_insight(core, product, modelPath, insightName, ucs, useModel)
 
 
 def main(argv):
-    print("Starting....")
-    core = os.path.join(argv[0], 'product-bizpack')
-    product = os.path.join(argv[1], 'Insights')
-    if not valPath(product):
-        return "fuck my life"
-    input_file = argv[2]
-    df = readCsv(input_file)
-    run_over_insights(core, product, df)
-    return "Overwriting finished"
+    info("Starting Enable insights")
+    corePath = os.path.join(getPath('corePath'), 'product-bizpack')
+    modelPath = os.path.join(getPath('modelPath'), 'product-models-bizpack')
+    try:
+        solutionPath = os.path.join(getSolution(projectPath()), 'Insights')
+    except:
+        error(getPath('solution') + ' is not a correct path Demo data didn\'t run')
+        return
+    
+    if not os.path.exists(solutionPath):
+        error(solutionPath + ' dosn\'t exists')
+        return
+    useModel = modelVersion(projectPath())
+    inputFile = argv[0]
+    enableCsv = readCsv(inputFile)
+    runOverInsights(corePath, solutionPath, modelPath, enableCsv, useModel)
+    
+    info('Enable Insights finished overwriting relevant insights')
 
 
 if __name__ == "__main__":
     main(sys.argv[1:])
 
-# core_path = C:\GIT\perso-core
-# product_path = C:\GIT\boc\biz-units\perso-biz\Projects\BOC
+# 0 file with the list of insights to enable
