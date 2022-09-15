@@ -1,9 +1,10 @@
 import json
 import os
 import sys
+from logging import error, info
 
 from Scripts.enableInsights import transfer
-from Scripts.toolBoox.toolBoox import getFile, readCsv, findDir, rewriteText, fixPath, writeJson
+from Scripts.toolBoox.toolBoox import getFile, readCsv, findDir, rewriteText, fixPath, writeJson, getPath, getSolution
 
 
 def createJson(file_name):
@@ -22,19 +23,24 @@ def createJson(file_name):
 
 
 def main(argv):
-    path = fixPath(findDir(argv[0], 'SEditorDefinition'))
-    transfer.main([argv[1], 'visible'])
-    file_name = getFile(argv[1])
+    info("Starting SEditorVisible.json override")
+    try:
+        solution = os.path.join(getSolution(getPath('solution')), 'SEditorDefinition')
+    except:
+        error(getPath('solution') + ' is not a correct path Demo data didn\'t run')
+        return
+    transfer.main([argv[0], 'visible'])
+    file_name = getFile(argv[0])
     json_data = json.dumps(createJson(file_name), indent=4)
-    json_name = fixPath(os.path.join(path, 'SEditorVisible.json'))
-    if os.path.exists(path + "\\" + json_name):
-        rewriteText(json_name, json_data, path)
+    json_name = fixPath(os.path.join(solution, 'SEditorVisible.json'))
+    if os.path.exists(solution + "\\" + json_name):
+        rewriteText(json_name, json_data, solution)
     else:
         writeJson(json_name, json_data)
-    return "Overwriting finished"
+    info("SEditorVisible.json overwriting is finished")
 
 
 if __name__ == "__main__":
     main(sys.argv[1:])
     
-    # [Path, excel file]
+    # 0 - excel file
