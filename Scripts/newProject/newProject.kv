@@ -12,33 +12,10 @@
         HeaderLabel:
             text: "New project configuration"
 
-        MyFileChooserBox:
-            MyFileChooserGrid:
-                MyFileChooserLabel:
-                    text: "Solution path:"
-
-                MyFileChooserExmp:
-                    id: solutionPath
-                    text: "C:\\GIT\\solution\\biz-units\\perso-biz\\Projects\\solution"
-
-            fileChooserButton:
-                spacing: 20
-                on_release: Factory.MenuWindow().selected(root,"s")
 
         GridLayout:
             cols: 2
             padding:20
-            UserInputBox:
-                UserInputLabel:
-                    text: "Channels name: "
-                UserInput:
-                    id: channel
-
-            UserInputBox:
-                UserInputLabel:
-                    text: "Directory's name: "
-                UserInput:
-                    id: projectDir
 
             UserInputBox:
                 UserInputLabel:
@@ -47,7 +24,6 @@
                     id: properties
                     on_active: root.checkBoxClick('properties')
 
-
             UserInputBox:
                 UserInputLabel:
                     text: "update configurations"
@@ -55,6 +31,11 @@
                     id: configurations
                     on_active: root.checkBoxClick('configurations')
 
+            UserInputBox:
+                UserInputLabel:
+                    text: "Channels name: "
+                UserInput:
+                    id: channel
 
         #menu
         tailBoxLayout:

@@ -1,8 +1,11 @@
 import json
 import os
 import webbrowser
+from logging import error
+
 import pandas as pd
 from bs4 import BeautifulSoup
+from kivy.app import App
 
 fileManger = 'Scripts/Source/fileManger.json'
 
@@ -144,9 +147,13 @@ def getSolution(path):
 
 def getPath(pathName):
     if pathName == 'corePath':
-        return readJson(getFile('settings'))['intelliJRoot']
+        return readJson(getFile('settings'))['corePath']
     elif pathName == 'modelPath':
         return readJson(getFile('settings'))['modelPath']
+    elif pathName == 'intelliJ':
+        return readJson(getFile('settings'))['intelliJRoot']
+    elif pathName == 'solution':
+        return App.get_running_app().root.ids.Menu_Window.ids.solutionPath.text
 
 
 def modelVersion(projectPath):
@@ -163,7 +170,7 @@ def modelVersion(projectPath):
 
 def getInsightsDir(path):
     projectName = path.split('\\')[-1].upper()
-    currPath = os.path.join(path, 'biz-units\\perso-biz\\Projects')
+    currPath = createPath(path, 'biz-units\\perso-biz\\Projects')
     if os.path.exists(currPath):
         for x in os.listdir(currPath):
             if x == projectName:
@@ -172,4 +179,4 @@ def getInsightsDir(path):
                     os.path.exists(currPath)
                     return currPath
                 except FileNotFoundError:
-                    print("Directory: {0} does not exist".format(currPath))
+                    error("Directory: {0} does not exist".format(currPath))

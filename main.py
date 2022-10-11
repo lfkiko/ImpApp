@@ -24,11 +24,6 @@ root.withdraw()
 root.destroy()
 
 
-def projectPath():
-    currPath = App.get_running_app().root.ids.Menu_Window.ids.solutionPath.text
-    return currPath
-
-
 class MenuWindow(Screen):
     solutionPath = ObjectProperty(None)
     
@@ -184,15 +179,12 @@ class breakingChangeWindow(Screen):
 
 class newProjectWindow(Screen):
     Builder.load_file('Scripts/newProject/newProject.kv')
-    solutionPath = ObjectProperty(None)
     
     def checkBoxClick(self, check):
         pass
     
     def runFunc(self):
-        path = self.ids.solutionPath.text
-        if valPath(path):
-            newProject.main([path, self.ids.channel.text, self.ids.projectDir.text])
+        newProject.main([self.ids.channel.text])
     
     pass
 

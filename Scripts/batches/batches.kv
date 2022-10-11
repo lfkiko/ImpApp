@@ -17,13 +17,8 @@
             size: root.width, root.height
             padding: 10
             spacing: 20
-
             GridLayout:
-                cols: 2
-                size_hint_y: None
-                height:90
-                spacing: 20
-                padding: 20
+                cols: 1
                 MySpinner:
                     id: method
                     text: "Choose a Method"
@@ -66,43 +61,6 @@
                             id: Purging
                             group: 'batches'
                             on_release: root.checkBoxClick('purging')
-
-            # core path
-            MyFileChooserBox
-                MyFileChooserGrid:
-                    MyFileChooserLabel:
-                        text: "Core path:"
-                    MyFileChooserExmp:
-                        id: corePath
-                        text: "C:\\GIT\\perso-core"
-
-                fileChooserButton:
-                    spacing: 20
-                    on_release: Factory.MenuWindow().selected(root,"c")
-
-                Label:
-                    text: "* for modifying existing batch no need for core path"
-                    font_size: 14
-                    color: (0,0,0)
-#                    bold: True
-                    size_hint: None, None
-                    size: self.texture_size
-                    halign:'left'
-
-
-            #Solution path
-            MyFileChooserBox
-                MyFileChooserGrid:
-                    MyFileChooserLabel:
-                        text: "Solution path:"
-
-                    MyFileChooserExmp:
-                        id: solutionPath
-                        text: "C:\\GIT\\solution\\biz-units\\perso-biz\\Projects\\solution$QA"
-
-                fileChooserButton:
-                    spacing: 20
-                    on_release: Factory.MenuWindow().selected(root,"s")
 
         #menu
         tailBoxLayout:

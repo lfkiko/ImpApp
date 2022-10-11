@@ -41,7 +41,6 @@ def main(argv):
     # print(solution)
     # print(argv[1])
     # print(insights)
-    
     # # print(path)
 
 

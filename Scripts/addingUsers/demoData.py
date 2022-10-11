@@ -23,22 +23,26 @@ def find_relevant_users(core_path, extraUsers, Busers, modified):
 
 def copy_users(relevant_user, core_path, solution_qa_path):
     errors = False
-    solution_demodata = createPath(solution_qa_path, "DemoData")
-    core_demo_data_path = createPath(core_path, "product-demo-data-biz-unit\\Core\\DemoData")
+    solution_demodata = createPath(solution_qa_path, 'DemoData')
+    coreDemoDataPath = createPath(core_path, "product-demo-data-biz-unit\\Core\\DemoData")
     try:
         os.mkdir(solution_demodata)
     except:
-        info(solution_demodata + ' all ready exist')
+        info('all ready exist: ' + solution_demodata)
     
     for user in relevant_user:
+        srcPath = os.path.join(coreDemoDataPath, user)
+        trgPath = os.path.join(solution_demodata, user)
         try:
-            os.mkdir(os.path.join(solution_demodata, user))
-            try:
-                shutil.copytree(os.path.join(core_demo_data_path, user), os.path.join(solution_demodata, user))
-            except:
-                error("Something went wrong while copping: " + user)
+            os.mkdir(trgPath)
+            files = os.listdir(srcPath)
+            for file in files:
+                try:
+                    shutil.copy2(os.path.join(srcPath, file), trgPath)
+                except:
+                    error("Something went wrong while copping: " + file + ' to ' + user)
         except:
-            warning("User: " + user + " is all ready exists in the solution level")
+            warning("User: " + user + " is all ready exists in the solution level from ")
     
     if errors:
         info("Copying users finished with warnings")
@@ -46,7 +50,7 @@ def copy_users(relevant_user, core_path, solution_qa_path):
         info("Copying users finished")
 
 
-def modify_user(usersPath, user, localCurrency, foreignCurrency, countryName, countryCode, factor):
+def modifyUser(usersPath, user, localCurrency, foreignCurrency, countryName, countryCode, factor):
     def updateCurrency(currentCurrency):
         if currentCurrency == "USD":
             return localCurrency
@@ -67,24 +71,26 @@ def modify_user(usersPath, user, localCurrency, foreignCurrency, countryName, co
         else:
             return currentCountry
     
-    def updateFactor():
-        pass
+    def updateFactor(currentValue):
+        if factor != 1 and currentValue != '':
+            try:
+                newVal = float(currentValue)
+                newVal = newVal * factor
+                return round(newVal, 2)
+            except:
+                error('Can\'t convert to float in :' + usersPath)
+        
+        return currentValue
     
     def updateColumn(column, file, func):
-        reWrite = False
         try:
             df = readCsv(os.path.join(usersPath, file))
         except:
             info('col ' + column + ' don\'t exists in - ' + os.path.join(usersPath, file))
             return
         
-        for i in range(len(df[column])):
-            check = df.loc[i, column]
-            df.loc[i, column] = func(df[column][i])
-            if check == df.loc[i, column]:
-                reWrite = True
-        if reWrite:
-            writeCsv(os.path.join(usersPath, file), df)
+        df[column] = df[column].apply(func)
+        writeCsv(os.path.join(usersPath, file), df)
     
     for thisFile in os.listdir(usersPath):
         try:
@@ -108,11 +114,12 @@ def modify_user(usersPath, user, localCurrency, foreignCurrency, countryName, co
                         updateColumn(col, thisFile, updateFactor)
 
 
-def modify_users_in_solution(solutionDemoDataPath, input_json):
+def modifyUsersInSolution(solutionDemoDataPath, input_json):
     for user in os.listdir(solutionDemoDataPath):
-        modify_user(os.path.join(solutionDemoDataPath, user), user, input_json['LocalCurrency'],
-                    input_json['ForeignCurrency'], input_json['CountryName'], input_json['CountryCode'],
-                    input_json['Factor'])
+        modifyUser(os.path.join(solutionDemoDataPath, user), user, input_json['LocalCurrency'],
+                   input_json['ForeignCurrency'], input_json['CountryName'], input_json['CountryCode'],
+                   input_json['Factor'])
+        # info(user + ' was updated')
 
 
 def main(argv):
@@ -127,7 +134,7 @@ def main(argv):
     extraUsers = getCol(argv[3], 'USERS')
     relevant_user = find_relevant_users(core, extraUsers, argv[1], argv[2])
     copy_users(relevant_user, core, product)
-    modify_users_in_solution(os.path.join(product, 'DemoData'), argv[0])
+    modifyUsersInSolution(os.path.join(product, 'DemoData'), argv[0],relevant_user)
     info("Demo data finished overwriting the users")
 
 

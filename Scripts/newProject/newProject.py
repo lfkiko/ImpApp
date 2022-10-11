@@ -2,10 +2,11 @@
 # adding to the project modified properties with the Channels name
 import os
 import sys
+from logging import info, error
 from shutil import copyfile
 import xml.dom.minidom
 
-from Scripts.toolBoox.toolBoox import getFile, readJson
+from Scripts.toolBoox.toolBoox import getFile, readJson, createPath, getPath, getSolution
 
 
 def findProfile(path):
@@ -39,20 +40,18 @@ def editProperties(file_name, channel):
             else:
                 f.write(line)
         f.truncate()
-    pass
 
 
-def checkForProperties(dir_path):
-    path = os.path.join(dir_path, 'profiles\\local')
+def checkForProperties(dirPath):
+    path = createPath(dirPath, 'profiles\\local')
     if 'personetics.properties' in os.listdir(path):
-        path = os.path.join(path, 'personetics.properties')
         return True
     
     else:
         properties = getFile('projectProperties')
         file_name = os.path.basename(properties)
         copyfile(properties, os.path.join(path, file_name))
-        path = os.path.join(dir_path, path, 'personetics.properties')
+        path = os.path.join(dirPath, path, 'personetics.properties')
         return True
 
 
@@ -87,18 +86,27 @@ def updateConfigurations(project_dir_name, intelliJ_path):
         personetics_home.getAttributeNode('value').nodeValue = new_home
         
         conf.writexml(open(intelliJ_path, 'w'))
-    pass
+    info('InteliJ configurations were updated')
 
 
 def main(argv):
-    path = findProfile(argv[0])
-    if checkForProperties(path):
-        editProperties(os.path.join(path, 'profiles\\local\\personetics.properties'), argv[1])
-        updateConfigurations(argv[2], readJson(getFile('settings'))['intelliJRoot'])
-        print("Project configuration complete")
+    info("Creating new SCategoryGroups.json override")
+    try:
+        solution = getPath('solution')
+    except:
+        error(getPath('solution') + ' is not a correct path Demo data didn\'t run')
+        return
+    
+    print(solution)
+    projectName = os.path.basename(solution)
+    print(projectName)
+    if checkForProperties(solution):
+        updateConfigurations(projectName, getPath('intelliJ'))
+        editProperties(createPath(solution, 'profiles\\local\\personetics.properties'), argv[0])
+        info("Project configuration complete")
 
 
 if __name__ == "__main__":
     main(sys.argv[1:])
     
-    # [Path, Channel's name, project's dir name, IntelliJ project path/name]
+    # 0 Channel's name

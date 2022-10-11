@@ -5,7 +5,6 @@ import sys
 from logging import info, error
 
 from Scripts.toolBoox.toolBoox import valPath, readCsv, getSolution, modelVersion, getPath
-from main import projectPath
 
 searchedCoreFolders = ["product-subscriptions-biz-unit", "product-budgets-biz-unit", "product-debt-biz-unit",
                        os.path.join("product-engage-biz-unit", "Projects"), "product-pa-biz-unit"]
@@ -93,7 +92,7 @@ def main(argv):
     corePath = os.path.join(getPath('corePath'), 'product-bizpack')
     modelPath = os.path.join(getPath('modelPath'), 'product-models-bizpack')
     try:
-        solutionPath = os.path.join(getSolution(projectPath()), 'Insights')
+        solutionPath = os.path.join(getSolution(getPath('solution')), 'Insights')
     except:
         error(getPath('solution') + ' is not a correct path Demo data didn\'t run')
         return
@@ -101,7 +100,7 @@ def main(argv):
     if not os.path.exists(solutionPath):
         error(solutionPath + ' dosn\'t exists')
         return
-    useModel = modelVersion(projectPath())
+    useModel = modelVersion(getPath('solution'))
     inputFile = argv[0]
     enableCsv = readCsv(inputFile)
     runOverInsights(corePath, solutionPath, modelPath, enableCsv, useModel)
