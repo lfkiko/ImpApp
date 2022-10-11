@@ -21,28 +21,30 @@ def find_relevant_users(core_path, extraUsers, Busers, modified):
     return relevant_user
 
 
-def copy_users(relevant_user, core_path, solution_qa_path):
+def copyUsers(relevantUser, corePath, solutionQaPath):
     errors = False
-    solution_demodata = createPath(solution_qa_path, 'DemoData')
-    coreDemoDataPath = createPath(core_path, "product-demo-data-biz-unit\\Core\\DemoData")
+    solutionDemoData = createPath(solutionQaPath, 'DemoData')
+    coreDemoDataPath = createPath(corePath, "product-demo-data-biz-unit\\Core\\DemoData")
     try:
-        os.mkdir(solution_demodata)
+        os.mkdir(solutionDemoData)
     except:
-        info('all ready exist: ' + solution_demodata)
+        info('all ready exist: ' + solutionDemoData)
+        errors = not errors
     
-    for user in relevant_user:
+    for user in relevantUser:
         srcPath = os.path.join(coreDemoDataPath, user)
-        trgPath = os.path.join(solution_demodata, user)
+        trgPath = os.path.join(solutionDemoData, user)
         try:
             os.mkdir(trgPath)
+        except:
+            warning("User: " + user + " is all ready exists in the solution level from ")
+        finally:
             files = os.listdir(srcPath)
             for file in files:
                 try:
                     shutil.copy2(os.path.join(srcPath, file), trgPath)
                 except:
                     error("Something went wrong while copping: " + file + ' to ' + user)
-        except:
-            warning("User: " + user + " is all ready exists in the solution level from ")
     
     if errors:
         info("Copying users finished with warnings")
@@ -101,9 +103,9 @@ def modifyUser(usersPath, user, localCurrency, foreignCurrency, countryName, cou
         
         for col in ['currencyCd', 'currencyCdOriginal', 'countryCd', 'countryName', 'availableBalance',
                     'availableCredit', 'availableCreditCash', 'amount', 'amountChargeCurrency',
-                    'amountLocalCurrency', 'amountOriginal', 'amountOriginalCurrency']:
+                    'amountLocalCurrency', 'amountOriginal', 'amountOriginalCurrency', 'currencyAmount']:
             if col in csvFile:
-                if 'currency' in col:
+                if 'currency' in col and 'currencyAmount' != col:
                     updateColumn(col, thisFile, updateCurrency)
                 else:
                     if 'Cd' in col:
@@ -114,8 +116,8 @@ def modifyUser(usersPath, user, localCurrency, foreignCurrency, countryName, cou
                         updateColumn(col, thisFile, updateFactor)
 
 
-def modifyUsersInSolution(solutionDemoDataPath, input_json):
-    for user in os.listdir(solutionDemoDataPath):
+def modifyUsersInSolution(solutionDemoDataPath, input_json, relevantUser):
+    for user in relevantUser:
         modifyUser(os.path.join(solutionDemoDataPath, user), user, input_json['LocalCurrency'],
                    input_json['ForeignCurrency'], input_json['CountryName'], input_json['CountryCode'],
                    input_json['Factor'])
@@ -126,15 +128,15 @@ def main(argv):
     info("Starting Demo data override")
     core = os.path.join(getPath('corePath'), 'product-bizpack')
     try:
-        product = getSolution(getPath('solution')) + '$QA'
+        solution = getSolution(getPath('solution')) + '$QA'
     except:
         error(getPath('solution') + ' is not a correct path Demo data didn\'t run')
         return
     
     extraUsers = getCol(argv[3], 'USERS')
-    relevant_user = find_relevant_users(core, extraUsers, argv[1], argv[2])
-    copy_users(relevant_user, core, product)
-    modifyUsersInSolution(os.path.join(product, 'DemoData'), argv[0],relevant_user)
+    relevantUser = find_relevant_users(core, extraUsers, argv[1], argv[2])
+    copyUsers(relevantUser, core, solution)
+    modifyUsersInSolution(os.path.join(solution, 'DemoData'), argv[0], relevantUser)
     info("Demo data finished overwriting the users")
 
 
