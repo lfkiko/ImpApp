@@ -2,6 +2,8 @@ import datetime
 import os
 import tkinter as tk
 from tkinter import filedialog
+
+import openpyxl
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.properties import ObjectProperty, BooleanProperty
@@ -12,6 +14,7 @@ from kivy.factory import Factory
 from Scripts import newFactField
 from Scripts.addingUsers import demoData
 from Scripts.categoryGroups import categoryGroups
+from Scripts.dataLibrary import dataLibrary
 from Scripts.enableInsights import enable_insights, transfer, sEditorVisible
 from Scripts.newFactField import fact_update
 from Scripts.newProject import newProject
@@ -19,6 +22,7 @@ from Scripts.thFactor import thFactor
 from Scripts.toolBoox.toolBoox import rewriteText, verifyPath, openKB, getFile, currentPath, valPath, readJson
 
 Builder.load_file('Scripts/Source/alerts.kv')
+fileManger = 'Scripts/Source/fileManger.json'
 root = tk.Tk()
 root.withdraw()
 root.destroy()
@@ -41,6 +45,23 @@ class MenuWindow(Screen):
         openKB(root.name)
     
     pass
+    
+    def cleanExcels(self):
+        files = readJson(fileManger)
+        for file in files:
+            if '_raw' in file:
+                fileName = files[file]
+                book = openpyxl.load_workbook(filename=fileName, read_only=False, keep_vba=True)
+                sheet = book['Sheet1']
+                lines = False
+                for row in sheet.rows:
+                    if lines:
+                        for cell in row:
+                            cell.value = None
+                    else:
+                        lines = not lines
+                book.save(fileName)
+        raise SystemExit
 
 
 class enableInsightsWindow(Screen):
@@ -153,6 +174,10 @@ class dataLibraryWindow(Screen):
     Builder.load_file('Scripts/dataLibrary/dataLibrary.kv')
     solutionPath = ObjectProperty(None)
     
+    def runFunc(self, file):
+        excel = getFile(file + "_raw")
+        dataLibrary.main([excel])
+    
     pass
 
 
@@ -238,6 +263,7 @@ class SettingsWindow(Screen):
     currentIntelliJPath = readJson(getFile('settings'))['intelliJRoot']
     currentCorePath = readJson(getFile('settings'))['corePath']
     currentModelPath = readJson(getFile('settings'))['modelPath']
+    currentEBPath = readJson(getFile('settings'))['EBPath']
     
     def dpath(self, path, path_filter):
         rewriteText(getFile(self.name), path, path_filter)

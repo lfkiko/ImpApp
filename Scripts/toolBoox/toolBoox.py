@@ -10,6 +10,30 @@ from kivy.app import App
 fileManger = 'Scripts/Source/fileManger.json'
 
 
+def getheader(fileName):
+    data = pd.read_excel(fileName).columns
+    categoris = list()
+    for c in data:
+        if c == 'dynamicTechType':
+            categoris.append('t' + c[8:])
+        else:
+            categoris.append(c)
+    return categoris
+
+
+def getRow(fileName, index):
+    data = pd.read_excel(fileName, skiprows=index, nrows=1).columns
+    row = list()
+    for a in data:
+        if 'Unnamed' in str(a):
+            row.append('noData')
+        elif str(a)[-2] == '.':
+            row.append(str(a)[:-2])
+        else:
+            row.append(a)
+    return row
+
+
 def getCol(fileName, colCategories):
     data = pd.read_excel(fileName, usecols=[colCategories])
     column = list()
@@ -83,7 +107,6 @@ def printExcel(filePath):
 def rewriteText(filePath, new_text, path_filter):
     data = readJson(filePath)
     data[path_filter] = new_text
-    print(data)
     updateJson(filePath, data)
 
 
@@ -152,6 +175,8 @@ def getPath(pathName):
         return readJson(getFile('settings'))['modelPath']
     elif pathName == 'intelliJ':
         return readJson(getFile('settings'))['intelliJRoot']
+    elif pathName == 'EBPath':
+        return readJson(getFile('settings'))['EBPath']
     elif pathName == 'solution':
         return App.get_running_app().root.ids.Menu_Window.ids.solutionPath.text
 

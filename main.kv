@@ -83,25 +83,28 @@ WindowManger:
                     app.root.current = "categoryGroups"
                     root.manager.transition.direction = "left"
             Button:
-                text: "New Field To Fact"
-                on_release:
-                    app.root.current = "newFieldToFact"
-                    root.manager.transition.direction = "left"
+                markup: True
+                text: "[s][color=000000]New Field To Fact[/color][/s]"
+#                on_release:
+#                    app.root.current = "newFieldToFact"
+#                    root.manager.transition.direction = "left"
             Button:
-                text: "Batches"
-                on_release:
-                    app.root.current = "batches"
-                    root.manager.transition.direction = "left"
+                markup: True
+                text: "[s][color=000000]Batches[/color][/s]"
+#                on_release:
+#                    app.root.current = "batches"
+#                    root.manager.transition.direction = "left"
             Button:
                 text: "Demo data"
                 on_release:
                     app.root.current = "demoData"
                     root.manager.transition.direction = "left"
             Button:
-                text: "Data Library"
-                on_release:
-                    app.root.current = "dataLibrary"
-                    root.manager.transition.direction = "left"
+                markup: True
+                text: "[s][color=000000]Data Library[/color][/s]"
+#                on_release:
+#                    app.root.current = "dataLibrary"
+#                    root.manager.transition.direction = "left"
             Button:
                 text: "SEditorVisible creator"
                 on_release:
@@ -113,21 +116,24 @@ WindowManger:
                     app.root.current = "newProject"
                     root.manager.transition.direction = "left"
             Button:
-                text: "Breaking Changes"
-                on_release:
-                    app.root.current = "breakingChange"
-                    root.manager.transition.direction = "left"
+                markup: True
+                text: "[s][color=000000]Breaking Changes[/color][/s]"
+#                on_release:
+#                    app.root.current = "breakingChange"
+#                    root.manager.transition.direction = "left"
             Button:
-                text: "Post-man"
-                on_release:
-                    app.root.current = "PostMan"
-                    root.manager.transition.direction = "left"
+                markup: True
+                text: "[s][color=000000]Post-man[/color][/s]"
+#                on_release:
+#                    app.root.current = "PostMan"
+#                    root.manager.transition.direction = "left"
 
             Button:
-                text: "TH factor"
-                on_release:
-                    app.root.current = "ThFactor"
-                    root.manager.transition.direction = "left"
+                markup: True
+                text: "[s][color=000000]TH factor[/color][/s]"
+#                on_release:
+#                    app.root.current = "ThFactor"
+#                    root.manager.transition.direction = "left"
 
 
         tailBoxLayout:
@@ -142,7 +148,9 @@ WindowManger:
                 text: "Exit"
                 bold: True
                 pos_hint: {'center_x': 0.5}
-                on_release: app.stop()
+                on_press: root.cleanExcels()
+#                on_release: app.stop()
+
 
 
 
@@ -158,14 +166,6 @@ WindowManger:
             text: "Settings"
 
         Label:
-            text: "Current default path:"
-            font_size: 32
-            bold: True
-            size_hint: None, None
-            size: self.texture_size
-            halign:'left'
-
-        Label:
             id: defaultPath
             text: root.currentDefaultPath
             font_size: 24
@@ -175,21 +175,13 @@ WindowManger:
 
         UserInputBox
             UserInputLabel:
-                text: "Enter new path:"
+                text: "Git path:"
             UserInput:
                 id: defaultNewPath
             fileChooserButton:
                 text: "Submit"
                 spacing: 20
                 on_press: root.dpath(defaultNewPath.text, 'pathRoot')
-
-        Label:
-            text: "Current IntelliJ path:"
-            font_size: 32
-            bold: True
-            size_hint: None, None
-            size: self.texture_size
-            halign:'left'
 
         Label:
             id: IntelliJPath
@@ -201,7 +193,7 @@ WindowManger:
 
         UserInputBox
             UserInputLabel:
-                text: "Enter new IntelliJ path:"
+                text: "IntelliJ path:"
             UserInput:
                 id: NewIntelliJPath
             fileChooserButton:
@@ -219,7 +211,7 @@ WindowManger:
 
         UserInputBox
             UserInputLabel:
-                text: "Enter new \nperso-core path:"
+                text: "Perso-core path:"
             UserInput:
                 id: NewCorePath
             fileChooserButton:
@@ -237,13 +229,31 @@ WindowManger:
 
         UserInputBox
             UserInputLabel:
-                text: "Enter new \nperso-model path:"
+                text: "Perso-model path:"
             UserInput:
                 id: NewModelPath
             fileChooserButton:
                 text: "Submit"
                 spacing: 20
                 on_press: root.dpath(NewModelPath.text, 'modelPath')
+
+        Label:
+            id:EBPath
+            text: root.currentEBPath
+            font_size: 24
+            color: (0,0,0)
+            size_hint: None, None
+            size: self.texture_size
+
+        UserInputBox
+            UserInputLabel:
+                text: "EB path:"
+            UserInput:
+                id: NewEBPath
+            fileChooserButton:
+                text: "Submit"
+                spacing: 20
+                on_press: root.dpath(NewEBPath.text, 'EBPath')
 
         #menu
         tailBoxLayout:

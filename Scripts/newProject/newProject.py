@@ -3,7 +3,7 @@
 import os
 import sys
 from logging import info, error
-from shutil import copyfile
+import shutil
 import xml.dom.minidom
 
 from Scripts.toolBoox.toolBoox import getFile, readJson, createPath, getPath, getSolution
@@ -35,6 +35,10 @@ def editProperties(file_name, channel):
                     v = channel
                     tmp_line = p + '=' + v + '\n'
                     f.write(tmp_line)
+                elif p == 'LOG_LEVEL':
+                    v = 'DEBUG'
+                    tmp_line = p + '=' + v + '\n'
+                    f.write(tmp_line)
                 else:
                     f.write(line)
             else:
@@ -45,13 +49,9 @@ def editProperties(file_name, channel):
 def checkForProperties(dirPath):
     path = createPath(dirPath, 'profiles\\local')
     if 'personetics.properties' in os.listdir(path):
-        return True
+        return False
     
     else:
-        properties = getFile('projectProperties')
-        file_name = os.path.basename(properties)
-        copyfile(properties, os.path.join(path, file_name))
-        path = os.path.join(dirPath, path, 'personetics.properties')
         return True
 
 
@@ -97,13 +97,20 @@ def main(argv):
         error(getPath('solution') + ' is not a correct path Demo data didn\'t run')
         return
     
-    print(solution)
     projectName = os.path.basename(solution)
-    print(projectName)
+    updateConfigurations(projectName, getPath('intelliJ'))
+    cqaPath = createPath(solution, 'profiles\\qa_cqa')
+    localPath = createPath(solution, 'profiles\\local')
     if checkForProperties(solution):
-        updateConfigurations(projectName, getPath('intelliJ'))
-        editProperties(createPath(solution, 'profiles\\local\\personetics.properties'), argv[0])
-        info("Project configuration complete")
+        properties = os.path.join(cqaPath, 'personetics.properties')
+        try:
+            shutil.copy2(os.path.join(cqaPath, properties), localPath)
+        except:
+            error("Something went wrong copying personetics.properties from qa_cqa")
+            return
+    
+    editProperties(os.path.join(localPath, 'personetics.properties'), argv[0])
+    info("Project configuration complete")
 
 
 if __name__ == "__main__":

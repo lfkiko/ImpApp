@@ -10,19 +10,6 @@
         HeaderLabel:
             text: "Data library update"
 
-        MyFileChooserBox:
-            MyFileChooserGrid:
-                MyFileChooserLabel:
-                    text: "Solution path:"
-
-                MyFileChooserExmp:
-                    id: solutionPath
-                    text: "C:\\GIT\\solution\\biz-units\\perso-biz\\Projects\\solution$QA"
-
-            fileChooserButton:
-                spacing: 20
-                on_release: root.selected("s")
-
         BoxLayout:
             orientation: "horizontal"
             size: root.width, root.height
@@ -58,4 +45,4 @@
             RoundedButton:
                 text: "Run"
                 pos_hint: {'center_x': 0.5}
-#                on_release: root.runFunc(solutionPath.text)
+                on_release: root.runFunc(root.name)

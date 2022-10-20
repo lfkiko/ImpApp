@@ -4,9 +4,9 @@
     "enableInsights": "Scripts/Source/enableInsights/input_insights.csv",
     "enableInsights_raw": "Scripts/Source/enableInsights/input_insights.xlsm",
     "sEditorVisible": "Scripts/Source/sEditorVisible/input_insights.csv",
+    "demoData_raw": "Scripts/Source/demoData/demoData.xlsm",
     "sEditorVisible_raw": "Scripts/Source/sEditorVisible/input_insights.xlsm",
     "batchesProperties": "Scripts/Source/batches/defaultParameters.json",
     "projectProperties": "Scripts/Source/newProject/personetics.properties",
-    "demoData_raw": "Scripts/Source/demoData/dempData.xlsm",
     "settings": "Scripts/Source/pathRoot.json"
 }
