@@ -1,0 +1,203 @@
+{
+  "categoryGroups":[
+    {
+      "id":"CG0",
+      "description":{"langMap":{"en":"Other","fr": "Autre"}},
+      "clientCategoryId":"CCG0",
+      "direction":"Both"
+    },
+    {
+      "id":"CG10",
+      "description":{"langMap":{"en":"Personal Care"}},
+      "clientCategoryId":"CCG10",
+      "direction":"Expenses"
+    },
+    {
+      "id":"CG100",
+      "description":{"langMap":{"en":"Transportation","fr": "Transportation"}},
+      "clientCategoryId":"CCG100",
+      "direction":"Expenses"
+    },
+    {
+      "id":"CG1000",
+      "description":{"langMap":{"en":"Household","fr": "Article de maison"}},
+      "clientCategoryId":"CCG1000",
+      "direction":"Expenses"
+    },
+    {
+      "id":"CG10000",
+      "description":{"langMap":{"en":"Groceries","fr": "Épicerie"}},
+      "clientCategoryId":"CCG10000",
+      "direction":"Expenses"
+    },
+    {
+      "id":"CG300",
+      "description":{"langMap":{"en":"Utilities","fr": "Services publics"}},
+      "clientCategoryId":"CCG300",
+      "direction":"Expenses"
+    },
+    {
+      "id":"CG3000",
+      "description":{"langMap":{"en":"Travel","fr": "Voyage"}},
+      "clientCategoryId":"CCG3000",
+      "direction":"Expenses"
+    },
+    {
+      "id":"CG500",
+      "description":{"langMap":{"en":"Entertainment","fr": "Divertissement"}},
+      "clientCategoryId":"CCG500",
+      "direction":"Expenses"
+    },
+    {
+      "id":"CG600",
+      "description":{"langMap":{"en":"Shopping","fr": "Magasinage"}},
+      "clientCategoryId":"CCG600",
+      "direction":"Expenses"
+    },
+    {
+      "id":"CG6000",
+      "description":{"langMap":{"en":"Education","fr": "Études"}},
+      "clientCategoryId":"CCG6000",
+      "direction":"Expenses"
+    },
+    {
+      "id":"CG700",
+      "description":{"langMap":{"en":"Insurance","fr": "Finances"}},
+      "clientCategoryId":"CCG700",
+      "direction":"Expenses"
+    },
+    {
+      "id":"CG8",
+      "description":{"langMap":{"en":"Taxes & Authorities","fr": "Impôt"}},
+      "clientCategoryId":"CCG8",
+      "direction":"Both"
+    },
+    {
+      "id":"CG800",
+      "description":{"langMap":{"en":"Dining","fr": "Restaurant"}},
+      "clientCategoryId":"CCG800",
+      "direction":"Expenses"
+    },
+    {
+      "id":"CG900",
+      "description":{"langMap":{"en":"Health & fitness","fr": "Santé"}},
+      "clientCategoryId":"CCG900",
+      "direction":"Expenses"
+    },
+	{
+      "id":"CG1100",
+      "description":{"langMap":{"en":"Kids & Family"}},
+      "clientCategoryId":"CCG1100",
+      "direction":"Expenses"
+    },
+	{
+      "id":"CG1200",
+      "description":{"langMap":{"en":"Savings & Investments"}},
+      "clientCategoryId":"CCG1200",
+      "direction":"Both"
+    },
+ 	{
+      "id":"CG1300",
+      "description":{"langMap":{"en":"Fees & Other charges"}},
+      "clientCategoryId":"CCG1300",
+      "direction":"Expenses"
+    },
+ 	{
+      "id":"CG1400",
+      "description":{"langMap":{"en":"Cash Withdrawal"}},
+      "clientCategoryId":"CCG1400",
+      "direction":"Expenses"
+    },
+ {
+      "id":"CG1500",
+      "description":{"langMap":{"en":"Checks Posted"}},
+      "clientCategoryId":"CCG1500",
+      "direction":"Expenses"
+    },
+ {
+      "id":"CG1600",
+      "description":{"langMap":{"en":"Transfers between own accounts"}},
+      "clientCategoryId":"CCG1600",
+      "direction":"Both"
+    },
+ {
+      "id":"CG1700",
+      "description":{"langMap":{"en":"Cash Deposit"}},
+      "clientCategoryId":"CCG1700",
+      "direction":"Income"
+    },
+ {
+      "id":"CG1800",
+      "description":{"langMap":{"en":"Check Deposit"}},
+      "clientCategoryId":"CCG1800",
+      "direction":"Income"
+    },
+ {
+      "id":"CG1900",
+      "description":{"langMap":{"en":"Other Deposits"}},
+      "clientCategoryId":"CCG1900",
+      "direction":"Income"
+    },
+{
+      "id":"CG2100",
+      "description":{"langMap":{"en":"Interest & Dividends"}},
+      "clientCategoryId":"CCG2100",
+      "direction":"Income"
+    },
+{
+      "id":"CG2200",
+      "description":{"langMap":{"en":"Loan & Mortgage"}},
+      "clientCategoryId":"CCG2200",
+      "direction":"Expenses"
+    },
+{
+      "id":"CG2300",
+      "description":{"langMap":{"en":"Direct Deposit"}},
+      "clientCategoryId":"CCG2300",
+      "direction":"Income"
+    },
+{
+      "id":"CG2400",
+      "description":{"langMap":{"en":"Direct Debit & Standing Order"}},
+      "clientCategoryId":"CCG2400",
+      "direction":"Expenses"
+    },
+{
+      "id":"CG2500",
+      "description":{"langMap":{"en":"Credit Card Payments"}},
+      "clientCategoryId":"CCG2500",
+      "direction":"Both"
+    },
+{
+      "id":"CG2600",
+      "description":{"langMap":{"en":"Other transfers"}},
+      "clientCategoryId":"CCG2600",
+      "direction":"Both"
+    },
+
+{
+      "id":"CG2700",
+      "description":{"langMap":{"en":"Donations"}},
+      "clientCategoryId":"CCG2700",
+      "direction":"Expenses"
+    },
+{
+      "id":"CG2800",
+      "description":{"langMap":{"en":"Office expenses"}},
+      "clientCategoryId":"CCG2800",
+      "direction":"Expenses"
+    },
+    {
+      "id":"CG2900",
+      "description":{"langMap":{"en":"Paycheck, Pensions & Annuity"}},
+      "clientCategoryId":"CCG2900",
+      "direction":"Income"
+    },
+    {
+      "id":"CG4000",
+      "description":{"langMap":{"en":"Digital Wallet"}},
+      "clientCategoryId":"CG4000",
+      "direction":"Both"
+    }
+  ]
+}

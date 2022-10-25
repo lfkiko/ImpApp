@@ -69,7 +69,8 @@ class enableInsightsWindow(Screen):
     
     def runFunc(self):
         transfer.main([self.name, 'active'])
-        enable_insights.main([getFile(self.name)])
+        notFound = enable_insights.main([getFile(self.name)])
+        print('this insights werent found:\n', notFound)
         # self.ids.corePath.text = status
     
     pass
@@ -174,9 +175,12 @@ class dataLibraryWindow(Screen):
     Builder.load_file('Scripts/dataLibrary/dataLibrary.kv')
     solutionPath = ObjectProperty(None)
     
+    def checkBoxClick(self, instance):
+        print(self.ids.deactivated.active)
+    
     def runFunc(self, file):
         excel = getFile(file + "_raw")
-        dataLibrary.main([excel])
+        dataLibrary.main([excel, self.ids.dataLibrary.active, self.ids.deactivated.active])
     
     pass
 

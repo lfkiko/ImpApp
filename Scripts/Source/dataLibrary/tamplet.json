@@ -1,0 +1,25 @@
+{
+    "id": "",
+    "dataAttributeId": "",
+    "displayName": "",
+    "description": "",
+    "activate": "",
+    "origin": "",
+    "type": "",
+    "dataItemLocation": [],
+    "tags": [],
+    "relatedEntity": "",
+    "droolClass": "",
+    "visibleLogic": "",
+    "visibleContent": "",
+    "triggerLogic": {
+        "type": "",
+        "attribute": {
+            "id": "",
+            "type": "",
+            "techType": "",
+            "dynamic": true,
+            "evalOnly": true
+        }
+    }
+}

@@ -3,7 +3,8 @@ import shutil
 import sys
 from logging import info, warning, error
 
-from Scripts.toolBoox.toolBoox import readCsv, writeCsv, getCol, createPath, getSolution, getPath
+from Scripts.toolBoox.excelJsonToolBox import getCol, readCsv, writeCsv
+from Scripts.toolBoox.toolBoox import createPath, getSolution, getPath
 
 
 def find_relevant_users(core_path, extraUsers, Busers, modified):
@@ -39,13 +40,16 @@ def copyUsers(relevantUser, corePath, solutionQaPath):
         except:
             warning("User: " + user + " is all ready exists in the solution level from ")
         finally:
-            files = os.listdir(srcPath)
-            for file in files:
-                try:
-                    shutil.copy2(os.path.join(srcPath, file), trgPath)
-                except:
-                    error("Something went wrong while copping: " + file + ' to ' + user)
-    
+            if os.path.exists(srcPath):
+                files = os.listdir(srcPath)
+                for file in files:
+                    try:
+                        shutil.copy2(os.path.join(srcPath, file), trgPath)
+                    except:
+                        error("Something went wrong while copping: " + file + ' to ' + user)
+            else:
+                error("User: " + user + " do not exists in the core ")
+                pass
     if errors:
         info("Copying users finished with warnings")
     else:

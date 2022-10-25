@@ -3,7 +3,8 @@ import sys
 import warnings
 from logging import info, error
 
-from Scripts.toolBoox.toolBoox import getPath, getSolution, createPath, readJson, readCsv, writeCsv
+from Scripts.toolBoox.excelJsonToolBox import readCsv, writeCsv, readJson
+from Scripts.toolBoox.toolBoox import getPath, getSolution, createPath
 
 
 def updateUsers(product, users, categories):

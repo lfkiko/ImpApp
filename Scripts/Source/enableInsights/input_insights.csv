@@ -1,7 +1,8 @@
 insight,UC
-BudgetConsistAbove,1
-BudgetConsistBelow,1
-BudgetMilestones,"1,2,3,4,5"
-BudgetRecommendationEvents,"3,4,5,8"
-BudgetRecommendationSpendingCategory,"1,3,5,7,9,11"
-BudgetSuperstar,"1,2,3"
+CardExpiration,3
+MakeCCPayment,1
+NotifyExceedCreditLimit,1
+NotifyNewCCStatement,1
+PaymentPastDue,"3,4,7,8"
+RecommendAutopay,2
+RecommendTravelCard,"1,2"

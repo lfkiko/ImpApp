@@ -6,7 +6,7 @@ from logging import info, error
 import shutil
 import xml.dom.minidom
 
-from Scripts.toolBoox.toolBoox import getFile, readJson, createPath, getPath, getSolution
+from Scripts.toolBoox.toolBoox import createPath, getPath
 
 
 def findProfile(path):

@@ -13,8 +13,23 @@
         BoxLayout:
             orientation: "horizontal"
             size: root.width, root.height
+            pos_hint:{'center_x': 0.64}
+            Label:
+                text: "Update data library --> "
+                font_size: 32
+                bold: True
+                size_hint_y: None
+                height:80
+                size_hint_x: None
+                width:240
+                pos_hint:{'center_y': 0.5}
+            MyCheckBox:
+                id: dataLibrary
+
+        BoxLayout:
+            orientation: "horizontal"
+            size: root.width, root.height
             pos_hint:{'center_y': 0.5}
-#            open_fileBoxLayout:
             Label:
                 text: "Edit the file --> "
                 font_size: 32
@@ -27,6 +42,22 @@
 
             openFileButton:
                 on_release: Factory.MenuWindow().openFile(root.name)
+
+        BoxLayout:
+            orientation: "horizontal"
+            size: root.width, root.height
+            pos_hint:{'center_x': 0.64}
+            Label:
+                text: "Remove deactivated attributes --> "
+                font_size: 32
+                bold: True
+                size_hint_y: None
+                height:80
+                size_hint_x: None
+                width:240
+                pos_hint:{'center_y': 0.5}
+            MyCheckBox:
+                id: deactivated
 
 
         tailBoxLayout:

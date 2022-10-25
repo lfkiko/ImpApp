@@ -4,7 +4,8 @@ import sys
 from logging import error, info
 
 from Scripts.enableInsights import transfer
-from Scripts.toolBoox.toolBoox import getFile, readCsv, findDir, rewriteText, fixPath, writeJson, getPath, getSolution
+from Scripts.toolBoox.excelJsonToolBox import readCsv, writeJson
+from Scripts.toolBoox.toolBoox import getFile, rewriteText, fixPath, getPath, getSolution
 
 
 def createJson(file_name):

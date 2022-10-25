@@ -1,13 +1,7 @@
 import json
 import sys
 import os
-
-
-def read_json(input_file):
-    with open(input_file, "r") as f:
-        input_json = json.load(f)
-    return input_json
-
+from Scripts.toolBoox.excelJsonToolBox import readJson
 
 def write_json(path, json_object):
     with open(path, "w") as f:
@@ -22,7 +16,7 @@ def get_insight_list(insight_path):
 
 def update_misc_jinsight_facts(insight_path, insight_uc, fact, new_field, new_dis, att):
     jinsightfacts_path = insight_path + "\\" + insight_uc + "\\JInsightFacts.json"
-    jinsightfacts = read_json(jinsightfacts_path)
+    jinsightfacts = readJson(jinsightfacts_path)
     jinsightfacts[fact]['cols'].append(new_field)
     for item in jinsightfacts[fact]['rows']:
         item.append(new_dis)
@@ -33,7 +27,7 @@ def update_misc_jinsight_facts(insight_path, insight_uc, fact, new_field, new_di
 
 def update_sstory_dif(insight_path, insight_uc):
     sstoryDiff_path = insight_path + "\\" + insight_uc + "\\SStoryDefinition.json"
-    sstoryDiff = read_json(sstoryDiff_path)
+    sstoryDiff = readJson(sstoryDiff_path)
     mydialog = ""
     for dialog in sstoryDiff['dialogs']:
         for block in dialog['blocks']:
@@ -47,7 +41,7 @@ def update_sstory_dif(insight_path, insight_uc):
 
 def update_sstory_text(insight_path, insight_uc, dialog):
     sstoryText_path = insight_path + "\\" + insight_uc + "\\SStoryText.json"
-    sstoryText = read_json(sstoryText_path)
+    sstoryText = readJson(sstoryText_path)
     
     if sstoryText.get(dialog):
         sstoryText[dialog]["en"].update({"dateCommentTxt": "{{misc}}"})

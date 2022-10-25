@@ -1,61 +1,14 @@
-import json
 import os
 import webbrowser
 from logging import error
-
 import pandas as pd
+
 from bs4 import BeautifulSoup
 from kivy.app import App
 
+from Scripts.toolBoox.excelJsonToolBox import readJson, updateJson
+
 fileManger = 'Scripts/Source/fileManger.json'
-
-
-def getheader(fileName):
-    data = pd.read_excel(fileName).columns
-    categoris = list()
-    for c in data:
-        if c == 'dynamicTechType':
-            categoris.append('t' + c[8:])
-        else:
-            categoris.append(c)
-    return categoris
-
-
-def getRow(fileName, index):
-    data = pd.read_excel(fileName, skiprows=index, nrows=1).columns
-    row = list()
-    for a in data:
-        if 'Unnamed' in str(a):
-            row.append('noData')
-        elif str(a)[-2] == '.':
-            row.append(str(a)[:-2])
-        else:
-            row.append(a)
-    return row
-
-
-def getCol(fileName, colCategories):
-    data = pd.read_excel(fileName, usecols=[colCategories])
-    column = list()
-    for i in data.index:
-        column.append(data[colCategories][i])
-    return column
-
-
-def readJson(input_file):
-    with open(input_file, "r", encoding=checkEndCode(input_file)) as f:
-        input_json = json.load(f)
-    return input_json
-
-
-def writeJson(filePath, json_object):
-    with open(filePath, "w") as f:
-        f.write(json_object)
-
-
-def updateJson(filePath, json_object):
-    with open(filePath, "w") as f:
-        json.dump(json_object, f, indent=4)
 
 
 def createDirectory(solutionsPath, path):
@@ -83,25 +36,6 @@ def valPath(path):
         return False
     else:
         return True
-
-
-def checkEndCode(filePath):
-    with open(filePath) as raw_data:
-        return raw_data.encoding
-
-
-def readCsv(filePath):
-    df = pd.read_csv(filePath, keep_default_na=False, encoding=checkEndCode(filePath), dtype=object)
-    return df
-
-
-def writeCsv(filePath, df):
-    df.to_csv(filePath, index=False, encoding=checkEndCode(filePath))
-
-
-def printExcel(filePath):
-    data = pd.read_excel(filePath)
-    print(data)
 
 
 def rewriteText(filePath, new_text, path_filter):
@@ -187,7 +121,7 @@ def modelVersion(projectPath):
             pom = f.read()
             data = str(BeautifulSoup(pom, 'xml').find('version'))
             version = data[(data.find('>')) + 1: data.find('<', 1)].split('.')
-            if version[0] > 5 and version[1] > 5:
+            if int(version[0]) >= 5 and int(version[1]) > 5:
                 return True
             
             return False

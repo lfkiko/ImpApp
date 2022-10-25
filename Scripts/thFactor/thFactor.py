@@ -1,8 +1,7 @@
-import codecs
-import json
-import sys, os
+import sys
+import os
 
-from Scripts.toolBoox.toolBoox import getInsightsDir, getFile, readJson, fixPath, checkEndCode
+from Scripts.toolBoox.toolBoox import getInsightsDir, getFile, readJson
 
 searchedFolders = ["product-subscriptions-biz-unit", "product-budgets-biz-unit", "product-debt-biz-unit",
                    os.path.join("product-engage-biz-unit", "Projects"), "product-pa-biz-unit"]
