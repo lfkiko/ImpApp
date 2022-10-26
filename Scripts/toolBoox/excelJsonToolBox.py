@@ -1,4 +1,5 @@
 import json
+import os
 
 import pandas as pd
 
@@ -49,13 +50,20 @@ def readJsonUtf8Sig(filePath):
         return inputJson
 
 
-def writeJson(filePath, json_object):
-    with open(filePath, "w") as f:
-        f.write(json_object)
+def writeJson(filePath, jsonObject):
+    print(os.getcwd())
+    f = open(filePath, "x")
+    f.write(json.dumps(jsonObject, indent=4))
+    f.close()
 
 
 def updateJson(filePath, jsonObject):
     with open(filePath, "w", encoding=checkEndCode(filePath)) as f:
+        json.dump(jsonObject, f, indent=4)
+
+
+def updateJsonUtf8Sig(filePath, jsonObject):
+    with open(filePath, "w", encoding='utf-8-sig') as f:
         json.dump(jsonObject, f, indent=4)
 
 
