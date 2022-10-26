@@ -1,4 +1,5 @@
 import datetime
+import json
 import os
 import tkinter as tk
 from tkinter import filedialog
@@ -19,6 +20,7 @@ from Scripts.enableInsights import enable_insights, transfer, sEditorVisible
 from Scripts.newFactField import fact_update
 from Scripts.newProject import newProject
 from Scripts.thFactor import thFactor
+from Scripts.toolBoox.excelJsonToolBox import writeJson
 from Scripts.toolBoox.toolBoox import rewriteText, verifyPath, openKB, getFile, currentPath, valPath, readJson
 
 Builder.load_file('Scripts/Source/alerts.kv')
@@ -263,6 +265,16 @@ class ThFactorWindow(Screen):
 
 
 class SettingsWindow(Screen):
+    if not os.path.exists(getFile('settings')):
+        print("check")
+        pathRootJson = {"pathRoot": "",
+                        "intelliJRoot": "",
+                        "corePath": "",
+                        "modelPath": "",
+                        "EBPath": ""}
+        f = open(getFile('settings'), "x")
+        f.write(json.dumps(pathRootJson, indent=4))
+        f.close()
     currentDefaultPath = readJson(getFile('settings'))['pathRoot']
     currentIntelliJPath = readJson(getFile('settings'))['intelliJRoot']
     currentCorePath = readJson(getFile('settings'))['corePath']
@@ -289,4 +301,21 @@ class ImplementationApp(App):
 
 
 if __name__ == '__main__':
+    # try:
+    # except Exception as e:
+    #     if 'FileNotFoundError' in e:
+    # print(os.path.exists(getFile('settings')))
+    # if not os.path.exists(getFile('settings')):
+    #     print("check")  # ImplementationApp().run()
+    #     pathRoot = {
+    #         "pathRoot": "",
+    #         "intelliJRoot": "",
+    #         "corePath": "",
+    #         "modelPath": "",
+    #         "EBPath": ""
+    #     }
+    #     writeJson(getFile('setting'), pathRoot)
+    #     f = open(getFile('settings'), "x")
+    #     f.write(json.dumps(pathRoot, indent=4))
+    #     f.close()
     ImplementationApp().run()

@@ -1,115 +1,165 @@
-import json
 import os
 import sys
 from logging import info, error, warning
-
-from Scripts.toolBoox.excelJsonToolBox import getheader, getRow, writeJson, readJson, updateJson, getCol, checkEndCode, \
-    readJsonUtf8Sig
+from Scripts.toolBoox.excelJsonToolBox import getheader, getRow, getCol, readJsonUtf8Sig, updateJsonUtf8Sig
 from Scripts.toolBoox.toolBoox import createPath, getSolution, getPath
 
-
-def getCostumeAttributes(EBPath, attributes, excel):
-    costumeAttributes = {}
-    categories = getheader(excel)
-    for a in attributes:
-        aJson = a + ".json"
-        if aJson not in os.listdir(EBPath):
-            row = getRow(excel, attributes.index(a) + 1)
-            costumeAttributes[aJson] = dict()
-            dictionary = costumeAttributes[aJson]
-            dictionaryAttribute = ''
-            for x in range(len(categories)):
-                if row[x] != 'noData':
-                    if categories[x] in ['dataItemLocation', 'tags', 'factName', '']:
-                        dictionary.update({categories[x]: row[x].split(",")})
-                    elif categories[x] == 'visibleLogic':
-                        dictionary.update({categories[x]: row[x]})
-                        dictionary.update({'triggerLogic': {}})
-                        dictionary['triggerLogic'].update({'type': 'attribute'})
-                        dictionary['triggerLogic'].update({'attribute': {}})
-                        dictionaryAttribute = dictionary['triggerLogic']['attribute']
-                        dictionaryAttribute.update({'id': dictionary['displayName']})
-                        dictionaryAttribute.update({'type': dictionary[row[categories.index('type')]]})
-                        dictionaryAttribute.update({'dynamic': True})
-                        dictionaryAttribute.update({'evalOnly': True})
-                    elif categories[x] == 'techType':
-                        dictionaryAttribute.update({categories[x]: row[x]})
-                    elif categories[x] == 'availableValues':
-                        dictionaryAttribute.update({'dynamic': {}})
-                        dictionaryAttribute['dynamic'].update({'sourceOfData': 'list'})
-                        dictionaryAttribute['dynamic'].update({'values': [row[x].split(",")]})
-                    else:
-                        dictionary.update({categories[x]: row[x]})
-                        tmp = dictionary['triggerLogic']
-                        dictionary.pop('triggerLogic')
-                        dictionary.update({'triggerLogic': tmp})
-    return costumeAttributes
+requireFieldsForTriggerLogic = ['type', 'dataAttributeId', 'droolClass', 'relatedEntity']
+javaEntitiesStrings = dict({})
 
 
-def createCostumeAttributes(solution, costumeAttributes):
-    info('Start writing costumed attributes ')
-    dataAttribute = createPath(solution, 'SEditorDefinition\\DataAttribute')
-    for jsonName in costumeAttributes:
-        try:
-            newJson = open(jsonName, "x")
-        except:
-            warning('all ready exist: ' + jsonName)
-        
-        jsonData = json.dumps(costumeAttributes[jsonName], indent=4)
-        try:
-            writeJson(newJson, jsonData)
-        except:
-            error('there was a problem writing: ' + jsonName)
-        print(jsonName)
-        print(jsonData)
-
-
-def createAttributes(engagementBuilderPath, solution, attributes, costumeAttributes, updatedAttribute, excel):
-    info('Start writing new attributes')
-    relevantAttributes = list()
-    solutionPath = createPath(solution, 'SEditorDefinition\\DataAttribute')
-    categories = getheader(excel)
-    for attribute in attributes:
-        if attribute in updatedAttribute or attribute + '.json' in costumeAttributes:
-            relevantAttributes.append(attribute)
-    for attribute in relevantAttributes:
-        attributeFileName = attribute + '.json'
-        attributePath = os.path.join(engagementBuilderPath, attributeFileName)
-        attributeJson = readJson(attributePath)
-        attributeJson.pop('triggerLogic')
-        row = getRow(excel, attributes.index(attribute))
-        for x in range(len(categories)):
-            if categories[x] in attributeJson.keys():
-                if row[x] != 'noData':
-                    if categories[x] in ['dataItemLocation', 'tags', 'factName']:
-                        attributeJson[categories[x]] = row[x].split(",")
-                    else:
-                        attributeJson[categories[x]] = row[x]
-                else:
-                    attributeJson.pop(categories[x])
-        attributeJson.pop('dataAttributeId')
-        try:
-            updateJson(os.path.join(solutionPath, attributeFileName), attributeJson)
-        except:
-            error('couldn\'t overwrite ' + attributeFileName)
+def getVal(colName, colVal):
+    if colVal == "" or colName in ["LastUpdate", "created"]:
+        return ""
     
-    info('New attributes were written')
+    if colName in ["tags", "dataItemLocation", "factName"]:
+        colVal = colVal.replace(" ", "").split(",")
+        return colVal
+    if colVal == 'availableValues' and len(colVal) != 0:
+        colVal = {'sourceOfData': 'list', 'values': colVal.replace(" ", "").split(",")}
+    
+    colVal = str(colVal).encode('ascii', 'ignore').decode("utf-8")
+    return colVal
 
 
-def updateAttributes(attributes, solution, excel):
-    info('Start updating overridden attributes ')
-    updatedAttribute = list()
-    activate = getCol(excel, 'activate')
-    dataAttribute = createPath(solution, 'SEditorDefinition\\DataAttribute')
-    for a in list(attributes):
-        if a + '.json' in os.listdir(dataAttribute):
-            jsonFile = os.path.join(dataAttribute, a + '.json')
-            aJson = readJson(jsonFile)
-            if aJson['activate'] != activate[attributes.index(a)]:
-                aJson['activate'] = activate[attributes.index(a)]
-                updateJson(jsonFile, aJson)
-                updatedAttribute.append(a)
-    return updatedAttribute
+def buildTriggerLogic(jsonEntity, rowNumber, corePath):
+    if "visibleLogic" not in jsonEntity or jsonEntity['visibleLogic'] == "FALSE":
+        return jsonEntity
+    for colName in requireFieldsForTriggerLogic:
+        if colName not in jsonEntity:
+            error(
+                "ERROR 2: trigger logic not created for raw number: {0}, id: {1} missing on of the require fields: {2}\n"
+                    .format(rowNumber, jsonEntity['id'], requireFieldsForTriggerLogic))
+            return jsonEntity
+    fieldId = jsonEntity['dataAttributeId']
+    javaClass = jsonEntity['droolClass']
+    
+    # handle dynamic
+    if 'dynamicTechType' in jsonEntity:
+        dynamicTriggerLogic = {"type": "attribute", "attribute": {'id': fieldId,
+                                                                  'type': jsonEntity['type'],
+                                                                  "techType": jsonEntity['dynamicTechType'],
+                                                                  "dynamic": True, "evalOnly": True}}
+        jsonEntity['triggerLogic'] = dynamicTriggerLogic
+        del jsonEntity['dynamicTechType']
+        return jsonEntity
+    if isProfile(javaClass):
+        if jsonEntity['type'] == 'Number':
+            jsonEntity['triggerLogic'] = {'type': 'profile', 'level': jsonEntity['relatedEntity'],
+                                          'class': javaClass,
+                                          'value': {'id': fieldId,
+                                                    'type': jsonEntity['type']}}
+        if jsonEntity['type'] == 'Date':
+            jsonEntity['triggerLogic'] = {'type': 'profile', 'level': jsonEntity['relatedEntity'],
+                                          'class': javaClass,
+                                          'value': {'id': fieldId,
+                                                    'type': jsonEntity['type'],
+                                                    'techType': 'PDate',
+                                                    'evalOnly': 'true'}}
+        if jsonEntity['type'] == 'String':
+            jsonEntity['triggerLogic'] = {'type': 'profile', 'level': jsonEntity['relatedEntity'],
+                                          'class': javaClass,
+                                          'value': {'id': fieldId,
+                                                    'type': jsonEntity['type'],
+                                                    'evalOnly': 'true'}}
+        return jsonEntity
+    
+    # handle string
+    if jsonEntity['type'] == 'String' and existInJava(javaClass, 'String', fieldId, corePath):
+        if 'availableValues' in jsonEntity:
+            jsonEntity['triggerLogic'] = {"type": "attribute", "attribute": {'id': fieldId,
+                                                                             'techType': "String",
+                                                                             'type': "List",
+                                                                             "evalOnly": True}}
+        else:
+            jsonEntity['triggerLogic'] = {"type": "attribute", "attribute": {'id': fieldId,
+                                                                             'type': "String",
+                                                                             "evalOnly": True}}
+    # handle date
+    if jsonEntity['type'] == 'Date' and existInJava(javaClass, 'PDate', fieldId, corePath):
+        jsonEntity['triggerLogic'] = {"type": "attribute", "attribute": {'id': fieldId,
+                                                                         'type': "Date",
+                                                                         "evalOnly": True}}
+    # handle boolean
+    if jsonEntity['type'] == 'Binary' or jsonEntity['type'] == 'Boolean':
+        if existInJava(javaClass, 'PExtendedBoolean', fieldId, corePath):
+            jsonEntity['triggerLogic'] = {"type": "attribute",
+                                          "attribute": {'id': fieldId,
+                                                        'techType': "PExtendedBoolean",
+                                                        'type': "Binary"},
+                                          "evalOnly": True}
+            return jsonEntity
+        if existInJava(javaClass, 'Boolean', fieldId, corePath):
+            jsonEntity['triggerLogic'] = {"type": "attribute",
+                                          "attribute": {'id': fieldId,
+                                                        'type': "Binary"}}
+    # handle number
+    if jsonEntity['type'] == 'Number':
+        if existInJava(javaClass, 'PAmount', fieldId, corePath):
+            getter = fieldId + '.getDoubleAmount()'
+            jsonEntity['triggerLogic'] = {"type": "attribute", "attribute": {'id': fieldId,
+                                                                             'type': "Number",
+                                                                             "getter": getter,
+                                                                             "evalOnly": True}}
+        else:
+            jsonEntity['triggerLogic'] = {"type": "attribute", "attribute": {'id': fieldId,
+                                                                             'type': "Number"}}
+    if 'triggerLogic' in jsonEntity:
+        return jsonEntity
+    if javaClass not in ["PInsightCombinedHistory"]:
+        error("ERROR 3: trigger logic not created for raw number: {0}, id:{1}, the field {2} may not defined in the "
+              "java class: {3}\n".format(rowNumber, jsonEntity['id'], fieldId, javaClass))
+    return jsonEntity
+
+
+def existInJava(javaClass, fieldType, fieldId, corePath):
+    if fieldId == 'id':
+        return True
+    if javaClass not in javaEntitiesStrings:
+        if not loadJavaFile(javaClass, corePath):
+            return False
+    javaFileText = javaEntitiesStrings.get(javaClass)
+    return str(javaFileText).__contains__(fieldType + " " + fieldId)
+
+
+def loadJavaFile(javaClass, corePath):
+    if javaClass in ['PInsightCombinedHistory']:
+        return False
+    for model in ["core-model", "mod-logic"]:
+        fullPath = createPath(corePath, model + '\\src\\main\\java\\com\\personetics\\entities\\' + javaClass + '.java')
+        if os.path.exists(fullPath):
+            javaFile = open(fullPath, "r", encoding='utf-8-sig')
+            javaEntitiesStrings[javaClass] = javaFile.read().replace('\t', ' ')
+            javaFile.close()
+            return True
+    
+    return False
+
+
+def isProfile(javaClass):
+    return javaClass.startswith('DA') and javaClass != 'DAccount' and javaClass != 'DATM'
+
+
+def saveJson(jsonEntity, rowNumber, solutionPath):
+    if validateBeforeSave(jsonEntity, rowNumber):
+        jsonName = jsonEntity['id'] + '.json'
+        jsonPath = os.path.join(solutionPath, jsonName)
+        if jsonName in os.listdir(solutionPath):
+            os.remove(jsonPath)
+        updateJsonUtf8Sig(jsonPath, jsonEntity)
+
+
+def validateBeforeSave(jsonEntity, rowNumber):
+    if jsonEntity == {}:
+        return False
+    elif 'id' in jsonEntity:
+        return True
+    elif 'dataAttributeId' in jsonEntity and 'droolClass' in jsonEntity:
+        jsonEntity['id'] = jsonEntity['droolClass'] + '-' + jsonEntity['dataAttributeId']
+        return True
+    error("ERROR 4: raw number: {0} missing 'id' column, and also missing 'dataAttributeId' or 'droolClass' "
+          "thus can not create id (and file name) \n".format(rowNumber))
+    return False
 
 
 def removeDeactivated(solution):
@@ -122,7 +172,6 @@ def removeDeactivated(solution):
         jsonPath = os.path.join(dataAttributePath, attribute)
         dataAttribute = readJsonUtf8Sig(jsonPath)
         
-        # print(readJsonUtf8Sig(jsonPath))
         if dataAttribute['activate'] == 'FALSE':
             countFalse += 1
             # os.remove(jsonPath)
@@ -134,23 +183,38 @@ def main(argv):
     info("updating DataAttribute")
     
     try:
-        solution = getSolution(getPath('solution'))
-    except:
-        error(getPath('solution') + ' is not a correct path Data library didn\'t run')
+        solution = createPath(getSolution(getPath('solution')), 'SEditorDefinition\\DataAttribute')
+    
+    except Exception as e:
+        print(e)
+        error('Path Error:' + getPath('solution') + ' is not a correct path Data library didn\'t run')
         return
     
     try:
-        engagementBuilderPath = createPath(getPath('EBPath'),
-                                           "editor-product-bizpack\\product-editor-engage-biz-unit\\Core\\SEditorDefinition\\DataAttribute")
+        corePath = getPath('corePath')
     except:
-        error(getPath('EBPath') + ' is not a correct path Data library didn\'t run')
+        error('Path Error:' + getPath('corePath') + ' is not a correct path Data library didn\'t run')
         return
     if argv[1]:
         attributes = getCol(argv[0], 'id')
-        costumeAttributes = getCostumeAttributes(engagementBuilderPath, attributes, argv[0])
-        updatedAttribute = updateAttributes(attributes, solution, argv[0])
-        createCostumeAttributes(solution, costumeAttributes)
-        createAttributes(engagementBuilderPath, solution, attributes, costumeAttributes, updatedAttribute, argv[0])
+        allHeaders = getheader(argv[0])
+        colsRange = range(len(allHeaders))
+        rowNumber = 1
+        for rows in attributes:
+            row = getRow(argv[0], attributes.index(rows) + 1)
+            jsonEntity = {}
+            for index in colsRange:
+                colName = allHeaders[index]
+                colVal = row[index]
+                colVal = getVal(colName, colVal)
+                if colVal == "":
+                    continue
+                
+                jsonEntity[colName] = colVal
+            jsonEntity = buildTriggerLogic(jsonEntity, rowNumber, corePath)
+            saveJson(jsonEntity, rowNumber, solution)
+            rowNumber += 1
+    
     if argv[2]:
         removeDeactivated(solution)
     info("DataAttribute was updated")
