@@ -1,5 +1,6 @@
 import json
 import os
+from logging import error
 
 import pandas as pd
 
@@ -8,13 +9,13 @@ fileManger = 'Scripts/Source/fileManger.json'
 
 def getheader(fileName):
     data = pd.read_excel(fileName).columns
-    categoris = list()
+    categories = list()
     for c in data:
         if c == 'dynamicTechType':
-            categoris.append('t' + c[8:])
+            categories.append('t' + c[8:])
         else:
-            categoris.append(c)
-    return categoris
+            categories.append(c)
+    return categories
 
 
 def getRow(fileName, index):
@@ -79,6 +80,17 @@ def writeCsv(filePath, df):
 def printExcel(filePath):
     data = pd.read_excel(filePath)
     print(data)
+
+
+def prettyPrintJson(jsonData):
+    if isinstance(jsonData, str):
+        jsonPrint = json.loads(jsonData)
+        prettyPrintJson(jsonPrint)
+    elif type(jsonData) == dict:
+        jsonPrint = json.dumps(jsonData, indent=4)
+        print(jsonPrint)
+    else:
+        error('Type Error: TheObject\'s type needs to be dict() or str() and not {0}'.format(type(jsonData)))
 
 
 def checkEndCode(filePath):

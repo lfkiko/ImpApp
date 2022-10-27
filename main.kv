@@ -100,8 +100,7 @@ WindowManger:
                     app.root.current = "demoData"
                     root.manager.transition.direction = "left"
             Button:
-                markup: True
-                text: "[s][color=111111]Data Library[/color][/s]"
+                text: "Data Library"
                 on_release:
                     app.root.current = "dataLibrary"
                     root.manager.transition.direction = "left"
@@ -124,9 +123,9 @@ WindowManger:
             Button:
                 markup: True
                 text: "[s][color=000000]Post-man[/color][/s]"
-#                on_release:
-#                    app.root.current = "PostMan"
-#                    root.manager.transition.direction = "left"
+                on_release:
+                    app.root.current = "PostMan"
+                    root.manager.transition.direction = "left"
 
             Button:
                 markup: True

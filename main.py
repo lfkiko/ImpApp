@@ -12,7 +12,7 @@ from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.factory import Factory
 
-from Scripts import newFactField
+from Scripts import newFactField, postMan
 from Scripts.addingUsers import demoData
 from Scripts.categoryGroups import categoryGroups
 from Scripts.dataLibrary import dataLibrary
@@ -20,7 +20,7 @@ from Scripts.enableInsights import enable_insights, transfer, sEditorVisible
 from Scripts.newFactField import fact_update
 from Scripts.newProject import newProject
 from Scripts.thFactor import thFactor
-from Scripts.toolBoox.excelJsonToolBox import writeJson
+from Scripts.postMan import requests
 from Scripts.toolBoox.toolBoox import rewriteText, verifyPath, openKB, getFile, currentPath, valPath, readJson
 
 Builder.load_file('Scripts/Source/alerts.kv')
@@ -222,8 +222,14 @@ class newProjectWindow(Screen):
 
 class PostManWindow(Screen):
     Builder.load_file('Scripts/postMan/postMan.kv')
-    solutionPath = ObjectProperty(None)
     
+    # solutionPath = ObjectProperty(None)
+    # ipAddress = ObjectProperty(None)
+    # channel = ObjectProperty(None)
+    # checkBoxs = ObjectProperty(None)
+    # user = ObjectProperty(None)
+    # context = ObjectProperty(None)
+    #
     def checkBoxDate(self, date):
         if date in ('01/03/2017', '12/22/2016'):
             self.ids.checkBoxs.text = date
@@ -239,15 +245,27 @@ class PostManWindow(Screen):
             datetime.datetime.strptime(date, dateFormat)
         except ValueError:
             print("Incorrect data format, should be MM-DD-YYYY")
+    
+    def requestProperties(self):
+        RequestsWindow.ipAddress = self.ids.ipAddress.text
+        RequestsWindow.channel = self.ids.channel.text
+        RequestsWindow.checkBoxs = self.ids.checkBoxs.text
+        RequestsWindow.user = self.ids.user.text
+        RequestsWindow.context = self.ids.context.text
 
 
 class RequestsWindow(Screen):
     Builder.load_file('Scripts/postMan/requests.kv')
+    ipAddress = ''
+    channel = ''
+    checkBoxs = ''
+    user = ''
+    context = ''
     
     def runFunc(self, api):
-        path = PostManWindow.solutionPath.text
-        print(path)
-        # print(api)
+        requests.main(
+            [RequestsWindow.ipAddress, RequestsWindow.channel, RequestsWindow.checkBoxs, api, RequestsWindow.user,
+             RequestsWindow.context])
     
     pass
 
@@ -301,21 +319,4 @@ class ImplementationApp(App):
 
 
 if __name__ == '__main__':
-    # try:
-    # except Exception as e:
-    #     if 'FileNotFoundError' in e:
-    # print(os.path.exists(getFile('settings')))
-    # if not os.path.exists(getFile('settings')):
-    #     print("check")  # ImplementationApp().run()
-    #     pathRoot = {
-    #         "pathRoot": "",
-    #         "intelliJRoot": "",
-    #         "corePath": "",
-    #         "modelPath": "",
-    #         "EBPath": ""
-    #     }
-    #     writeJson(getFile('setting'), pathRoot)
-    #     f = open(getFile('settings'), "x")
-    #     f.write(json.dumps(pathRoot, indent=4))
-    #     f.close()
     ImplementationApp().run()
