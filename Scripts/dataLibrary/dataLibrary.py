@@ -166,15 +166,14 @@ def removeDeactivated(solution):
     info('Start remove deactivated from solution')
     countFalse = 0
     countAll = 0
-    dataAttributePath = createPath(solution, 'SEditorDefinition\\DataAttribute')
-    for attribute in [j for j in os.listdir(dataAttributePath) if os.path.isfile(os.path.join(dataAttributePath, j))]:
+    for attribute in [j for j in os.listdir(solution) if os.path.isfile(os.path.join(solution, j))]:
         countAll += 1
-        jsonPath = os.path.join(dataAttributePath, attribute)
+        jsonPath = os.path.join(solution, attribute)
         dataAttribute = readJsonUtf8Sig(jsonPath)
         
         if dataAttribute['activate'] == 'FALSE':
             countFalse += 1
-            # os.remove(jsonPath)
+            os.remove(jsonPath)
     print(str(countFalse) + " out of " + str(countAll))
     info('Finished remove deactivated from solution')
 
