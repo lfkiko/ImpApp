@@ -1,12 +1,13 @@
+import asyncio
 import json
 import os
 import sys
 import pandas
 import requests
-import threading
+import aiohttp
 from logging import info, error
 from subprocess import call
-from Scripts.postMan.apiRequests import apis
+from Scripts.postMan.requestClasses import apis, apiErrors
 from Scripts.toolBoox.excelJsonToolBox import prettyPrintJson
 from Scripts.toolBoox.toolBoox import createPath, getSolution, getPath
 
@@ -51,8 +52,8 @@ def addToCsv(user, insights, path):
 
 def requesting(api, url, headers, context, solution):
     def sendRequest(completeApi):
-        response = requests.post(url, headers=headers, json=completeApi)
-        return json.loads(response.text)
+        with requests.post(url, headers=headers, json=completeApi) as response:
+            return json.loads(response.text)
     
     tmpUser = headers['authToken'].lower()
     postman = apis()
@@ -63,18 +64,21 @@ def requesting(api, url, headers, context, solution):
             headers['authToken'] = B
             apiResponse = sendRequest(insightsApi)
             if apiResponse['ok'] and int(apiResponse['numberOfInsights']) > 0:
-                # print(apiResponse['numberOfInsights'])
                 addToCsv(B, apiResponse['insights'], currentCsvPath)
+            elif not apiResponse['ok']:
+                apiErrors(apiResponse['errorData'], B)
         
-        if os.name == "nt":
-            os.startfile(insightsApi)
-        else:
-            call(("open", currentCsvPath))
-    
+        # if os.name == "nt":
+        os.startfile(currentCsvPath)
+        # else:
+        #     call(("open", currentCsvPath))
+        #
     else:
         apiResponse = sendRequest(api)
-        prettyPrintJson(apiResponse)
-    print('its alive!!!')
+        if apiResponse['ok']:
+            prettyPrintJson(apiResponse)
+        else:
+            apiErrors(apiResponse['errorData'])
 
 
 def main(argv):
