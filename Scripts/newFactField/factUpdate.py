@@ -50,4 +50,7 @@ def main(argv):
 if __name__ == "__main__":
     main(sys.argv[1:])
 
-#  [fact] [new_field] [value] [type]
+# 0 - fact
+# 1 - field's name
+# 2 - value
+# 3 - type
