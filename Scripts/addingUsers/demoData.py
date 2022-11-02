@@ -7,12 +7,12 @@ from Scripts.toolBoox.excelJsonToolBox import getCol, readCsv, writeCsv
 from Scripts.toolBoox.toolBoox import createPath, getSolution, getPath
 
 
-def find_relevant_users(core_path, extraUsers, Busers, modified):
+def find_relevant_users(core_path, extraUsers, bUsers, modified):
     relevant_user = []
     core_demo_data_path = createPath(core_path, 'product-demo-data-biz-unit\\Core\\DemoData')
-    if Busers:
+    if bUsers:
         for d in os.listdir(core_demo_data_path):
-            if d.startswith("B_1") or d.startswith("B_2"):
+            if d.startswith("B_") and d[2].isnumeric():
                 relevant_user.append(d)
     if modified:
         for x in extraUsers:
@@ -133,8 +133,9 @@ def main(argv):
     core = os.path.join(getPath('corePath'), 'product-bizpack')
     try:
         solution = getSolution(getPath('solution')) + '$QA'
-    except:
-        error(getPath('solution') + ' is not a correct path Demo data didn\'t run')
+    except Exception as e:
+        print(e)
+        error('Path Error:' + getPath('solution') + ' is not a correct path Demo data didn\'t run')
         return
     
     extraUsers = getCol(argv[3], 'USERS')
