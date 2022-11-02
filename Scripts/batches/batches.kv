@@ -31,36 +31,56 @@
                     UserInputBox:
                         UserInputLabel:
                             text: "data-assets:"
-                        MyCheckBox:
-                            id: DataAssets
-                            group: 'batches'
-                            on_release: root.checkBoxClick('data-assets')
+                        openFileButton:
+                            text: "NEXT"
+                            on_release:
+                                app.root.current = "data-assets"
+                                root.manager.transition.direction = "left"
+#                        MyCheckBox:
+#                            id: DataAssets
+#                            group: 'batches'
+#                            on_release: root.checkBoxClick('data-assets')
 
 
                     UserInputBox:
                         UserInputLabel:
                             text: "push:"
-                        MyCheckBox:
-                            id: Push
-                            group: 'batches'
-                            on_release: root.checkBoxClick('push')
+                        openFileButton:
+                            text: "NEXT"
+                            on_release:
+                                app.root.current = "push-notification-only-send"
+                                root.manager.transition.direction = "left"
+#                        MyCheckBox:
+#                            id: Push
+#                            group: 'batches'
+#                            on_release: root.checkBoxClick('push')
 
 
                     UserInputBox:
                         UserInputLabel:
                             text: "ACT:"
-                        MyCheckBox:
-                            id: ACT
-                            group: 'batches'
-                            on_release: root.checkBoxClick('ACT')
+                        openFileButton:
+                            text: "NEXT"
+                            on_release:
+                                app.root.current = "act-data-assets"
+                                root.manager.transition.direction = "left"
+#                        MyCheckBox:
+#                            id: ACT
+#                            group: 'batches'
+#                            on_release: root.checkBoxClick('ACT')
 
                     UserInputBox:
                         UserInputLabel:
                             text: "purging:"
-                        MyCheckBox:
-                            id: Purging
-                            group: 'batches'
-                            on_release: root.checkBoxClick('purging')
+                        openFileButton:
+                            text: "NEXT"
+                            on_release:
+                                app.root.current = "purging"
+                                root.manager.transition.direction = "left"
+#                        MyCheckBox:
+#                            id: Purging
+#                            group: 'batches'
+#                            on_release: root.checkBoxClick('purging')
 
         #menu
         tailBoxLayout:
@@ -74,12 +94,12 @@
                 text: "Help"
                 on_release: Factory.MenuWindow().openKB(root)
 
-            RoundedButton:
-                text: "Next"
-#                on_press: root.update(Factory.batchesPropertiesWindow(),self.ids.checkBoxs.text)
-                on_release:
-                    app.root.current = "batchesProperties"
-                    root.manager.transition.direction = "left"
+#            RoundedButton:
+#                text: "Next"
+##                on_press: root.update(Factory.batchesPropertiesWindow(),self.ids.checkBoxs.text)
+#                on_release:
+#                    app.root.current = self.ids.checkBoxs.text
+#                    root.manager.transition.direction = "left"
 
 
 
