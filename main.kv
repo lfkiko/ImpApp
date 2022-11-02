@@ -10,7 +10,10 @@ WindowManger:
     categoryGroupsWindow:
     newFieldToFactWindow:
     batchesWindow:
-    batchesPropertiesWindow:
+    DataAssetsPropertiesWindow:
+    PushPropertiesWindow:
+    ACTPropertiesWindow:
+    PurgingPropertiesWindow
     demoDataWindow:
     dataLibraryWindow:
     sEditorVisibleWindow:
@@ -84,16 +87,16 @@ WindowManger:
                     root.manager.transition.direction = "left"
             Button:
                 markup: True
-                text: "[s][color=000000]New Field To Fact[/color][/s]"
-#                on_release:
-#                    app.root.current = "newFieldToFact"
-#                    root.manager.transition.direction = "left"
+                text: "New Field To Fact"
+                on_release:
+                    app.root.current = "newFieldToFact"
+                    root.manager.transition.direction = "left"
             Button:
                 markup: True
                 text: "[s][color=000000]Batches[/color][/s]"
-#                on_release:
-#                    app.root.current = "batches"
-#                    root.manager.transition.direction = "left"
+                on_release:
+                    app.root.current = "batches"
+                    root.manager.transition.direction = "left"
             Button:
                 text: "Demo data"
                 on_release:

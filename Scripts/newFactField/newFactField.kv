@@ -15,38 +15,25 @@
         HeaderLabel:
             text: "New Field To Fact"
 
-        MyFileChooserBox:
-            MyFileChooserGrid:
-                MyFileChooserLabel:
-                    text: "Solution path:"
-
-                MyFileChooserExmp:
-                    id: solutionPath
-                    text: "C:\\GIT\\solution\\biz-units\\perso-biz\\Projects\\solution"
-
-            fileChooserButton:
-                spacing: 20
-                on_release: Factory.MenuWindow().selected(root,"s")
-
         GridLayout:
             cols:2
             UserInputBox:
                 UserInputLabel:
-                    text: "Fact to modify"
+                    text: "Fact name"
                 UserInput:
                     id: fact
 
             UserInputBox:
                 UserInputLabel:
-                    text: "New field"
+                    text: "Field's name"
                 UserInput:
                     id: field
 
             UserInputBox:
                 UserInputLabel:
-                    text: "Description"
+                    text: "value"
                 UserInput:
-                    id: description
+                    id: value
 
             UserInputBox
                 UserInputLabel:

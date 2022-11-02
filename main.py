@@ -14,13 +14,16 @@ from kivy.factory import Factory
 
 from Scripts import newFactField, postMan
 from Scripts.addingUsers import demoData
+from Scripts.batches import batches
+from Scripts.batches.batchesJson import batchJson
 from Scripts.categoryGroups import categoryGroups
 from Scripts.dataLibrary import dataLibrary
 from Scripts.enableInsights import enable_insights, transfer, sEditorVisible
-from Scripts.newFactField import fact_update
+from Scripts.newFactField import factUpdate
 from Scripts.newProject import newProject
 from Scripts.thFactor import thFactor
-from Scripts.postMan import requests
+from Scripts.postMan import postManRequests
+from Scripts.toolBoox.excelJsonToolBox import prettyPrintJson
 from Scripts.toolBoox.toolBoox import rewriteText, verifyPath, openKB, getFile, currentPath, valPath, readJson
 
 Builder.load_file('Scripts/Source/alerts.kv')
@@ -104,18 +107,18 @@ class categoryGroupsWindow(Screen):
 
 
 class newFieldToFactWindow(Screen):
-    Builder.load_file('Scripts/newFactField/new_fact_field.kv')
-    solutionPath = ObjectProperty(None)
+    Builder.load_file('Scripts/newFactField/newFactField.kv')
     
     def runFunc(self):
         newFactField.fact_update.main(
-            [self.ids.solutionPath.text, self.fact.text, self.field.text, self.type.text, self.description.text])
+            [self.fact.text, self.field.text, self.value.text, self.type.text])
     
     pass
 
 
 class batchesWindow(Screen):
     Builder.load_file('Scripts/batches/batches.kv')
+    Builder.load_file('Scripts/batches/batchesProperties.kv')
     corePath = ObjectProperty(None)
     solutionPath = ObjectProperty(None)
     checkBoxs = ObjectProperty(None)
@@ -127,7 +130,90 @@ class batchesWindow(Screen):
         if ImplementationApp.batch_use == 'data-assets':
             me.ids.batchId.text = 'data-assets'
             me.ids.batchId.hint_text = 'data-assets'
-            print(me.ids.batchId.text)
+    
+    def runFunc(self):
+        adhocBatch = False
+        apiContext = ''
+        AutoRegisterApi = ''
+        batchDataCreator = batchJson()
+        batchData = batchDataCreator.jsonData(self.name, self)
+        qaBatch = self.ids.QaBatch
+        if self.ids.taskType == 'adhoc':
+            adhocBatch = True
+            apiContext = self.ids.context.text
+            AutoRegisterApi = self.ids.API.text
+        batches.main([self.name, batchData, qaBatch, adhocBatch, apiContext, AutoRegisterApi])
+        prettyPrintJson(batchData)
+
+
+class DataAssetsPropertiesWindow(Screen):
+    batchId = ObjectProperty(None)
+    disabled = BooleanProperty(False)
+    
+    def methods_update(self, value):
+        print(self)
+        if value == "autoRegister":
+            self.ids.API.disabled = False
+            self.ids.Context.disabled = False
+        else:
+            self.ids.API.disabled = True
+            self.ids.Context.disabled = True
+        
+        pass
+    
+    pass
+
+
+class PushPropertiesWindow(Screen):
+    batchId = ObjectProperty(None)
+    disabled = BooleanProperty(False)
+    
+    def methods_update(self, value):
+        print(self)
+        if value == "autoRegister":
+            self.ids.API.disabled = False
+            self.ids.Context.disabled = False
+        else:
+            self.ids.API.disabled = True
+            self.ids.Context.disabled = True
+        
+        pass
+    
+    pass
+
+
+class ACTPropertiesWindow(Screen):
+    batchId = ObjectProperty(None)
+    disabled = BooleanProperty(False)
+    
+    def methods_update(self, value):
+        print(self)
+        if value == "autoRegister":
+            self.ids.API.disabled = False
+            self.ids.Context.disabled = False
+        else:
+            self.ids.API.disabled = True
+            self.ids.Context.disabled = True
+        
+        pass
+    
+    pass
+
+
+class PurgingPropertiesWindow(Screen):
+    batchId = ObjectProperty(None)
+    disabled = BooleanProperty(False)
+    
+    def methods_update(self, value):
+        print(self)
+        if value == "autoRegister":
+            self.ids.API.disabled = False
+            self.ids.Context.disabled = False
+        else:
+            self.ids.API.disabled = True
+            self.ids.Context.disabled = True
+        
+        pass
     
     pass
 
@@ -143,32 +229,6 @@ class demoDataWindow(Screen):
                       "Factor": int(self.ids.Factor.text)}
         demoData.main([properties, bUsers, modified,
                        getFile(self.name + "_raw")])
-    
-    pass
-
-
-class batchesPropertiesWindow(Screen):
-    Builder.load_file('Scripts/batches/batchesProperties.kv')
-    batchId = ObjectProperty(None)
-    disabled = BooleanProperty(False)
-    
-    def methods_update(self, value):
-        print(self)
-        if value == "autoRegister":
-            self.ids.API.disabled = False
-            self.ids.Context.disabled = False
-        else:
-            self.ids.API.disabled = True
-            self.ids.Context.disabled = True
-        
-        pass
-    
-    def autoFill(self):
-        data = readJson(getFile(self.name))
-        print(batchesWindow.ids.checkBoxs.text)
-    
-    def runFunc(self):
-        print(ImplementationApp.batch_use)
     
     pass
 
@@ -263,7 +323,7 @@ class RequestsWindow(Screen):
     context = ''
     
     def runFunc(self, api):
-        requests.main(
+        postManRequests.main(
             [RequestsWindow.ipAddress, RequestsWindow.channel, RequestsWindow.checkBoxs, api, RequestsWindow.user,
              RequestsWindow.context])
     
