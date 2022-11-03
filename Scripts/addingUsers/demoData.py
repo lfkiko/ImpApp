@@ -81,8 +81,8 @@ def modifyUser(usersPath, user, localCurrency, foreignCurrency, countryName, cou
         if factor != 1 and currentValue != '':
             try:
                 newVal = float(currentValue)
-                newVal = newVal * factor
-                return round(newVal, 2)
+                newVal = newVal * float(factor)
+                return str(round(newVal, 2))
             except:
                 error('Can\'t convert to float in :' + usersPath)
         
@@ -125,7 +125,6 @@ def modifyUsersInSolution(solutionDemoDataPath, input_json, relevantUser):
         modifyUser(os.path.join(solutionDemoDataPath, user), user, input_json['LocalCurrency'],
                    input_json['ForeignCurrency'], input_json['CountryName'], input_json['CountryCode'],
                    input_json['Factor'])
-        # info(user + ' was updated')
 
 
 def main(argv):
