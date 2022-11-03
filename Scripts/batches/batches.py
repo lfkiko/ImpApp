@@ -77,16 +77,14 @@ def main(argv):
     info("Starting batches override")
     try:
         solution = createPath(getSolution(getPath('solution')), 'Batch\\SBatch')
-    
     except Exception as e:
-        print(e)
-        error('Path Error:' + getPath('solution') + ' is not a correct path Data library didn\'t run')
+        error('Path Error:' + e.__str__()[e.index(']') + 1:])
         return
     try:
         corePath = createPath(getPath('corePath'),
                               'product-bizpack\\product-system-biz-unit\\Projects\\Core\\Batch\\SBatch')
-    except:
-        error('Path Error:' + getPath('corePath') + ' is not a correct path Data library didn\'t run')
+    except Exception as e:
+        error('Path Error:' + e.__str__()[e.index(']') + 1:])
         return
     
     sourceFile = getSource(corePath, argv[0])

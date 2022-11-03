@@ -27,8 +27,8 @@ def main(argv):
     info("Starting SEditorVisible.json override")
     try:
         solution = os.path.join(getSolution(getPath('solution')), 'SEditorDefinition')
-    except:
-        error(getPath('solution') + ' is not a correct path Demo data didn\'t run')
+    except Exception as e:
+        error('Path Error:' + e.__str__()[e.index(']') + 1:])
         return
     transfer.main([argv[0], 'visible'])
     file_name = getFile(argv[0])

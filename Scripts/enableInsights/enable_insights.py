@@ -58,7 +58,7 @@ def buildSinsights(insightName, ucs, insightProductPath):
                     }
         for uc in ucs:
             Sinsight["useCases"].append({"id": uc, "activated": "TRUE"})
-
+        
         updateJson(filePath, Sinsight)
 
 
@@ -67,13 +67,14 @@ def searchInsightInCore(core, modelPath, insightName, useModel):
         if useModel and 'SUB_' in insightName:
             try:
                 currFolder = os.path.join(modelPath, coreFolder, "Core", "Insights")
-            except:
-                error('Couldn\'t find ' + coreFolder + 'in the perso-core')
+            except Exception as e:
+                error('Path Error:' + e.__str__()[e.index(']') + 1:])
+                return
         else:
             try:
                 currFolder = os.path.join(core, coreFolder, 'Core', 'Insights')
-            except:
-                error('Couldn\'t find ' + coreFolder + 'in the perso-core')
+            except Exception as e:
+                error('Path Error:' + e.__str__()[e.index(']') + 1:])
         if os.path.exists(currFolder) and insightName in os.listdir(currFolder):
             return os.path.join(currFolder, insightName)
     return
@@ -83,8 +84,9 @@ def overwriteInsight(solution, core, modelPath, insightName, ucs, useModel, notF
     insightCorePath = searchInsightInCore(core, modelPath, insightName, useModel)
     try:
         os.mkdir(os.path.join(solution, insightName))
-    except:
-        info('dir not exits: %s', os.path.join(solution, insightName))
+    except Exception as e:
+        error('Path Error:' + e.__str__()[e.index(']') + 1:])
+        return
     
     ucsList = getUcsList(insightName, ucs)
     for uc in ucsList:

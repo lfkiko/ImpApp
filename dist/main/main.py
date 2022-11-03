@@ -134,6 +134,7 @@ class sEditorVisibleWindow(Screen):
 class newProjectWindow(Screen):
     Builder.load_file('Scripts/newProject/newProject.kv')
     solutionPath = ObjectProperty(None)
+    
     def checkBoxClick(self, check):
         pass
     
@@ -155,7 +156,6 @@ class SettingsWindow(Screen):
         elif path_filter == 'j':
             rewriteText(getFile(self.name), path, path_filter)
             pass
-
 
 
 class WindowManger(ScreenManager):

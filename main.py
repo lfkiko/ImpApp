@@ -5,6 +5,7 @@ import tkinter as tk
 from tkinter import filedialog
 
 import openpyxl
+from kivy import Config
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.properties import ObjectProperty, BooleanProperty
@@ -366,16 +367,24 @@ class SettingsWindow(Screen):
 
 
 class WindowManger(ScreenManager):
+    # Config.set('graphics', 'width', '1000')
+    # Config.set('graphics', 'height', '800')
+    # Config.set('graphics', 'minimum_width', '800')
+    # Config.set('graphics', 'minimum_height', '755')
     Window.size = (1000, 800)
-    Window.minimum_height = 660
-    Window.minimum_width = 860
-    
+    Window.minimum_height = 755
+    Window.minimum_width = 800
+    # #
     pass
 
 
 class ImplementationApp(App):
     def build(self):
         return Builder.load_file('main.kv')
+        Config.set('graphics', 'width', '1000')
+        Config.set('graphics', 'height', '1000')
+        Config.set('graphics', 'minimum_width', '800')
+        Config.set('graphics', 'minimum_height', '755')
 
 
 if __name__ == '__main__':

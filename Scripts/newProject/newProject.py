@@ -93,8 +93,8 @@ def main(argv):
     info("Creating new SCategoryGroups.json override")
     try:
         solution = getPath('solution')
-    except:
-        error(getPath('solution') + ' is not a correct path Demo data didn\'t run')
+    except Exception as e:
+        error('Path Error:' + e.__str__()[e.index(']') + 1:])
         return
     
     projectName = os.path.basename(solution)

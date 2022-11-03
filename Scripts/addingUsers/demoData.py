@@ -134,8 +134,7 @@ def main(argv):
     try:
         solution = getSolution(getPath('solution')) + '$QA'
     except Exception as e:
-        print(e)
-        error('Path Error:' + getPath('solution') + ' is not a correct path Demo data didn\'t run')
+        error('Path Error:' + e.__str__()[e.index(']') + 1:])
         return
     
     extraUsers = getCol(argv[3], 'USERS')

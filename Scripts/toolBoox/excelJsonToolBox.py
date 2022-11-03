@@ -24,7 +24,7 @@ def getRow(fileName, index):
     for a in data:
         if 'Unnamed' in str(a):
             row.append('noData')
-        elif str(a)[-2] == '.':
+        elif len(str(a)) >= 2 and str(a)[-2] == '.':
             row.append(str(a)[:-2])
         else:
             row.append(a)
@@ -33,6 +33,14 @@ def getRow(fileName, index):
 
 def getCol(fileName, colCategories):
     data = pd.read_excel(fileName, usecols=[colCategories])
+    column = list()
+    for i in data.index:
+        column.append(data[colCategories][i])
+    return column
+
+
+def getColCsv(fileName, colCategories):
+    data = pd.read_csv(fileName, usecols=[colCategories])
     column = list()
     for i in data.index:
         column.append(data[colCategories][i])

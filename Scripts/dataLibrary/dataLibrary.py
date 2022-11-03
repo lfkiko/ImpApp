@@ -183,10 +183,8 @@ def main(argv):
     
     try:
         solution = createPath(getSolution(getPath('solution')), 'SEditorDefinition\\DataAttribute')
-    
     except Exception as e:
-        print(e)
-        error('Path Error:' + getPath('solution') + ' is not a correct path Data library didn\'t run')
+        error('Path Error:' + e.__str__()[e.index(']') + 1:])
         return
     
     try:

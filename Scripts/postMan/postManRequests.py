@@ -88,8 +88,7 @@ def main(argv):
         solution = createPath(getSolution(getPath('solution')) + '$QA', 'DemoData')
     
     except Exception as e:
-        print(e)
-        error('Path Error:' + getPath('solution') + ' is not a correct path Data library didn\'t run')
+        error('Path Error:' + e.__str__()[e.index(']') + 1:])
         return
     
     url = 'http://' + argv[0] + ':8080/pserver/execute?channel=' + argv[1].upper()

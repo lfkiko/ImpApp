@@ -108,7 +108,7 @@ WindowManger:
                     app.root.current = "dataLibrary"
                     root.manager.transition.direction = "left"
             Button:
-                text: "SEditorVisible creator"
+                text: "SEditorVisible"
                 on_release:
                     app.root.current = "sEditorVisible"
                     root.manager.transition.direction = "left"
@@ -412,14 +412,12 @@ WindowManger:
 
 ###############################
 
-
 <tailBoxLayout@BoxLayout>
     orientation: "horizontal"
     size_hint_y: None
     height:150
     padding: 10
     spacing: 20
-
 
 <HeaderLabel@Label>
     font_size: 45
@@ -428,15 +426,6 @@ WindowManger:
     size_hint: None, None
     size: self.texture_size
     halign:'left'
-
-
-
-
-
-
-
-
-
 
 <UserInputBox@BoxLayout>
     orientation: "horizontal"

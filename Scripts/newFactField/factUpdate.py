@@ -36,8 +36,7 @@ def main(argv):
     try:
         solution = createPath(getSolution(getPath('solution')), 'Insights')
     except Exception as e:
-        print(e)
-        error('Path Error:' + getPath('solution') + ' is not a correct path Demo data didn\'t run')
+        error('Path Error:' + e.__str__()[e.index(']') + 1:])
         return
     fact = argv[0]
     fieldName = argv[1]
