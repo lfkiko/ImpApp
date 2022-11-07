@@ -15,7 +15,6 @@ def main(argv):
     except:
         error(getPath('solution') + ' is not a correct path Demo data didn\'t run')
         return
-    
     if not os.path.exists(solutionPath):
         error(solutionPath + ' dosn\'t exists')
         return

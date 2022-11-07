@@ -1,7 +1,9 @@
 import os
 import webbrowser
 from logging import error
-import pandas as pd
+import tkinter as tk
+from tkinter import filedialog
+from tkinter.ttk import Combobox, Button
 
 from bs4 import BeautifulSoup
 from kivy.app import App

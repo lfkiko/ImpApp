@@ -1,8 +1,1 @@
 insight,UC
-CardExpiration,3
-MakeCCPayment,1
-NotifyExceedCreditLimit,1
-NotifyNewCCStatement,1
-PaymentPastDue,"3,4,7,8"
-RecommendAutopay,2
-RecommendTravelCard,"1,2"

@@ -1,10 +1,11 @@
-import json
-import logging
 import os
 import shutil
 import sys
 from logging import info, error, warning
-from pathlib import PurePath
+import PySimpleGUI as sg
+from kivy.lang import Builder
+from kivy.properties import ObjectProperty
+from kivy.uix.floatlayout import FloatLayout
 
 from Scripts.toolBoox.excelJsonToolBox import readCsv, readJson, updateJson
 from Scripts.toolBoox.toolBoox import getSolution, modelVersion, getPath
@@ -12,6 +13,15 @@ from Scripts.toolBoox.toolBoox import getSolution, modelVersion, getPath
 searchedCoreFolders = ["product-subscriptions-biz-unit", "product-budgets-biz-unit", "product-debt-biz-unit",
                        os.path.join("product-engage-biz-unit", "Projects"), "product-pa-biz-unit"]
 searchedModleFolders = ['product-subscriptions-biz-unit', 'product-portfolio-biz-unit']
+
+
+def getChannels(solution):
+    path = os.path.dirname(solution)
+    channels = []
+    for x in os.listdir(path):
+        if os.path.isdir(os.path.join(path, x)):
+            channels.append(x)
+    return channels
 
 
 def validInsight(insightName):
@@ -113,15 +123,50 @@ def runOverInsights(core, solution, modelPath, enableCsv, useModel):
     return notFound
 
 
+class channelPopup(FloatLayout):
+    firstChannel = ObjectProperty(None)
+    channelList = ObjectProperty(None)
+    
+    def build(self, channels):
+        self.setFirst(channels[0])
+        self.setSpinner(channels)
+        Builder.load_file('Scripts/enableInsights/enableInsights.kv')
+    
+    def setFirst(self, firstChannel):
+        print(self.ids.channel.text)
+        self.ids.channel.text = 'checkCheck'
+        print(self.ids.channel.text)
+    
+    def setSpinner(self, channelsList):
+        print(self.ids.channel.values)
+        self.ids.channel.values = channelsList
+        print(self.ids.channel.values)
+    
+    pass
+
+
+def chooseChanel(channels):
+    event, values = sg.Window('Choose an option', [
+        [sg.Text('Select one->'), sg.Listbox(channels, size=(20, 3), key='LB')],
+        [sg.Button('Ok')]]).read(close=True)
+    channel = values["LB"][0]
+    channel = channel[channel.index('$'):]
+    return channel
+
+
 def main(argv):
     info("Starting Enable insights")
     corePath = os.path.join(getPath('corePath'), 'product-bizpack')
     modelPath = os.path.join(getPath('modelPath'), 'product-models-bizpack')
     try:
-        solutionPath = os.path.join(getSolution(getPath('solution')), 'Insights')
+        solutionPath = getSolution(getPath('solution'))
     except:
         error(getPath('solution') + ' is not a correct path Demo data didn\'t run')
         return
+    channels = getChannels(solutionPath)
+    if len(channels) > 3:
+        theChannel = chooseChanel(channels)
+        solutionPath = os.path.join(solutionPath, theChannel)
     
     if not os.path.exists(solutionPath):
         error(solutionPath + ' dosn\'t exists')
@@ -132,7 +177,7 @@ def main(argv):
     notFound = runOverInsights(corePath, solutionPath, modelPath, enableCsv, useModel)
     
     info('Enable Insights finished overwriting relevant insights')
-    return notFound
+    return 'notFound'
 
 
 if __name__ == "__main__":

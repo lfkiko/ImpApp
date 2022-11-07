@@ -8,14 +8,15 @@ from Scripts.toolBoox.excelJsonToolBox import getCol, readJson, readCsv, getRow,
 from Scripts.toolBoox.toolBoox import getPath, getSolution, getFile, createPath
 
 
-def categoriesMerge(fileExcel):
+def categoriesMerge(fileExcel,CType):
     solution = createPath(getSolution(getPath('solution')), 'Enrichment\\SEntities\\CategoryAggregation.csv')
     cgs = getCol(fileExcel, 'CG')
-    if os.path.exists(solution):
-        MergedCategory = getColCsv(solution, 'categoryGroupId')
-        for x in cgs:
-            if x in MergedCategory:
-                cgs.remove(x)
+    if CType == 'CType':
+        if os.path.exists(solution):
+            MergedCategory = getColCsv(solution, 'categoryGroupId')
+            for x in cgs:
+                if x in MergedCategory:
+                    cgs.remove(x)
     
     return cgs
 
@@ -92,7 +93,7 @@ def main(argv):
         return
     
     jsonName = os.path.join(solution, argv[3] + ".json")
-    categories = categoriesMerge(argv[0])
+    categories = categoriesMerge(argv[0],argv[3])
     direction = getCol(argv[0], 'direction')
     languages = createLanguages(argv[0])
     langNum = argv[1]

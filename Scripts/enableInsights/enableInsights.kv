@@ -13,10 +13,11 @@
 
         #data file
         BoxLayout:
+            padding: 10
+            spacing: 20
             orientation: "vertical"
             BoxLayout
                 orientation: "horizontal"
-
                 Label:
                     text: "Input insights file - "
                     font_size: 32
@@ -45,3 +46,19 @@
                 text: "Run"
                 pos_hint: {'center_x': 0.5}
                 on_release: root.runFunc()
+
+
+<channelPopup>
+    auto_dismiss: False
+    Spinner:
+        size_hint: 0.6, 0.4
+        pos_hint: {'center_x': 0.5, 'top': 0.9}
+        id: channel
+        text: "check"
+        values: ""
+        on_text: root.methods_update(importMethods.text)
+
+    openFileButton:
+        text: 'choose'
+        pos_hint: {'center_x': 0.5, 'top': 0.3}
+        on_release: root.setFirst('name')

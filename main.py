@@ -4,6 +4,7 @@ import os
 import tkinter as tk
 from tkinter import filedialog
 
+import kivy.properties
 import openpyxl
 from kivy import Config
 from kivy.app import App
@@ -25,7 +26,8 @@ from Scripts.newProject import newProject
 from Scripts.thFactor import thFactor
 from Scripts.postMan import postManRequests
 from Scripts.toolBoox.excelJsonToolBox import prettyPrintJson
-from Scripts.toolBoox.toolBoox import rewriteText, verifyPath, openKB, getFile, currentPath, valPath, readJson
+from Scripts.toolBoox.toolBoox import rewriteText, verifyPath, openKB, getFile, currentPath, valPath, readJson, getPath, \
+    getSolution
 
 Builder.load_file('Scripts/Source/alerts.kv')
 fileManger = 'Scripts/Source/fileManger.json'
@@ -36,6 +38,8 @@ root.destroy()
 
 class MenuWindow(Screen):
     solutionPath = ObjectProperty(None)
+    
+    # channels = list(os.listdir(getSolution(getPath('solution'))))
     
     def openFile(self, name):
         os.startfile(os.path.normpath(getFile(name + "_raw")), 'edit')
@@ -367,10 +371,6 @@ class SettingsWindow(Screen):
 
 
 class WindowManger(ScreenManager):
-    # Config.set('graphics', 'width', '1000')
-    # Config.set('graphics', 'height', '800')
-    # Config.set('graphics', 'minimum_width', '800')
-    # Config.set('graphics', 'minimum_height', '755')
     Window.size = (1000, 800)
     Window.minimum_height = 755
     Window.minimum_width = 800
