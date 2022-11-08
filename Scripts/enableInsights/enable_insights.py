@@ -166,7 +166,7 @@ def main(argv):
     channels = getChannels(solutionPath)
     if len(channels) > 3:
         theChannel = chooseChanel(channels)
-        solutionPath = os.path.join(solutionPath, theChannel)
+        solutionPath = solutionPath + theChannel
     
     if not os.path.exists(solutionPath):
         error(solutionPath + ' dosn\'t exists')
