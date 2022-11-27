@@ -16,8 +16,8 @@ def updateFacts(insightPath, insightUc, fact, fieldName, fieldType, fieldVal):
         if fact in insightFacts.keys():
             insightFacts[fact]['cols'].append(fieldName)
             for row in insightFacts[fact]['rows']:
-                row.append(fieldType)
-            insightFacts[fact]['attributesTypes'].append(fieldVal)
+                row.append(fieldVal)
+            insightFacts[fact]['attributesTypes'].append(fieldType)
             try:
                 updateJson(insightFactsPath, insightFacts)
             except:
