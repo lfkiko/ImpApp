@@ -1,20 +1,31 @@
-import json
 import sys
 import os
-from logging import info, error
+from logging import info, error, warning
 
-from Scripts.toolBoox.excelJsonToolBox import readJson, updateJson
+from Scripts.toolBoox.excelJsonToolBox import readJson, updateJson, checkEndCode, readJsonUtf8Sig, updateJsonUtf8Sig
 from Scripts.toolBoox.toolBoox import getPath, getSolution, createPath
 
 
 def updateFacts(insightPath, insightUc, fact, fieldName, fieldType, fieldVal):
     insightFactsPath = os.path.join(insightPath, insightUc, "JInsightFacts.json")
-    insightFacts = readJson(insightFactsPath)
-    insightFacts[fact]['cols'].append(fieldName)
-    for row in insightFacts[fact]['rows']:
-        row.append(fieldType)
-    insightFacts[fact]['attributesTypes'].append(fieldVal)
-    updateJson(insightFactsPath, insightFacts)
+    if os.path.exists(insightPath):
+        try:
+            insightFacts = readJson(insightFactsPath)
+        except:
+            insightFacts = readJsonUtf8Sig(insightFactsPath)
+        if fact in insightFacts.keys():
+            insightFacts[fact]['cols'].append(fieldName)
+            for row in insightFacts[fact]['rows']:
+                row.append(fieldType)
+            insightFacts[fact]['attributesTypes'].append(fieldVal)
+            try:
+                updateJson(insightFactsPath, insightFacts)
+            except:
+                updateJsonUtf8Sig(insightFactsPath, insightFacts)
+        else:
+            warning(fact + 'is not part of ' + insightPath)
+    else:
+        warning('There is no such file = ' + insightPath)
 
 
 def checkFacts(solution, insights, fact, fieldName, fieldType, fieldVal):
@@ -25,10 +36,11 @@ def checkFacts(solution, insights, fact, fieldName, fieldType, fieldVal):
             insightUcs = dirNames
             break
         for useCase in insightUcs:
+            
             try:
                 updateFacts(insightPath, useCase, fact, fieldName, fieldType, fieldVal)
             except Exception as e:
-                error('could not update jinsight facts for: ', useCase)
+                error(e.__str__() + ' ' + insight + ' ' + useCase)
 
 
 def main(argv):
@@ -43,7 +55,9 @@ def main(argv):
     fieldVal = argv[2]
     fieldType = argv[3]
     insights = os.listdir(solution)
+    insights.remove('SEntities')
     checkFacts(solution, insights, fact, fieldName, fieldType, fieldVal)
+    info("New field wasa added to the relevant facts")
 
 
 if __name__ == "__main__":

@@ -115,7 +115,7 @@ class newFieldToFactWindow(Screen):
     Builder.load_file('Scripts/newFactField/newFactField.kv')
     
     def runFunc(self):
-        newFactField.fact_update.main(
+        newFactField.factUpdate.main(
             [self.fact.text, self.field.text, self.value.text, self.type.text])
     
     pass
@@ -346,8 +346,10 @@ class ThFactorWindow(Screen):
     
     pass
 
+
 class jsonsWindow(Screen):
     pass
+
 
 class SettingsWindow(Screen):
     if not os.path.exists(getFile('settings')):

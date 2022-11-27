@@ -48,7 +48,7 @@ def getColCsv(fileName, colCategories):
 
 
 def readJson(filePath):
-    with open(filePath, "r") as f:
+    with open(filePath, "r",) as f:
         inputJson = json.load(f)
         return inputJson
 
