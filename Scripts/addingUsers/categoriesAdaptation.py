@@ -53,7 +53,7 @@ def getCategories(cgPath):
 def main(argv):
     info('starting categoriesAdaptation')
     try:
-        solution = os.pathsep.join(argv[0], 'Demodata')
+        solution = os.path.join(argv[0], 'Demodata')
     except:
         error('Demodata don\'t exsists')
         return

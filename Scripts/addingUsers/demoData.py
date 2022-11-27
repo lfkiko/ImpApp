@@ -50,6 +50,7 @@ def copyUsers(relevantUser, corePath, solutionQaPath):
                         error("Something went wrong while copping: " + file + ' to ' + user)
             else:
                 error("User: " + user + " do not exists in the core ")
+                os.rmdir(trgPath)
                 pass
     if errors:
         info("Copying users finished with warnings")
@@ -81,10 +82,11 @@ def modifyUser(usersPath, user, localCurrency, foreignCurrency, countryName, cou
     def updateFactor(currentValue):
         if factor != 1 and currentValue != '':
             try:
-                newVal = float(currentValue)
+                newVal = float(currentValue.replace(",", ""))
                 newVal = newVal * float(factor)
                 return str(round(newVal, 2))
             except:
+                print(currentValue)
                 error('Can\'t convert to float in :' + usersPath)
         
         return currentValue
@@ -140,7 +142,7 @@ def main(argv):
     extraUsers = getCol(argv[3], 'USERS')
     relevantUser = find_relevant_users(core, extraUsers, argv[1], argv[2])
     copyUsers(relevantUser, core, solution)
-    modifyUsersInSolution(os.path.join(solution, 'DemoData'), argv[0], relevantUser)
+    modifyUsersInSolution(os.path.join(solution, 'DemoData'), argv[0], os.listdir(os.path.join(solution, 'DemoData')))
     categoriesAdaptation.main([solution])
     info("Demo data finished overwriting the users")
 
