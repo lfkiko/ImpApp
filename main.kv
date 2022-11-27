@@ -23,6 +23,7 @@ WindowManger:
     RequestsWindow:
     ThFactorWindow:
     SettingsWindow:
+    jsonsWindow:
 
 <WindowManger>
     size: root.width, root.height
@@ -76,26 +77,14 @@ WindowManger:
 #                    width: 2.
 #                    rectangle: (self.x, self.y, self.width, self.height)
             Button:
+                text: "Json scripts"
+                on_release:
+                    app.root.current = "jsons"
+                    root.manager.transition.direction = "left"
+            Button:
                 text: "Enable Insights"
                 on_release:
                     app.root.current = "enableInsights"
-                    root.manager.transition.direction = "left"
-            Button:
-                text: "SCategory Groups"
-                on_release:
-                    app.root.current = "categoryGroups"
-                    root.manager.transition.direction = "left"
-            Button:
-                markup: True
-                text: "New Field To Fact"
-                on_release:
-                    app.root.current = "newFieldToFact"
-                    root.manager.transition.direction = "left"
-            Button:
-                markup: True
-                text: "[s][color=000000]Batches[/color][/s]"
-                on_release:
-                    app.root.current = "batches"
                     root.manager.transition.direction = "left"
             Button:
                 text: "Demo data"
@@ -106,11 +95,6 @@ WindowManger:
                 text: "Data Library"
                 on_release:
                     app.root.current = "dataLibrary"
-                    root.manager.transition.direction = "left"
-            Button:
-                text: "SEditorVisible"
-                on_release:
-                    app.root.current = "sEditorVisible"
                     root.manager.transition.direction = "left"
             Button:
                 text: "New Project"
@@ -153,6 +137,62 @@ WindowManger:
                 on_press: root.cleanExcels()
 #                on_release: app.stop()
 
+<jsonsWindow>
+    name: "jsons"
+    BoxLayout:
+        padding: 10
+        orientation: "vertical"
+        size: root.width, root.height
+
+        HeaderLabel:
+            text: "Json generator"
+
+        GridLayout:
+            cols: 3
+            padding:10
+            spacing: 20
+            size: root.width, root.height
+#            canvas:
+#                Color:
+#                    rgba: 1,1,1, .9
+#                Line:
+#                    width: 2.
+#                    rectangle: (self.x, self.y, self.width, self.height)
+            Button:
+                text: "SCategory Groups"
+                on_release:
+                    app.root.current = "categoryGroups"
+                    root.manager.transition.direction = "left"
+            Button:
+                markup: True
+                text: "New Field To Fact"
+                on_release:
+                    app.root.current = "newFieldToFact"
+                    root.manager.transition.direction = "left"
+            Button:
+                markup: True
+                text: "[s][color=000000]Batches[/color][/s]"
+                on_release:
+                    app.root.current = "batches"
+                    root.manager.transition.direction = "left"
+
+            Button:
+                text: "SEditorVisible"
+                on_release:
+                    app.root.current = "sEditorVisible"
+                    root.manager.transition.direction = "left"
+        tailBoxLayout:
+            RoundedButton:
+                text: "Back"
+                pos_hint: {'center_x': 0.5}
+                on_release:
+                    app.root.current = "menu"
+                    root.manager.transition.direction = "right"
+            RoundedExitButton:
+                text: "Exit"
+                bold: True
+                pos_hint: {'center_x': 0.5}
+                on_press: root.cleanExcels()
 
 
 

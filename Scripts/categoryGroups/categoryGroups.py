@@ -13,7 +13,7 @@ def categoriesMerge(fileExcel,CType):
     cgs = getCol(fileExcel, 'CG')
     if CType == 'CType':
         if os.path.exists(solution):
-            MergedCategory = getColCsv(solution, 'categoryGroupId')
+            MergedCategory = getColCsv(solution, 'aggregatedCategoryGroup')
             for x in cgs:
                 if x in MergedCategory:
                     cgs.remove(x)
@@ -22,14 +22,14 @@ def categoriesMerge(fileExcel,CType):
 
 
 def createLanguages(fileName):
-    langages = list()
+    languages = list()
     lang1 = getCol(fileName, 'language 1')
     lang2 = getCol(fileName, 'language 2')
     lang3 = getCol(fileName, 'language 3')
     lang4 = getCol(fileName, 'language 4')
     for i in range(len(lang1)):
-        langages.append([lang1[i], lang2[i], lang3[i], lang4[i]])
-    return langages
+        languages.append([lang1[i], lang2[i], lang3[i], lang4[i]])
+    return languages
 
 
 def getFromSource(categoryId, value):

@@ -346,6 +346,8 @@ class ThFactorWindow(Screen):
     
     pass
 
+class jsonsWindow(Screen):
+    pass
 
 class SettingsWindow(Screen):
     if not os.path.exists(getFile('settings')):

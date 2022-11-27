@@ -3,23 +3,24 @@ import shutil
 import sys
 from logging import info, warning, error
 
+from Scripts.addingUsers import categoriesAdaptation
 from Scripts.toolBoox.excelJsonToolBox import getCol, readCsv, writeCsv
 from Scripts.toolBoox.toolBoox import createPath, getSolution, getPath
 
 
 def find_relevant_users(core_path, extraUsers, bUsers, modified):
-    relevant_user = []
-    core_demo_data_path = createPath(core_path, 'product-demo-data-biz-unit\\Core\\DemoData')
+    relevantUser = []
+    coreDemoDataPath = createPath(core_path, 'product-demo-data-biz-unit\\Core\\DemoData')
     if bUsers:
-        for d in os.listdir(core_demo_data_path):
+        for d in os.listdir(coreDemoDataPath):
             if d.startswith("B_") and d[2].isnumeric():
-                relevant_user.append(d)
+                relevantUser.append(d)
     if modified:
         for x in extraUsers:
-            relevant_user.append(x)
+            relevantUser.append(x)
     info('Relevant users list:')
-    info(relevant_user)
-    return relevant_user
+    info(relevantUser)
+    return relevantUser
 
 
 def copyUsers(relevantUser, corePath, solutionQaPath):
@@ -140,6 +141,7 @@ def main(argv):
     relevantUser = find_relevant_users(core, extraUsers, argv[1], argv[2])
     copyUsers(relevantUser, core, solution)
     modifyUsersInSolution(os.path.join(solution, 'DemoData'), argv[0], relevantUser)
+    categoriesAdaptation.main([solution])
     info("Demo data finished overwriting the users")
 
 

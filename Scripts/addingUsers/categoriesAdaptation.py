@@ -53,17 +53,17 @@ def getCategories(cgPath):
 def main(argv):
     info('starting categoriesAdaptation')
     try:
-        product = os.pathsep.join(argv[0], 'Demodata')
+        solution = os.pathsep.join(argv[0], 'Demodata')
     except:
         error('Demodata don\'t exsists')
         return
-    users = os.listdir(product)
+    users = os.listdir(solution)
     categories = getCategories(getSolution(getPath('solution')))
     if len(categories) == 0:
         error('problem with getCategories')
         return
     else:
-        updateUsers(product, users, categories)
+        updateUsers(solution, users, categories)
         info("categoriesAdaptation finished updating users users")
 
 
