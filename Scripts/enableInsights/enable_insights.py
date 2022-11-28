@@ -12,7 +12,7 @@ from Scripts.toolBoox.toolBoox import getSolution, modelVersion, getPath
 
 searchedCoreFolders = ["product-subscriptions-biz-unit", "product-budgets-biz-unit", "product-debt-biz-unit",
                        os.path.join("product-engage-biz-unit", "Projects"), "product-pa-biz-unit"]
-searchedModleFolders = ['product-subscriptions-biz-unit', 'product-portfolio-biz-unit']
+searchedModelFolders = ['product-subscriptions-biz-unit', 'product-portfolio-biz-unit']
 
 
 def getChannels(solution):
@@ -175,7 +175,8 @@ def main(argv):
     inputFile = argv[0]
     enableCsv = readCsv(inputFile)
     notFound = runOverInsights(corePath, solutionPath, modelPath, enableCsv, useModel)
-    
+    for i in notFound:
+        warning("Not Found: " + i + " wasn't found")
     info('Enable Insights finished overwriting relevant insights')
     return 'notFound'
 

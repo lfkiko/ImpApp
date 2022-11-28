@@ -337,12 +337,10 @@ class RequestsWindow(Screen):
 
 class ThFactorWindow(Screen):
     Builder.load_file('Scripts/thFactor/thFactor.kv')
-    solutionPath = ObjectProperty(None)
     
     def runFunc(self):
-        path = self.ids.solutionPath.text
         factor = float(self.ids.factor.text)
-        thFactor.main([path, factor])
+        thFactor.main([factor])
     
     pass
 
