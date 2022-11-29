@@ -105,15 +105,13 @@
             RoundedButton:
                 text: "Back"
                 on_release:
-                    app.root.current = "menu"
+                    app.root.current = "jsons"
                     root.manager.transition.direction = "right"
 
             RoundedButton:
                 text: "Help"
                 on_release: Factory.MenuWindow().openKB(root)
 
-
             RoundedButton:
                 text: "Run"
-                pos_hint: {'center_x': 0.5}
                 on_release: root.runFunc()

@@ -29,7 +29,7 @@ WindowManger:
     size: root.width, root.height
     canvas.before:
         Color:
-            rgba: (200/255,200/255,200/255,1)
+            rgba: (177/255,212/255,224/255,1)
         Rectangle:
             pos: self.pos
             size: self.size
@@ -37,19 +37,13 @@ WindowManger:
 <MenuWindow>
     BoxLayout:
         padding: 10
+        spacing: 20
         orientation: "vertical"
         size: root.width, root.height
 
-        Label:
-            text: "Menu"
+        HeaderLabel:
+            text: "Main Menu"
             font_size: 64
-            bold: True
-            color: (0,0,0)
-            size_hint_y: None
-            height:50
-            size_hint_x: None
-            width:100
-            pos_hint: {'center_x': 0.5}
 
         MyFileChooserBox:
             MyFileChooserGrid:
@@ -76,49 +70,54 @@ WindowManger:
 #                Line:
 #                    width: 2.
 #                    rectangle: (self.x, self.y, self.width, self.height)
-            Button:
+            RoundedButton:
                 text: "Json scripts"
                 on_release:
                     app.root.current = "jsons"
                     root.manager.transition.direction = "left"
-            Button:
+            RoundedButton:
                 text: "Enable Insights"
                 on_release:
                     app.root.current = "enableInsights"
                     root.manager.transition.direction = "left"
-            Button:
+            RoundedButton:
                 text: "Demo data"
                 on_release:
                     app.root.current = "demoData"
                     root.manager.transition.direction = "left"
-            Button:
+            RoundedButton:
                 text: "Data Library"
                 on_release:
                     app.root.current = "dataLibrary"
                     root.manager.transition.direction = "left"
-            Button:
+            RoundedButton:
                 text: "New Project"
                 on_release:
                     app.root.current = "newProject"
                     root.manager.transition.direction = "left"
-            Button:
+            RoundedButton:
                 markup: True
                 text: "[s][color=000000]Breaking Changes[/color][/s]"
 #                on_release:
 #                    app.root.current = "breakingChange"
 #                    root.manager.transition.direction = "left"
-            Button:
+            RoundedButton:
                 markup: True
                 text: "[s][color=000000]Post-man[/color][/s]"
                 on_release:
                     app.root.current = "PostMan"
                     root.manager.transition.direction = "left"
-
-            Button:
+            RoundedButton:
                 text: "TH factor"
                 on_release:
                     app.root.current = "ThFactor"
                     root.manager.transition.direction = "left"
+            RoundedButton:
+                markup: True
+                text: "[s][color=000000]A-2-A[/color][/s]"
+#                on_release:
+#                    app.root.current = "breakingChange"
+#                    root.manager.transition.direction = "left"
 
 
         tailBoxLayout:
@@ -157,25 +156,25 @@ WindowManger:
 #                Line:
 #                    width: 2.
 #                    rectangle: (self.x, self.y, self.width, self.height)
-            Button:
+            RoundedButton:
                 text: "SCategory Groups"
                 on_release:
                     app.root.current = "categoryGroups"
                     root.manager.transition.direction = "left"
-            Button:
+            RoundedButton:
                 markup: True
                 text: "New Field To Fact"
                 on_release:
                     app.root.current = "newFieldToFact"
                     root.manager.transition.direction = "left"
-            Button:
+            RoundedButton:
                 markup: True
                 text: "[s][color=000000]Batches[/color][/s]"
                 on_release:
                     app.root.current = "batches"
                     root.manager.transition.direction = "left"
 
-            Button:
+            RoundedButton:
                 text: "SEditorVisible"
                 on_release:
                     app.root.current = "sEditorVisible"
@@ -318,7 +317,7 @@ WindowManger:
     size_hint_y: None
     height:100
     background_normal: ''
-    background_color: utils.get_color_from_hex('#ff0083')
+    background_color: utils.get_color_from_hex('#2E8BC0')
 
 
 <RoundedButton@Button>
@@ -326,7 +325,7 @@ WindowManger:
     background_normal: ''
     canvas.before:
         Color:
-            rgba: utils.get_color_from_hex('#ff0083')
+            rgba: utils.get_color_from_hex('#2E8BC0')
         RoundedRectangle:
             pos: self.pos
             size: self.size
@@ -408,7 +407,7 @@ WindowManger:
     background_normal: ''
     canvas.before:
         Color:
-            rgba: utils.get_color_from_hex('#ff0083')
+            rgba: utils.get_color_from_hex('#0C2D48')
         RoundedRectangle:
             pos: self.pos
             size: self.size
@@ -436,7 +435,7 @@ WindowManger:
     background_normal: ''
     canvas.before:
         Color:
-            rgba: utils.get_color_from_hex('#ff0083')
+            rgba: utils.get_color_from_hex('#0C2D48')
         RoundedRectangle:
             pos: self.pos
             size: self.size
@@ -461,7 +460,7 @@ WindowManger:
 <HeaderLabel@Label>
     font_size: 45
     bold: True
-    color: (0,0,0)
+    color: (237/255, 242/255, 243/255, 1)
     size_hint: None, None
     size: self.texture_size
     halign:'left'
@@ -482,13 +481,13 @@ WindowManger:
 <UserInput@TextInput>
     font_size: 20
     multiline: False
-    size_hint_y: None
+#    size_hint_y: None
     pos_hint: {'center_y': 0.5}
     valign: 'bottom'
 
 <MySpinner@Spinner>
     font_size: 20
-    values_font_size:20
+    values_font_size:10
     pos_hint:{'center_y': 0.5}
     size_hint_y: None
     height:60
@@ -496,20 +495,27 @@ WindowManger:
     width:200
     background_color: (0,0,0,0)
     background_normal: ''
+#    sync_height: True
     canvas.before:
         Color:
-            rgba: utils.get_color_from_hex('#ff0083')
+            rgba: utils.get_color_from_hex('#2E8BC0')
         RoundedRectangle:
             pos: self.pos
             size: self.size
             radius: [25]
 
 <MyCheckBox@CheckBox>
+    size_hint_y: None
+    height:50
+    size_hint_x: None
+    width:100
+    pos_hint: {'center_x': 0.5,'center_y': 0.5}
+    spacing: 20
     canvas:
         Clear:
         Color:
             rgba: (0,0,0,1)
         Rectangle:
             source: self._checkbox_image
-            size: sp(32), sp(32)
+            size: sp(35), sp(35)
             pos: int(self.center_x - sp(16)), int(self.center_y - sp(16))

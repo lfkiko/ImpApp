@@ -67,14 +67,16 @@
                 MyCheckBox:
                     id: otherDate
                     group: 'dates'
-                    on_release: root.checkBoxDate(date.text)
+                    active:
+                    on_release:
+                        root.checkBoxDate(date.text)
                 UserInputLabel:
                     text: "Other date:"
 
             UserInputBox:
                 UserInput:
                     id: date
-                    disabled: True
+                    disabled: not(otherDate.active)
                 fileChooserButton:
                     text: "Submit"
                     spacing: 20

@@ -54,25 +54,33 @@
         GridLayout:
             id: checkBoxs
             text: ""
-            cols: 3
+            cols: 2
+            spacing: 20
+            padding: 20
             UserInputBox:
-                UserInputLabel:
-                    text: "B_users:"
                 MyCheckBox:
                     id: BUsers
+                UserInputLabel:
+                    text: "B_users"
+                    size_hint_y: None
+                    height:50
+                    size_hint_x: None
+                    width:100
+                    pos_hint: {'center_x': 0.5,'center_y': 0.5}
+                    spacing: 20
 
 
             UserInputBox:
-                UserInputLabel:
-                    text: "modified:"
                 MyCheckBox:
                     active:
                     id: modified
+                openFileButton:
+                    id: modFile
+                    text: "modified"
+                    disabled: not(modified.active)
+                    on_release: Factory.MenuWindow().openFile(root.name)
 
-            openFileButton:
-                id: modFile
-                disabled: not(modified.active)
-                on_release: Factory.MenuWindow().openFile(root.name)
+
 
 
         #menu
