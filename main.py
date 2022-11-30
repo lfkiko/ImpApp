@@ -4,7 +4,6 @@ import os
 import tkinter as tk
 from tkinter import filedialog
 
-import kivy.properties
 import openpyxl
 from kivy import Config
 from kivy.app import App
@@ -12,9 +11,8 @@ from kivy.core.window import Window
 from kivy.properties import ObjectProperty, BooleanProperty
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.factory import Factory
 
-from Scripts import newFactField, postMan
+from Scripts import newFactField
 from Scripts.addingUsers import demoData
 from Scripts.batches import batches
 from Scripts.batches.batchesJson import batchJson

@@ -15,3 +15,12 @@
     - after a.datas: *[Tree(p) for p in (sdl2.dep_bins + glew.dep_bins)],
 
 - run: pyinstaller --log-level "DEBUG" main.spec -y
+
+
+
+create requirements: pip freeze > requirements.txt
+install requirements: pip install -r requirements.txt
+upgrade requirements: pip install --upgrade -r requirements.txt
+
+pip freeze > requirements.txt
+pip uninstall -r requirements.txt -y
