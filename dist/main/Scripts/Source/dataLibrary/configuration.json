@@ -1,5 +1,0 @@
-{
-  "array_fields": ["tags", "dataItemLocation", "factName"],
-  "create_activate_json": true,
-  "perso_core_folder_path": "/Users/asaf472/git/perso-core"
-}
