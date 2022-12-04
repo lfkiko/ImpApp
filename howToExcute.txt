@@ -21,6 +21,4 @@
 create requirements: pip freeze > requirements.txt
 install requirements: pip install -r requirements.txt
 upgrade requirements: pip install --upgrade -r requirements.txt
-
-pip freeze > requirements.txt
-pip uninstall -r requirements.txt -y
+remove all packages: pip uninstall -r requirements.txt -y

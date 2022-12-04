@@ -3,12 +3,14 @@ import json
 import os
 import sys
 from logging import info, error
+from tkinter.messagebox import askyesno
 
+from Scripts.addingUsers import categoriesAdaptation
 from Scripts.toolBoox.excelJsonToolBox import getCol, readJson, readCsv, getRow, getColCsv
 from Scripts.toolBoox.toolBoox import getPath, getSolution, getFile, createPath
 
 
-def categoriesMerge(fileExcel,CType):
+def categoriesMerge(fileExcel, CType):
     solution = createPath(getSolution(getPath('solution')), 'Enrichment\\SEntities\\CategoryAggregation.csv')
     cgs = getCol(fileExcel, 'CG')
     if CType == 'CType':
@@ -41,7 +43,11 @@ def getFromSource(categoryId, value):
 
 
 def createSCategoryGroups(categories, direction, languages, numOfLang, listOfLanguages, CType):
-    langs = int(numOfLang)
+    try:
+        langs = int(numOfLang)
+    except Exception as e:
+        error(e.__str__())
+        return -1
     data = {}
     if CType == 'SCategoryGroups':
         data = {'categoryGroups': []}
@@ -93,7 +99,7 @@ def main(argv):
         return
     
     jsonName = os.path.join(solution, argv[3] + ".json")
-    categories = categoriesMerge(argv[0],argv[3])
+    categories = categoriesMerge(argv[0], argv[3])
     direction = getCol(argv[0], 'direction')
     languages = createLanguages(argv[0])
     langNum = argv[1]
@@ -103,7 +109,17 @@ def main(argv):
         return
     lanNames = argv[2]
     categoryGroups = createSCategoryGroups(categories, direction, languages, langNum, lanNames, argv[3])
+    if categoryGroups == -1:
+        error('Stop while running: SCategoryGroups.json stopped without completing the task')
+        return
     writeCategoriesJson(jsonName, categoryGroups)
+    if askyesno('Confirmation', 'Would you like to run categoriesAdaptation.py?') and argv[3] == 'SCategoryGroups':
+        try:
+            solution = getSolution(getPath('solution')) + '$QA'
+        except Exception as e:
+            error('Path Error:' + e.__str__()[e.index(']') + 1:])
+            return
+        categoriesAdaptation.main([solution])
     info("SCategoryGroups.json is now  overridden")
 
 
