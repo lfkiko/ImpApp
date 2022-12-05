@@ -5,6 +5,7 @@ from logging import info, warning, error
 
 from Scripts.addingUsers import categoriesAdaptation
 from Scripts.toolBoox.excelJsonToolBox import getCol, readCsv, writeCsv
+from Scripts.toolBoox.logs import startLog, endLog
 from Scripts.toolBoox.toolBoox import createPath, getSolution, getPath
 
 
@@ -131,20 +132,20 @@ def modifyUsersInSolution(solutionDemoDataPath, input_json, relevantUser):
 
 
 def main(argv):
-    info("Starting Demo data override")
+    startLog()
     core = os.path.join(getPath('corePath'), 'product-bizpack')
     try:
         solution = getSolution(getPath('solution')) + '$QA'
     except Exception as e:
         error('Path Error:' + e.__str__()[e.index(']') + 1:])
         return
-    
+
     extraUsers = getCol(argv[3], 'USERS')
     relevantUser = find_relevant_users(core, extraUsers, argv[1], argv[2])
     copyUsers(relevantUser, core, solution)
     modifyUsersInSolution(os.path.join(solution, 'DemoData'), argv[0], os.listdir(os.path.join(solution, 'DemoData')))
     categoriesAdaptation.main([solution])
-    info("Demo data finished overwriting the users")
+    endLog()
 
 
 if __name__ == "__main__":

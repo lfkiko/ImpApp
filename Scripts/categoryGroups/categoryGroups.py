@@ -7,6 +7,7 @@ from tkinter.messagebox import askyesno
 
 from Scripts.addingUsers import categoriesAdaptation
 from Scripts.toolBoox.excelJsonToolBox import getCol, readJson, readCsv, getRow, getColCsv
+from Scripts.toolBoox.logs import startLog, endLog
 from Scripts.toolBoox.toolBoox import getPath, getSolution, getFile, createPath
 
 
@@ -87,7 +88,7 @@ def warnings(param):
 
 
 def main(argv):
-    info("Creating new SCategoryGroups.json override")
+    startLog()
     try:
         solution = os.path.join(getSolution(getPath('solution')), 'SEntities')
         try:
@@ -120,7 +121,7 @@ def main(argv):
             error('Path Error:' + e.__str__()[e.index(']') + 1:])
             return
         categoriesAdaptation.main([solution])
-    info("SCategoryGroups.json is now  overridden")
+    endLog()
 
 
 if __name__ == "__main__":

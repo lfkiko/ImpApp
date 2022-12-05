@@ -8,6 +8,7 @@ from kivy.properties import ObjectProperty
 from kivy.uix.floatlayout import FloatLayout
 
 from Scripts.toolBoox.excelJsonToolBox import readCsv, readJson, updateJson
+from Scripts.toolBoox.logs import startLog, endLog
 from Scripts.toolBoox.toolBoox import getSolution, modelVersion, getPath
 
 searchedCoreFolders = ["product-subscriptions-biz-unit", "product-budgets-biz-unit", "product-debt-biz-unit",
@@ -123,28 +124,6 @@ def runOverInsights(core, solution, modelPath, enableCsv, useModel):
     return notFound
 
 
-class channelPopup(FloatLayout):
-    firstChannel = ObjectProperty(None)
-    channelList = ObjectProperty(None)
-    
-    def build(self, channels):
-        self.setFirst(channels[0])
-        self.setSpinner(channels)
-        Builder.load_file('Scripts/enableInsights/enableInsights.kv')
-    
-    def setFirst(self, firstChannel):
-        print(self.ids.channel.text)
-        self.ids.channel.text = 'checkCheck'
-        print(self.ids.channel.text)
-    
-    def setSpinner(self, channelsList):
-        print(self.ids.channel.values)
-        self.ids.channel.values = channelsList
-        print(self.ids.channel.values)
-    
-    pass
-
-
 def chooseChanel(channels):
     event, values = sg.Window('Choose an option', [
         [sg.Text('Select one->'), sg.Listbox(channels, size=(20, 3), key='LB')],
@@ -155,7 +134,7 @@ def chooseChanel(channels):
 
 
 def main(argv):
-    info("Starting Enable insights")
+    startLog()
     corePath = os.path.join(getPath('corePath'), 'product-bizpack')
     modelPath = os.path.join(getPath('modelPath'), 'product-models-bizpack')
     try:
@@ -177,7 +156,7 @@ def main(argv):
     notFound = runOverInsights(corePath, solutionPath, modelPath, enableCsv, useModel)
     for i in notFound:
         warning("Not Found: " + i + " wasn't found")
-    info('Enable Insights finished overwriting relevant insights')
+    endLog()
     return 'notFound'
 
 

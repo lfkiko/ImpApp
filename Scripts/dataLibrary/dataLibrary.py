@@ -2,6 +2,7 @@ import os
 import sys
 from logging import info, error, warning
 from Scripts.toolBoox.excelJsonToolBox import getheader, getRow, getCol, readJsonUtf8Sig, updateJsonUtf8Sig
+from Scripts.toolBoox.logs import startLog, endLog
 from Scripts.toolBoox.toolBoox import createPath, getSolution, getPath
 
 requireFieldsForTriggerLogic = ['type', 'dataAttributeId', 'droolClass', 'relatedEntity']
@@ -179,7 +180,7 @@ def removeDeactivated(solution):
 
 
 def main(argv):
-    info("updating DataAttribute")
+    startLog()
     
     try:
         solution = createPath(getSolution(getPath('solution')), 'SEditorDefinition\\DataAttribute')
@@ -214,7 +215,7 @@ def main(argv):
     
     if argv[2]:
         removeDeactivated(solution)
-    info("DataAttribute was updated")
+    endLog()
 
 
 if __name__ == "__main__":

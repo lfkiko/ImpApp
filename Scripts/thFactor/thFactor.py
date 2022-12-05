@@ -3,6 +3,7 @@ import os
 from logging import info, error
 
 from Scripts.toolBoox.excelJsonToolBox import readJsonUtf8Sig, prettyPrintJson, updateJson, updateJsonUtf8Sig
+from Scripts.toolBoox.logs import startLog, endLog
 from Scripts.toolBoox.toolBoox import getInsightsDir, getFile, readJson, getPath, getSolution, modelVersion
 
 searchedFolders = ["product-subscriptions-biz-unit", "product-budgets-biz-unit", "product-debt-biz-unit",
@@ -55,7 +56,7 @@ def searchForInsight(solution, core, modelPath, insight, useModel, factor):
 
 
 def main(argv):
-    info("Starting SThresholds factor updated")
+    startLog()
     core = os.path.join(getPath('corePath'), 'product-bizpack')
     modelPath = os.path.join(getPath('modelPath'), 'product-models-bizpack')
     try:
@@ -68,7 +69,7 @@ def main(argv):
         if insight != 'SEntities':
             searchForInsight(solution, core, modelPath, insight, useModel, argv[0])
     
-    info("All relevant SThresholds are updated")
+    endLog()
 
 
 searchedModelFolders = ['product-subscriptions-biz-unit', 'product-portfolio-biz-unit']

@@ -9,6 +9,7 @@ from logging import info, error
 from subprocess import call
 from Scripts.postMan.requestClasses import apis, apiErrors
 from Scripts.toolBoox.excelJsonToolBox import prettyPrintJson
+from Scripts.toolBoox.logs import startLog, endLog
 from Scripts.toolBoox.toolBoox import createPath, getSolution, getPath
 
 csvName = 'allUsersInsights'
@@ -82,7 +83,7 @@ def requesting(api, url, headers, context, solution):
 
 
 def main(argv):
-    info("updating DataAttribute")
+    startLog()
     
     try:
         solution = createPath(getSolution(getPath('solution')) + '$QA', 'DemoData')
@@ -99,7 +100,7 @@ def main(argv):
         useContext = "showAll"
     
     requesting(argv[3], url, headers, useContext, solution)
-    info("Done")
+    endLog()
 
 
 if __name__ == "__main__":

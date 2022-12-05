@@ -3,6 +3,7 @@ import sys
 from logging import info, error
 
 from Scripts.toolBoox.excelJsonToolBox import readJson, updateJson
+from Scripts.toolBoox.logs import startLog, endLog
 from Scripts.toolBoox.toolBoox import getPath, getSolution, createPath
 
 
@@ -74,7 +75,7 @@ def overrideBatch(solution, batchName, overrideFile, qaCopy, adhocCopy):
 
 
 def main(argv):
-    info("Starting batches override")
+    startLog()
     try:
         solution = createPath(getSolution(getPath('solution')), 'Batch\\SBatch')
     except Exception as e:
@@ -93,7 +94,7 @@ def main(argv):
     if overrideFile['importMethods'] == 'autoRegister':
         updateContexts(getSolution(getPath('solution')), argv[4], overrideFile['groupName'])
         updateProperties(getPath('solution'), argv[5])
-    info("Batches override is over")
+    endLog()
 
 
 if __name__ == "__main__":

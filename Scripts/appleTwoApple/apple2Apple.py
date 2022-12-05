@@ -1,9 +1,11 @@
 import sys
 from logging import info
 
+from Scripts.toolBoox.logs import startLog
+
 
 def main(argv):
-    info("Starting apple two apple")
+    startLog()
     differnce = {}
     oldApple = {}
     newApple = {}

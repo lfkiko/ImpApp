@@ -3,6 +3,7 @@ import os
 from logging import info, error, warning
 
 from Scripts.toolBoox.excelJsonToolBox import readJson, updateJson, checkEndCode, readJsonUtf8Sig, updateJsonUtf8Sig
+from Scripts.toolBoox.logs import startLog, endLog
 from Scripts.toolBoox.toolBoox import getPath, getSolution, createPath
 
 
@@ -44,7 +45,7 @@ def checkFacts(solution, insights, fact, fieldName, fieldType, fieldVal):
 
 
 def main(argv):
-    info("Starting new field adding")
+    startLog()
     try:
         solution = createPath(getSolution(getPath('solution')), 'Insights')
     except Exception as e:
@@ -57,7 +58,7 @@ def main(argv):
     insights = os.listdir(solution)
     insights.remove('SEntities')
     checkFacts(solution, insights, fact, fieldName, fieldType, fieldVal)
-    info("New field wasa added to the relevant facts")
+    endLog()
 
 
 if __name__ == "__main__":

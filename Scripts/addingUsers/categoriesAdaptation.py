@@ -4,6 +4,7 @@ import warnings
 from logging import info, error
 
 from Scripts.toolBoox.excelJsonToolBox import readCsv, writeCsv, readJson
+from Scripts.toolBoox.logs import startLog, endLog
 from Scripts.toolBoox.toolBoox import getPath, getSolution, createPath
 
 
@@ -51,7 +52,7 @@ def getCategories(cgPath):
 
 
 def main(argv):
-    info('starting categoriesAdaptation')
+    startLog()
     try:
         solution = os.path.join(argv[0], 'Demodata')
     except:
@@ -64,7 +65,7 @@ def main(argv):
         return
     else:
         updateUsers(solution, users, categories)
-        info("categoriesAdaptation finished updating users users")
+        endLog()
 
 
 if __name__ == "__main__":

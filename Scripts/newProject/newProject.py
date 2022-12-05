@@ -6,6 +6,7 @@ from logging import info, error
 import shutil
 import xml.dom.minidom
 
+from Scripts.toolBoox.logs import startLog, endLog
 from Scripts.toolBoox.toolBoox import createPath, getPath
 
 
@@ -90,7 +91,7 @@ def updateConfigurations(project_dir_name, intelliJ_path):
 
 
 def main(argv):
-    info("Creating new SCategoryGroups.json override")
+    startLog()
     try:
         solution = getPath('solution')
     except Exception as e:
@@ -110,7 +111,7 @@ def main(argv):
             return
     
     editProperties(os.path.join(localPath, 'personetics.properties'), argv[0])
-    info("Project configuration complete")
+    endLog()
 
 
 if __name__ == "__main__":

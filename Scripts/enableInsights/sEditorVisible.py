@@ -5,6 +5,7 @@ from logging import error, info
 
 from Scripts.enableInsights import transfer
 from Scripts.toolBoox.excelJsonToolBox import readCsv, writeJson
+from Scripts.toolBoox.logs import startLog, endLog
 from Scripts.toolBoox.toolBoox import getFile, rewriteText, fixPath, getPath, getSolution
 
 
@@ -24,7 +25,7 @@ def createJson(file_name):
 
 
 def main(argv):
-    info("Starting SEditorVisible.json override")
+    startLog()
     try:
         solution = os.path.join(getSolution(getPath('solution')), 'SEditorDefinition')
     except Exception as e:
@@ -38,7 +39,7 @@ def main(argv):
         rewriteText(json_name, json_data, solution)
     else:
         writeJson(json_name, json_data)
-    info("SEditorVisible.json overwriting is finished")
+    endLog()
 
 
 if __name__ == "__main__":
