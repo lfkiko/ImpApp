@@ -11,19 +11,6 @@ from Scripts.toolBoox.logs import startLog, endLog
 from Scripts.toolBoox.toolBoox import getPath, getSolution, getFile, createPath
 
 
-def categoriesMerge(fileExcel, CType):
-    solution = createPath(getSolution(getPath('solution')), 'Enrichment\\SEntities\\CategoryAggregation.csv')
-    cgs = getCol(fileExcel, 'CG')
-    if CType == 'CType':
-        if os.path.exists(solution):
-            MergedCategory = getColCsv(solution, 'aggregatedCategoryGroup')
-            for x in cgs:
-                if x in MergedCategory:
-                    cgs.remove(x)
-    
-    return cgs
-
-
 def createLanguages(fileName):
     languages = list()
     lang1 = getCol(fileName, 'language 1')
@@ -100,7 +87,7 @@ def main(argv):
         return
     
     jsonName = os.path.join(solution, argv[3] + ".json")
-    categories = categoriesMerge(argv[0], argv[3])
+    categories = getCol(argv[0], 'CG')
     direction = getCol(argv[0], 'direction')
     languages = createLanguages(argv[0])
     langNum = argv[1]
