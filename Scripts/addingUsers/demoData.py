@@ -30,7 +30,7 @@ def copyUsers(relevantUser, corePath, solutionQaPath):
         os.mkdir(solutionDemoData)
     except:
         warning('all ready exist: ' + solutionDemoData)
-        errors = not errors
+        errors = True
     
     for user in relevantUser:
         srcPath = os.path.join(coreDemoDataPath, user)
@@ -46,14 +46,13 @@ def copyUsers(relevantUser, corePath, solutionQaPath):
                     try:
                         shutil.copy2(os.path.join(srcPath, file), trgPath)
                     except:
+                        errors = True
                         error("Something went wrong while copping: " + file + ' to ' + user)
             else:
+                errors = True
                 error("User: " + user + " do not exists in the core ")
-                try:
-                    os.rmdir(trgPath)
-                except:
-                    warning("Dir exists: " + trgPath + " already exits")
                 pass
+    
     if errors:
         info("Copying users finished with warnings")
     else:
