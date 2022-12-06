@@ -19,8 +19,6 @@ def find_relevant_users(core_path, extraUsers, bUsers, modified):
     if modified:
         for x in extraUsers:
             relevantUser.append(x)
-    info('Relevant users list:')
-    info(relevantUser)
     return relevantUser
 
 
@@ -31,7 +29,7 @@ def copyUsers(relevantUser, corePath, solutionQaPath):
     try:
         os.mkdir(solutionDemoData)
     except:
-        info('all ready exist: ' + solutionDemoData)
+        warning('all ready exist: ' + solutionDemoData)
         errors = not errors
     
     for user in relevantUser:
@@ -51,12 +49,16 @@ def copyUsers(relevantUser, corePath, solutionQaPath):
                         error("Something went wrong while copping: " + file + ' to ' + user)
             else:
                 error("User: " + user + " do not exists in the core ")
-                os.rmdir(trgPath)
+                try:
+                    os.rmdir(trgPath)
+                except:
+                    warning("Dir exists: " + trgPath + " already exits")
                 pass
     if errors:
         info("Copying users finished with warnings")
     else:
         info("Copying users finished")
+    return errors
 
 
 def modifyUser(usersPath, user, localCurrency, foreignCurrency, countryName, countryCode, factor):
@@ -96,7 +98,7 @@ def modifyUser(usersPath, user, localCurrency, foreignCurrency, countryName, cou
         try:
             df = readCsv(os.path.join(usersPath, file))
         except:
-            info('col ' + column + ' don\'t exists in - ' + os.path.join(usersPath, file))
+            warning('col ' + column + ' don\'t exists in - ' + os.path.join(usersPath, file))
             return
         
         df[column] = df[column].apply(func)
@@ -139,13 +141,13 @@ def main(argv):
     except Exception as e:
         error('Path Error:' + e.__str__()[e.index(']') + 1:])
         return
-
+    
     extraUsers = getCol(argv[3], 'USERS')
     relevantUser = find_relevant_users(core, extraUsers, argv[1], argv[2])
-    copyUsers(relevantUser, core, solution)
+    err: bool = copyUsers(relevantUser, core, solution)
     modifyUsersInSolution(os.path.join(solution, 'DemoData'), argv[0], os.listdir(os.path.join(solution, 'DemoData')))
     categoriesAdaptation.main([solution])
-    endLog()
+    endLog(err)
 
 
 if __name__ == "__main__":

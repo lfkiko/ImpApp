@@ -1,6 +1,6 @@
 import sys
 import os
-from logging import info, error, warning
+from logging import error, warning
 
 from Scripts.toolBoox.excelJsonToolBox import readJson, updateJson, checkEndCode, readJsonUtf8Sig, updateJsonUtf8Sig
 from Scripts.toolBoox.logs import startLog, endLog

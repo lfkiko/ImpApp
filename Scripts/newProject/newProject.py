@@ -2,11 +2,11 @@
 # adding to the project modified properties with the Channels name
 import os
 import sys
-from logging import info, error
+from logging import error
 import shutil
 import xml.dom.minidom
 
-from Scripts.toolBoox.logs import startLog, endLog
+from Scripts.toolBoox.logs import startLog, endLog, fileStatus
 from Scripts.toolBoox.toolBoox import createPath, getPath
 
 
@@ -56,8 +56,8 @@ def checkForProperties(dirPath):
         return True
 
 
-def updateConfigurations(project_dir_name, intelliJ_path):
-    conf = xml.dom.minidom.parse(intelliJ_path)
+def updateConfigurations(project_dir_name, intellijPath):
+    conf = xml.dom.minidom.parse(intellijPath)
     component = conf.getElementsByTagName('configuration')
     
     for x in component:
@@ -86,8 +86,8 @@ def updateConfigurations(project_dir_name, intelliJ_path):
                 new_home = new_home + '\\' + i
         personetics_home.getAttributeNode('value').nodeValue = new_home
         
-        conf.writexml(open(intelliJ_path, 'w'))
-    info('InteliJ configurations were updated')
+        conf.writexml(open(intellijPath, 'w'))
+    fileStatus(intellijPath, 'update')
 
 
 def main(argv):

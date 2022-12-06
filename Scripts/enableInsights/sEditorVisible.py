@@ -1,7 +1,7 @@
 import json
 import os
 import sys
-from logging import error, info
+from logging import error
 
 from Scripts.enableInsights import transfer
 from Scripts.toolBoox.excelJsonToolBox import readCsv, writeJson

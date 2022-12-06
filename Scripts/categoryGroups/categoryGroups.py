@@ -2,13 +2,13 @@ import codecs
 import json
 import os
 import sys
-from logging import info, error
+from logging import error
 from tkinter.messagebox import askyesno
 
 from Scripts.addingUsers import categoriesAdaptation
-from Scripts.toolBoox.excelJsonToolBox import getCol, readJson, readCsv, getRow, getColCsv
+from Scripts.toolBoox.excelJsonToolBox import getCol, readJson
 from Scripts.toolBoox.logs import startLog, endLog
-from Scripts.toolBoox.toolBoox import getPath, getSolution, getFile, createPath
+from Scripts.toolBoox.toolBoox import getPath, getSolution, getFile
 
 
 def createLanguages(fileName):

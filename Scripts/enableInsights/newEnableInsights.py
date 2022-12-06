@@ -1,7 +1,7 @@
 import os
 import shutil
 import sys
-from logging import info, error, warning
+from logging import error, warning
 
 from Scripts.toolBoox.excelJsonToolBox import readCsv, readJson, updateJson
 from Scripts.toolBoox.logs import startLog, endLog

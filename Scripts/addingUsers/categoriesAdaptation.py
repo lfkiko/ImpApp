@@ -1,7 +1,7 @@
 import os
 import sys
 import warnings
-from logging import info, error
+from logging import error
 
 from Scripts.toolBoox.excelJsonToolBox import readCsv, writeCsv, readJson
 from Scripts.toolBoox.logs import startLog, endLog

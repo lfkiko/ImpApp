@@ -1,6 +1,6 @@
 import os
 import sys
-from logging import info, error, warning
+from logging import error, warning
 from Scripts.toolBoox.excelJsonToolBox import getheader, getRow, getCol, readJsonUtf8Sig, updateJsonUtf8Sig
 from Scripts.toolBoox.logs import startLog, endLog
 from Scripts.toolBoox.toolBoox import createPath, getSolution, getPath
@@ -164,7 +164,7 @@ def validateBeforeSave(jsonEntity, rowNumber):
 
 
 def removeDeactivated(solution):
-    info('Start remove deactivated from solution')
+    startLog('removeDeactivated')
     countFalse = 0
     countAll = 0
     for attribute in [j for j in os.listdir(solution) if os.path.isfile(os.path.join(solution, j))]:
@@ -176,7 +176,7 @@ def removeDeactivated(solution):
             countFalse += 1
             os.remove(jsonPath)
     print(str(countFalse) + " out of " + str(countAll))
-    info('Finished remove deactivated from solution')
+    endLog(True, removeDeactivated)
 
 
 def main(argv):
