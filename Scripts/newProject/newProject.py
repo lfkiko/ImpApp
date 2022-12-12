@@ -95,7 +95,7 @@ def main(argv):
     try:
         solution = getPath('solution')
     except Exception as e:
-        error('Path Error:' + e.__str__()[e.index(']') + 1:])
+        error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
     
     projectName = os.path.basename(solution)

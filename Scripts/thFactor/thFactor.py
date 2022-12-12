@@ -62,7 +62,7 @@ def main(argv):
     try:
         solution = os.path.join(getSolution(getPath('solution')), 'Insights')
     except Exception as e:
-        error('Path Error:' + e.__str__()[e.index(']') + 1:])
+        error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
     useModel = modelVersion(getPath('solution'))
     for insight in os.listdir(solution):

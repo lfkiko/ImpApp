@@ -1,8 +1,11 @@
 import datetime
 import json
 import os
+import subprocess
 import tkinter as tk
+from logging import error
 from tkinter import filedialog
+from tkinter.messagebox import askyesno
 
 import openpyxl
 from kivy import Config
@@ -18,8 +21,8 @@ from Scripts.batches import batches
 from Scripts.batches.batchesJson import batchJson
 from Scripts.categoryGroups import categoryGroups
 from Scripts.dataLibrary import dataLibrary
-from Scripts.enableInsights import enable_insights, transfer, sEditorVisible
-from Scripts.newFactField import factUpdate
+from Scripts.enableInsights import enable_insights, transfer, sEditorVisible, newEnableInsights
+from Scripts.newFactField import newFactField
 from Scripts.newProject import newProject
 from Scripts.thFactor import thFactor
 from Scripts.postMan import postManRequests
@@ -45,9 +48,10 @@ class MenuWindow(Screen):
     def selected(self, name, filterX):
         checkPath = filedialog.askdirectory(initialdir=os.path.normpath(SettingsWindow().currentDefaultPath))
         verifyPath(name, filterX, checkPath)
-    
-    def refreshPath(self, name, filterX, path):
-        currentPath(name, filterX, path)
+        if askyesno('Confirmation', 'Do you need to install MAVENs?'):
+            p = subprocess.run('mvn clean install -DskipTests -U', shell=True, cwd=checkPath)
+            if p.returncode != 0:
+                error('Maven: couldn\'t complete the build for ' + checkPath)
     
     def openKB(self, root):
         openKB(root.name)
@@ -77,9 +81,7 @@ class enableInsightsWindow(Screen):
     
     def runFunc(self):
         transfer.main([self.name, 'active'])
-        notFound = enable_insights.main([getFile(self.name)])
-        print('this insights werent found:\n', notFound)
-        # self.ids.corePath.text = status
+        newEnableInsights.main([getFile(self.name)])
     
     pass
 
@@ -253,9 +255,8 @@ class dataLibraryWindow(Screen):
 class sEditorVisibleWindow(Screen):
     Builder.load_file('Scripts/enableInsights/sEditorVisible.kv')
     
-    def runFunc(self, path):
-        if valPath(path):
-            sEditorVisible.main([self.name])
+    def runFunc(self):
+        sEditorVisible.main([self.name])
     
     pass
 

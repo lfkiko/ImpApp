@@ -1,5 +1,6 @@
 import os
 import webbrowser
+import zipfile
 from logging import error
 import tkinter as tk
 from tkinter import filedialog
@@ -99,8 +100,8 @@ def getSolution(path):
             solutionsPath = os.path.join(solutionsPath, d)
     for x in os.listdir(solutionsPath):
         checkPath = os.path.join(solutionsPath, x)
-        if os.path.isdir(checkPath) and '$' not in x:
-            return os.path.join(solutionsPath, x)
+        if os.path.isdir(checkPath) and '$' in x:
+            return os.path.join(solutionsPath, x[:x.index('$')])
     return path
 
 
@@ -115,6 +116,8 @@ def getPath(pathName):
         return readJson(getFile('settings'))['EBPath']
     elif pathName == 'solution':
         return App.get_running_app().root.ids.Menu_Window.ids.solutionPath.text
+    elif pathName == 'DataLoad':
+        return os.path.join(getPath('solution'), 'package', 'target', 'DataLoad')
 
 
 def modelVersion(projectPath):
@@ -141,3 +144,13 @@ def getInsightsDir(path):
                     return currPath
                 except FileNotFoundError:
                     error("Directory: {0} does not exist".format(currPath))
+
+
+def filesInZip(path, zippedDir, pathTo):
+    zippedPath = os.path.join(path, zippedDir)
+    with zipfile.ZipFile(zippedPath) as z:
+        files = []
+        for names in z.namelist():
+            if pathTo in names and pathTo != names:
+                files.append(names)
+    return files

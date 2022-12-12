@@ -23,28 +23,22 @@ def activated_insights(file_name, process):
     return insights
 
 
-def ucs_activation(file_name, insights_list):
+def ucs_activation(file_name, insightsList):
     data = pd.read_excel(file_name, usecols=['UC'])
-    insights = insights_list
-    name = str
-    uc = int
+    insights = insightsList
+    name = str()
+    uc = int()
     for i in data['UC']:
-        if i[:3] != "SUB":
-            ins = i.rsplit("_")
-            name = ins[0]
-            uc = ins[1][2:]
-        elif i[:3] == "SUB":
-            ins = i.rsplit("_", 1)
-            name = ins[0]
-            uc = ins[1][2:]
+        seperator = i.rfind('_')
+        name = i[:seperator]
+        tmp = i[seperator + 1:]
+        uc = tmp[tmp.index('C') + 1:]
         for j in insights:
             if j[0] == name:
                 if j[1] == 'x':
                     j[1] = str(uc)
-                    # print(j[1])
                 else:
                     num = str(j[1]) + "," + uc
-                    # print(num)
                     j[1] = num
     
     return insights

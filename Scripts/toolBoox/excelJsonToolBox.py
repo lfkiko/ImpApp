@@ -1,5 +1,6 @@
 import json
 import os
+import zipfile
 from logging import error
 
 import pandas as pd
@@ -32,7 +33,10 @@ def getRow(fileName, index):
 
 
 def getCol(fileName, colCategories):
-    data = pd.read_excel(fileName, usecols=[colCategories])
+    try:
+        data = pd.read_excel(fileName, usecols=[colCategories])
+    except:
+        data = pd.read_csv(fileName, usecols=[colCategories])
     column = list()
     for i in data.index:
         column.append(data[colCategories][i])
@@ -48,7 +52,7 @@ def getColCsv(fileName, colCategories):
 
 
 def readJson(filePath):
-    with open(filePath, "r",) as f:
+    with open(filePath, "r", encoding=checkEndCode(filePath)) as f:
         inputJson = json.load(f)
         return inputJson
 
@@ -59,9 +63,22 @@ def readJsonUtf8Sig(filePath):
         return inputJson
 
 
+def readJsonZip(path, zipDir, fileName):
+    try:
+        with zipfile.ZipFile(os.path.join(path, zipDir)) as z:
+            for names in z.namelist():
+                if fileName in names:
+                    with z.open(names) as j:
+                        inputJson = j.read().decode(encoding='utf-8')
+                        
+                        return inputJson
+    except Exception as e:
+        error(e.__str__())
+        return
+
+
 def writeJson(filePath, jsonObject):
-    print(os.getcwd())
-    f = open(filePath, "x")
+    f = open(filePath, "a", encoding='utf-8')
     f.write(json.dumps(jsonObject, indent=4))
     f.close()
 

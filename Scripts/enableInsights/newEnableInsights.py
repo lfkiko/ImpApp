@@ -1,15 +1,24 @@
+import json
 import os
 import shutil
 import sys
+import zipfile
 from logging import error, warning
 
 from Scripts.toolBoox.excelJsonToolBox import readCsv, readJson, updateJson
 from Scripts.toolBoox.logs import startLog, endLog
-from Scripts.toolBoox.toolBoox import getPath, getSolution, modelVersion
+from Scripts.toolBoox.toolBoox import getPath, getSolution, modelVersion, createPath, filesInZip
 
-searchedCoreFolders = ["product-subscriptions-biz-unit", "product-budgets-biz-unit", "product-debt-biz-unit",
-                       os.path.join("product-engage-biz-unit", "Projects"), "product-pa-biz-unit"]
-searchedModelFolders = ['product-subscriptions-biz-unit', 'product-portfolio-biz-unit']
+searchedCoreFolders = ['product-act-biz-unit.zip', 'product-budgets-biz-unit.zip',
+                       'product-data-and-assets-biz-unit.zip', 'product-engage-unified-biz-unit.zip']
+
+
+def searchInsightInCore(corePath, insightName):
+    for zipDir in searchedCoreFolders:
+        insightsInPath = filesInZip(corePath, zipDir, 'Core/Insights/')
+        if insightName in insightsInPath:
+            return zipDir
+    return FileNotFoundError
 
 
 def getChannels(solution):
@@ -42,24 +51,6 @@ def validInsight(insightName):
     return True
 
 
-def searchInsightInCore(core, modelPath, insightName, useModel):
-    for coreFolder in searchedCoreFolders:
-        if useModel and 'SUB_' in insightName:
-            try:
-                currFolder = os.path.join(modelPath, coreFolder, "Core", "Insights")
-            except Exception as e:
-                error('Path Error:' + e.__str__()[e.index(']') + 1:])
-                return
-        else:
-            try:
-                currFolder = os.path.join(core, coreFolder, 'Core', 'Insights')
-            except Exception as e:
-                error('Path Error:' + e.__str__()[e.index(']') + 1:])
-        if os.path.exists(currFolder) and insightName in os.listdir(currFolder):
-            return os.path.join(currFolder, insightName)
-    return
-
-
 def getUcsList(insightName, ucs):
     try:
         return [insightName + "_UC" + str(int(ucs))]
@@ -78,61 +69,73 @@ def cleanSInsight(ucsList, SInsightPath):
     for uc in SInsightData['useCases']:
         if SInsightData['useCases'][uc]['id'] in ucsList:
             SInsightData['useCases'][uc]['activated'] = 'TRUE'
+        else:
+            try:
+                SInsightData['useCases'].remove(uc)
+            except Exception as e:
+                error(e.__str__())
     updateJson(SInsightPath, SInsightData)
 
 
-def overwriteInsight(solutionPath, cocorePathre, modelPath, insightName, ucs, useModel):
-    notFound = 0
-    insightCorePath = searchInsightInCore(cocorePathre, modelPath, insightName, useModel)
+def overwriteInsight(solutionPath, corePath, insightName, ucs):
     try:
-        os.mkdir(os.path.join(solutionPath, insightName))
+        insightZipDir = searchInsightInCore(corePath, insightName)
+        insightCorePath = os.path.join(corePath, insightZipDir)
     except Exception as e:
-        error('Path Error:' + e.__str__()[e.index(']') + 1:])
+        error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
+    
     ucsList = getUcsList(insightName, ucs)
     try:
-        shutil.copytree(os.path.join(insightCorePath, 'SInsight.json'),
-                        os.path.join(solutionPath, insightName, 'SInsight.json'))
-    except Exception as e:
-        if len(e.args) > 1 and 'Cannot create a file when that file already exists' == e.args[1]:
-            warning('uc already exists in solution: SInsight.json')
-        else:
-            error('file not found: SInsight.json wasn\'t found.')
-    for uc in ucsList:
-        try:
-            shutil.copytree(os.path.join(insightCorePath, uc), os.path.join(solutionPath, insightName, uc))
-        except Exception as e:
-            if len(e.args) > 1 and 'Cannot create a file when that file already exists' == e.args[1]:
-                warning('uc already exists in solution: %s', uc)
-            else:
-                ucsList.remove(uc)
-                notFound += 1
-                error('UC not found: {} wasn\'t found.'.format(uc))
-    cleanSInsight(ucsList, os.path.join(solutionPath, insightName, 'SInsight.json'))
-    return notFound
+        os.mkdir(os.path.join(solutionPath, insightName))
+    except:
+        warning("Insight: " + insightName + " is all ready exists in the solution level")
+    finally:
+        insightpath = os.path.join(solutionPath, insightName)
+        with zipfile.ZipFile(insightCorePath) as z:
+            srcFiles = filesInZip(corePath, insightZipDir, 'Core/DemoData/' + insightName + '/')
+            for file in srcFiles:
+                if file.split('/')[-1] == 'SInsight.json':
+                    try:
+                        with z.open(file) as j:
+                            newJson = open(insightpath, 'a')
+                            newJson.write(json.dumps(json.loads(j.read().decode(encoding='utf-8-sig')), indent=4))
+                    except Exception as e:
+                        error(e.__str__())
+                if file.split('/')[-1] in ucsList:
+                    ucFiles = filesInZip(corePath, insightZipDir, 'Core/DemoData/' + insightName + '/' + file + '/')
+                    for ucFile in ucFiles:
+                        try:
+                            with z.open(ucFile) as ucJ:
+                                newJason = open(os.path.join(insightpath, file.split('/')[-1]), 'a')
+                                newJason.write(
+                                    json.dumps(json.loads(ucJ.read().decode(encoding='utf-8-sig')), indent=4))
+                        except Exception as e:
+                            error(e.__str__())
+    
+    cleanSInsight(ucsList, os.path.join(insightpath, 'SInsight.json'))
 
 
-def sortInsights(solutionPath, corePath, modelPath, enableCsv, useModel):
-    notFound = 0
-    total = 0
+def sortInsights(solutionPath, corePath, enableCsv):
     for i in enableCsv.index:
         insightName = enableCsv['insight'][i]
         if not validInsight(insightName):
             warning("insight name is illegal: " + insightName)
         ucs = enableCsv['UC'][i]
-        total += len(ucs)
-        notFound = overwriteInsight(solutionPath, corePath, modelPath, insightName, ucs, useModel)
-    return notFound
+        overwriteInsight(solutionPath, corePath, insightName, ucs)
 
 
 def main(argv):
     startLog()
-    corePath = os.path.join(getPath('corePath'), 'product-bizpack')
-    modelPath = os.path.join(getPath('modelPath'), 'product-models-bizpack')
     try:
         solutionPath = os.path.join(getSolution(getPath('solution')), 'Insights')
     except:
         error(getPath('solution') + ' is not a correct path Demo data didn\'t run')
+        return
+    try:
+        corePath = createPath(getPath('solution'), 'package\\target\\DataLoad')
+    except Exception as e:
+        error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
     channels = getChannels(solutionPath)
     if len(channels) > 3:
@@ -142,13 +145,10 @@ def main(argv):
     if not os.path.exists(solutionPath):
         error(solutionPath + ' dosn\'t exists')
         return
-    useModel = modelVersion(getPath('solution'))
     inputFile = argv[0]
     enableCsv = readCsv(inputFile)
-    notFound = sortInsights(solutionPath, corePath, modelPath, enableCsv, useModel)
+    sortInsights(solutionPath, corePath, enableCsv)
     endLog()
-    
-    return notFound
 
 
 if __name__ == "__main__":

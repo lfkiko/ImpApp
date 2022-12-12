@@ -30,7 +30,11 @@ def updateUsers(product, users, categories):
             warnings(user + ' DTransaction.csv do not exists')
             continue
         
-        updateColumn(dtPath, updateCategoryGroupId)
+        finally:
+            try:
+                updateColumn(dtPath, updateCategoryGroupId)
+            except Exception as e:
+                error(e.__str__())
 
 
 def getCategories(cgPath):
@@ -65,7 +69,8 @@ def main(argv):
         return
     else:
         updateUsers(solution, users, categories)
-        endLog()
+    
+    endLog(not (len(categories) == 0))
 
 
 if __name__ == "__main__":

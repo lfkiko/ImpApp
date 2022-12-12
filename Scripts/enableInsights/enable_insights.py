@@ -76,13 +76,13 @@ def searchInsightInCore(core, modelPath, insightName, useModel):
             try:
                 currFolder = os.path.join(modelPath, coreFolder, "Core", "Insights")
             except Exception as e:
-                error('Path Error:' + e.__str__()[e.index(']') + 1:])
+                error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
                 return
         else:
             try:
                 currFolder = os.path.join(core, coreFolder, 'Core', 'Insights')
             except Exception as e:
-                error('Path Error:' + e.__str__()[e.index(']') + 1:])
+                error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         if os.path.exists(currFolder) and insightName in os.listdir(currFolder):
             return os.path.join(currFolder, insightName)
     return
@@ -93,7 +93,7 @@ def overwriteInsight(solution, core, modelPath, insightName, ucs, useModel, notF
     try:
         os.mkdir(os.path.join(solution, insightName))
     except Exception as e:
-        error('Path Error:' + e.__str__()[e.index(']') + 1:])
+        error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
     
     ucsList = getUcsList(insightName, ucs)

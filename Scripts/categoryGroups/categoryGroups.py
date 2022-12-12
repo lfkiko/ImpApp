@@ -77,13 +77,13 @@ def warnings(param):
 def main(argv):
     startLog()
     try:
-        solution = os.path.join(getSolution(getPath('solution')), 'SEntities')
+        solution = os.path.join(getSolution(argv[4]), 'SEntities')
         try:
             os.path.exists(solution)
         except:
             os.mkdir(solution)
     except Exception as e:
-        error('Path Error:' + e.__str__()[e.index(']') + 1:])
+        error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
     
     jsonName = os.path.join(solution, argv[3] + ".json")
@@ -105,7 +105,7 @@ def main(argv):
         try:
             solution = getSolution(getPath('solution')) + '$QA'
         except Exception as e:
-            error('Path Error:' + e.__str__()[e.index(']') + 1:])
+            error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
             return
         categoriesAdaptation.main([solution])
     endLog()
@@ -118,3 +118,4 @@ if __name__ == "__main__":
     # 1 number of languages
     # 2 list of languages
     # 3 type
+    # 4 path

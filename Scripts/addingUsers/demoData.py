@@ -1,19 +1,20 @@
 import os
 import shutil
 import sys
+import zipfile
 from logging import info, warning, error
 
 from Scripts.addingUsers import categoriesAdaptation
 from Scripts.toolBoox.excelJsonToolBox import getCol, readCsv, writeCsv
 from Scripts.toolBoox.logs import startLog, endLog
-from Scripts.toolBoox.toolBoox import createPath, getSolution, getPath
+from Scripts.toolBoox.toolBoox import createPath, getSolution, getPath, filesInZip
 
 
-def find_relevant_users(core_path, extraUsers, bUsers, modified):
+def findRelevantUsers(corePath, extraUsers, bUsers, modified):
     relevantUser = []
-    coreDemoDataPath = createPath(core_path, 'product-demo-data-biz-unit\\Core\\DemoData')
+    coreUsers = filesInZip(corePath, 'product-demo-data-biz-unit.zip', 'Core/DemoData')
     if bUsers:
-        for d in os.listdir(coreDemoDataPath):
+        for d in coreUsers:
             if d.startswith("B_") and d[2].isnumeric():
                 relevantUser.append(d)
     if modified:
@@ -25,33 +26,35 @@ def find_relevant_users(core_path, extraUsers, bUsers, modified):
 def copyUsers(relevantUser, corePath, solutionQaPath):
     errors = False
     solutionDemoData = createPath(solutionQaPath, 'DemoData')
-    coreDemoDataPath = createPath(corePath, "product-demo-data-biz-unit\\Core\\DemoData")
+    coreDemoDataPath = os.path.join(corePath, 'product-demo-data-biz-unit.zip')
     try:
         os.mkdir(solutionDemoData)
     except:
         warning('all ready exist: ' + solutionDemoData)
         errors = True
-    
-    for user in relevantUser:
-        srcPath = os.path.join(coreDemoDataPath, user)
-        trgPath = os.path.join(solutionDemoData, user)
-        try:
-            os.mkdir(trgPath)
-        except:
-            warning("User: " + user + " is all ready exists in the solution level from ")
-        finally:
-            if os.path.exists(srcPath):
-                files = os.listdir(srcPath)
-                for file in files:
-                    try:
-                        shutil.copy2(os.path.join(srcPath, file), trgPath)
-                    except:
+    finally:
+        for user in relevantUser:
+            trgPath = os.path.join(solutionDemoData, user)
+            try:
+                os.mkdir(trgPath)
+            except:
+                warning("User: " + user + " is all ready exists in the solution level from ")
+            finally:
+                with zipfile.ZipFile(coreDemoDataPath) as z:
+                    srcFiles = filesInZip(corePath, 'product-demo-data-biz-unit.zip', 'Core/DemoData/' + user + '/')
+                    for file in srcFiles:
+                        try:
+                            with z.open(file) as f:
+                                tf = open(os.path.join(trgPath, file.split('/')[-1]), 'a')
+                                tf.write(f.read().decode(encoding='utf-8-sig'))
+                        except:
+                            errors = True
+                            error("Something went wrong while copping: " + file + ' to ' + user)
+                    if not srcFiles:
                         errors = True
-                        error("Something went wrong while copping: " + file + ' to ' + user)
-            else:
-                errors = True
-                error("User: " + user + " do not exists in the core ")
-                pass
+                        error("User: " + user + " do not exists in the core ")
+                        os.rmdir(trgPath)
+                        pass
     
     if errors:
         info("Copying users finished with warnings")
@@ -134,16 +137,19 @@ def modifyUsersInSolution(solutionDemoDataPath, input_json, relevantUser):
 
 def main(argv):
     startLog()
-    core = os.path.join(getPath('corePath'), 'product-bizpack')
     try:
         solution = getSolution(getPath('solution')) + '$QA'
     except Exception as e:
-        error('Path Error:' + e.__str__()[e.index(']') + 1:])
+        error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
-    
+    try:
+        corePath = createPath(getPath('solution'), 'package\\target\\DataLoad')
+    except Exception as e:
+        error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
+        return
     extraUsers = getCol(argv[3], 'USERS')
-    relevantUser = find_relevant_users(core, extraUsers, argv[1], argv[2])
-    err: bool = copyUsers(relevantUser, core, solution)
+    relevantUser = findRelevantUsers(corePath, extraUsers, argv[1], argv[2])
+    err: bool = copyUsers(relevantUser, corePath, solution)
     modifyUsersInSolution(os.path.join(solution, 'DemoData'), argv[0], os.listdir(os.path.join(solution, 'DemoData')))
     categoriesAdaptation.main([solution])
     endLog(err)
@@ -156,5 +162,4 @@ if __name__ == "__main__":
 # 1 B_users checkBox bool
 # 2 modified checkBox bool
 # 3 file name
-
 # os.listdir(product + "\\DemoData")

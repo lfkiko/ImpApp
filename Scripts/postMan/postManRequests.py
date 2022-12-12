@@ -89,7 +89,7 @@ def main(argv):
         solution = createPath(getSolution(getPath('solution')) + '$QA', 'DemoData')
     
     except Exception as e:
-        error('Path Error:' + e.__str__()[e.index(']') + 1:])
+        error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
     
     url = 'http://' + argv[0] + ':8080/pserver/execute?channel=' + argv[1].upper()

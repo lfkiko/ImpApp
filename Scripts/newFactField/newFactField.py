@@ -49,7 +49,7 @@ def main(argv):
     try:
         solution = createPath(getSolution(getPath('solution')), 'Insights')
     except Exception as e:
-        error('Path Error:' + e.__str__()[e.index(']') + 1:])
+        error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
     fact = argv[0]
     fieldName = argv[1]

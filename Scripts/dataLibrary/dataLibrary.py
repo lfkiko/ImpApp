@@ -185,13 +185,13 @@ def main(argv):
     try:
         solution = createPath(getSolution(getPath('solution')), 'SEditorDefinition\\DataAttribute')
     except Exception as e:
-        error('Path Error:' + e.__str__()[e.index(']') + 1:])
+        error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
-    
+
     try:
-        corePath = getPath('corePath')
-    except:
-        error('Path Error:' + getPath('corePath') + ' is not a correct path Data library didn\'t run')
+        corePath = createPath(getPath('solution'), 'package\\target\\DataLoad')
+    except Exception as e:
+        error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
     if argv[1]:
         attributes = getCol(argv[0], 'id')
