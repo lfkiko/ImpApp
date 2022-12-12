@@ -4,9 +4,9 @@ import sys
 from logging import error
 
 from Scripts.enableInsights import transfer
-from Scripts.toolBoox.excelJsonToolBox import readCsv, writeJson, readJsonZip, prettyPrintJson, getCol, updateJson
+from Scripts.toolBoox.excelJsonToolBox import readCsv, writeJson, readJsonZip, getCol, updateJson
 from Scripts.toolBoox.logs import startLog, endLog
-from Scripts.toolBoox.toolBoox import getFile, rewriteText, fixPath, getPath, getSolution
+from Scripts.toolBoox.toolBoox import getFile, getPath, getSolution
 
 
 def modifyJson(fileName, jsonData):

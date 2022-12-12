@@ -26,8 +26,6 @@ def activated_insights(file_name, process):
 def ucs_activation(file_name, insightsList):
     data = pd.read_excel(file_name, usecols=['UC'])
     insights = insightsList
-    name = str()
-    uc = int()
     for i in data['UC']:
         seperator = i.rfind('_')
         name = i[:seperator]
@@ -68,12 +66,11 @@ def main(argv):
     file_name = getFile(argv[0])
     insights = activated_insights(file_raw, argv[1])
     ucs = ucs_activation(file_raw, insights)
-    # insights_list = reformatList(ucs)
-    # print(insights_list)
     write_input_insights(ucs, file_name)
 
 
 if __name__ == "__main__":
     main(sys.argv[1:])
-    
-    # [file name, active/visible]
+
+#   0 file name
+#   1 process = active or visible
