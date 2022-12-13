@@ -47,7 +47,7 @@ def checkFacts(solution, insights, fact, fieldName, fieldType, fieldVal):
 def main(argv):
     startLog()
     try:
-        solution = createPath(getSolution(getPath('solution')), 'Insights')
+        solution = os.path.join(getSolution(getPath('solution')), 'Insights')
     except Exception as e:
         error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
