@@ -1,6 +1,6 @@
 import os
 import sys
-from logging import error, warning
+from logging import error
 from Scripts.toolBoox.excelJsonToolBox import getheader, getRow, getCol, readJsonUtf8Sig, updateJsonUtf8Sig
 from Scripts.toolBoox.logs import startLog, endLog
 from Scripts.toolBoox.toolBoox import createPath, getSolution, getPath
@@ -187,7 +187,7 @@ def main(argv):
     except Exception as e:
         error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
-
+    
     try:
         corePath = createPath(getPath('solution'), 'package\\target\\DataLoad')
     except Exception as e:

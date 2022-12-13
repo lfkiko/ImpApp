@@ -11,9 +11,9 @@ from Scripts.toolBoox.toolBoox import getPath, getSolution, createPath
 def updateUsers(product, users, categories):
     defaultCg = 'CG0'
     
-    def updateCategoryGroupId(currentCatrgory):
-        if currentCatrgory in categories:
-            return currentCatrgory
+    def updateCategoryGroupId(currentCategory):
+        if currentCategory in categories:
+            return currentCategory
         else:
             return defaultCg
     

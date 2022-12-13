@@ -1,6 +1,6 @@
 import os.path
 import sys
-from logging import info, error
+from logging import error
 
 from Scripts.toolBoox.excelJsonToolBox import readJson, updateJson
 from Scripts.toolBoox.logs import startLog, endLog

@@ -2,7 +2,7 @@ import codecs
 import json
 import os
 import sys
-from logging import error
+from logging import error, warning
 from tkinter.messagebox import askyesno
 
 from Scripts.addingUsers import categoriesAdaptation
@@ -39,21 +39,23 @@ def createSCategoryGroups(categories, direction, languages, numOfLang, listOfLan
     data = {}
     if CType == 'SCategoryGroups':
         data = {'categoryGroups': []}
+        sub = False
     elif CType == 'SSubCategories':
         data = {'subCategories': []}
+        sub = True
     for i in range(len(categories)):
         new_cg = {'id': categories[i],
                   'description': {'langMap': {}}}
         for j in range(langs):
             new_cg['description']['langMap'][listOfLanguages[j]] = languages[i][j]
-        if CType == "SCategoryGroups":
+        if not sub:
             new_cg['clientCategoryId'] = getFromSource(categories[i], 'clientCategoryId')
             if direction[i] in ["Both", "Income", "Expenses"]:
                 new_cg['direction'] = direction[i]
             else:
                 new_cg['direction'] = getFromSource(categories[i], 'direction')
             data['categoryGroups'].append(new_cg)
-        elif CType == "SSubCategories":
+        elif sub:
             data['subCategories'].append(new_cg)
     return data
 
@@ -68,10 +70,6 @@ def writeCategoriesJson(fileName, json_object):
             error(e)
     with codecs.open(fileName, 'a+', 'utf-8') as f:
         f.write(json.dumps(json_object, ensure_ascii=False, indent=4))
-
-
-def warnings(param):
-    pass
 
 
 def main(argv):
@@ -93,7 +91,7 @@ def main(argv):
     langNum = argv[1]
     if type(langNum) == 'Choose number of languages':
         error('langNum is not an integer')
-        warnings("SCategoryGroups.json wasn't overridden")
+        warning("SCategoryGroups.json wasn't overridden")
         return
     lanNames = argv[2]
     categoryGroups = createSCategoryGroups(categories, direction, languages, langNum, lanNames, argv[3])

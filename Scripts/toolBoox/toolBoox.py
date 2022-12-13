@@ -92,12 +92,14 @@ def createPath(path, extra):
     return newPath
 
 
-def getSolution(path):
+def getSolution(path, checkTime: bool = False):
     solutionsPath = path
     dirs = ['biz-units', 'perso-biz', 'Projects']
     for d in dirs:
         if d in os.listdir(solutionsPath):
             solutionsPath = os.path.join(solutionsPath, d)
+    if checkTime:
+        return solutionsPath
     for x in os.listdir(solutionsPath):
         checkPath = os.path.join(solutionsPath, x)
         if os.path.isdir(checkPath) and '$' in x:
@@ -130,20 +132,6 @@ def modelVersion(projectPath):
                 return True
             
             return False
-
-
-def getInsightsDir(path):
-    projectName = path.split('\\')[-1].upper()
-    currPath = createPath(path, 'biz-units\\perso-biz\\Projects')
-    if os.path.exists(currPath):
-        for x in os.listdir(currPath):
-            if x == projectName:
-                currPath = os.path.join(currPath, projectName + '\\Insights')
-                try:
-                    os.path.exists(currPath)
-                    return currPath
-                except FileNotFoundError:
-                    error("Directory: {0} does not exist".format(currPath))
 
 
 def filesInZip(path, zippedDir, pathTo):

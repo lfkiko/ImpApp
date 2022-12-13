@@ -1,78 +1,73 @@
 import sys
 import os
-from logging import info, error
+import zipfile
+from logging import error
 
-from Scripts.toolBoox.excelJsonToolBox import readJsonUtf8Sig, prettyPrintJson, updateJson, updateJsonUtf8Sig
+from Scripts.enableInsights.newEnableInsights import searchInsightInCore
+from Scripts.toolBoox.excelJsonToolBox import updateJson, readJsonZip, writeJson
 from Scripts.toolBoox.logs import startLog, endLog
-from Scripts.toolBoox.toolBoox import getInsightsDir, getFile, readJson, getPath, getSolution, modelVersion
-
-searchedFolders = ["product-subscriptions-biz-unit", "product-budgets-biz-unit", "product-debt-biz-unit",
-                   os.path.join("product-engage-biz-unit", "Projects"), "product-pa-biz-unit"]
+from Scripts.toolBoox.toolBoox import getPath, getSolution
 
 
-def searchForInsight(solution, core, modelPath, insight, useModel, factor):
+def searchForInsight(solution, core, insight, factor):
     overridden = False
-    for coreDir in searchedFolders:
-        currentDir = os.path.join(core, coreDir, "Core", "Insights")
-        if useModel and coreDir in searchedModelFolders:
-            currentDir = os.path.join(modelPath, coreDir, "Core", "Insights")
-        
-        if insight in os.listdir(currentDir):
-            currentDir = os.path.join(currentDir, insight)
-            if 'SThresholds.json' in os.listdir(currentDir):
-                fileType = 'SThresholds.json'
-            elif 'SParameters.json' in os.listdir(currentDir):
-                fileType = 'SParameters.json'
-            else:
-                Warning('Missing json' + insight + " has no SThresholds.json or SParameters.json to modify")
-                return
-            
-            currentDir = os.path.join(currentDir, fileType)
-            
-            try:
-                jsonData = readJson(currentDir)
-            except:
-                jsonData = readJsonUtf8Sig(currentDir)
-            
-            parType = fileType[1:fileType.index('.')].lower()
-            parList = []
-            for parameter in jsonData[parType]:
-                if 'Amount' in parameter['name'] or 'Balance' in parameter['name']:
-                    oldVal = int(parameter['value'])
-                    newVal = oldVal * int(factor)
-                    parameter['value'] = str(newVal)
-                    parList.append(parameter)
-                    if not overridden:
-                        overridden = True
-            
-            if overridden:
-                jsonData.update({parType: parList})
-                try:
-                    updateJson(os.path.join(solution, insight, fileType), jsonData)
-                except:
-                    updateJsonUtf8Sig(os.path.join(solution, insight, fileType), jsonData)
-            else:
-                Warning('Missing parameters' + insight + " has no Amount/Balance to modify")
+    try:
+        insightZipDir = searchInsightInCore(core, insight)
+    except Exception as e:
+        error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
+        return
+    with zipfile.ZipFile(os.path.join(core, insightZipDir)) as z:
+        for file in z.namelist():
+            if insight in file:
+                if 'SThresholds.json' in file:
+                    filePath = file
+                    fileType = 'SThresholds.json'
+                elif 'SParameters.json' in file:
+                    filePath = file
+                    fileType = 'SParameters.json'
+                else:
+                    Warning('Missing json' + insight + " has no SThresholds.json or SParameters.json to modify")
+                    return
+    
+    jsonData = readJsonZip(core, insightZipDir, filePath)
+    parType = fileType[1:fileType.index('.')].lower()
+    parList = []
+    
+    for parameter in jsonData[parType]:
+        if 'Amount' in parameter['name'] or 'Balance' in parameter['name']:
+            oldVal = int(parameter['value'])
+            newVal = oldVal * int(factor)
+            parameter['value'] = str(newVal)
+            parList.append(parameter)
+            if not overridden:
+                overridden = True
+    
+    if overridden:
+        jsonData.update({parType: parList})
+        if os.path.exists(os.path.join(solution, insight, fileType)):
+            updateJson(os.path.join(solution, insight, fileType), jsonData)
+        else:
+            writeJson(os.path.join(solution, insight, fileType), jsonData)
+    else:
+        Warning('Missing parameters' + insight + " has no Amount/Balance to modify")
 
 
 def main(argv):
     startLog()
-    core = os.path.join(getPath('corePath'), 'product-bizpack')
-    modelPath = os.path.join(getPath('modelPath'), 'product-models-bizpack')
     try:
         solution = os.path.join(getSolution(getPath('solution')), 'Insights')
     except Exception as e:
         error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
-    useModel = modelVersion(getPath('solution'))
+    
+    core = getPath('DataLoad')
+    
     for insight in os.listdir(solution):
         if insight != 'SEntities':
-            searchForInsight(solution, core, modelPath, insight, useModel, argv[0])
+            searchForInsight(solution, core, insight, argv[0])
     
     endLog()
 
-
-searchedModelFolders = ['product-subscriptions-biz-unit', 'product-portfolio-biz-unit']
 
 if __name__ == "__main__":
     main(sys.argv[1:])

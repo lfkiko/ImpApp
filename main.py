@@ -1,13 +1,14 @@
-import datetime
 import json
 import os
 import subprocess
+import time
 import tkinter as tk
 from logging import error
 from tkinter import filedialog
 from tkinter.messagebox import askyesno
-
+from datetime import datetime
 import openpyxl
+from dateutil.parser import parser
 from kivy import Config
 from kivy.app import App
 from kivy.core.window import Window
@@ -48,6 +49,18 @@ class MenuWindow(Screen):
     def selected(self, name, filterX):
         checkPath = filedialog.askdirectory(initialdir=os.path.normpath(SettingsWindow().currentDefaultPath))
         verifyPath(name, filterX, checkPath)
+        operations = os.path.join(getSolution(checkPath, True), 'pack_dscr.properties')
+        askMvn = False
+        if os.path.exists(operations):
+            newTime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(checkPath)))
+            with open(operations, "r+") as f:
+                d = f.readlines()
+                for prop in d:
+                    if 'PACKAGING_TIMESTAMP' in prop:
+                        raw = prop.split('=')[-1]
+                        mvnTime = raw.replace('T', ' ').replace('Z', '')
+            if mvnTime.split(' ')[0] == newTime.split(' ')[0] and mvnTime.split(' ')[1] >= newTime.split(' ')[1]:
+                return
         if askyesno('Confirmation', 'Do you need to install MAVENs?'):
             p = subprocess.run('mvn clean install -DskipTests -U', shell=True, cwd=checkPath)
             if p.returncode != 0:
@@ -55,8 +68,6 @@ class MenuWindow(Screen):
     
     def openKB(self, root):
         openKB(root.name)
-    
-    pass
     
     def cleanExcels(self):
         files = readJson(fileManger)
