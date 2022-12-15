@@ -23,6 +23,7 @@ from Scripts.batches.batchesJson import batchJson
 from Scripts.categoryGroups import categoryGroups
 from Scripts.dataLibrary import dataLibrary
 from Scripts.enableInsights import enable_insights, transfer, sEditorVisible, newEnableInsights
+from Scripts.expressionsFormats import expressionsFormats
 from Scripts.newFactField import newFactField
 from Scripts.newProject import newProject
 from Scripts.thFactor import thFactor
@@ -50,7 +51,6 @@ class MenuWindow(Screen):
         checkPath = filedialog.askdirectory(initialdir=os.path.normpath(SettingsWindow().currentDefaultPath))
         verifyPath(name, filterX, checkPath)
         operations = os.path.join(getSolution(checkPath, True), 'pack_dscr.properties')
-        askMvn = False
         if os.path.exists(operations):
             newTime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(checkPath)))
             with open(operations, "r+") as f:
@@ -268,6 +268,15 @@ class sEditorVisibleWindow(Screen):
     
     def runFunc(self):
         sEditorVisible.main([self.name])
+    
+    pass
+
+
+class expressionsFormatsWindow(Screen):
+    Builder.load_file('Scripts/expressionsFormats/expressionsFormats.kv')
+    
+    def runFunc(self):
+        expressionsFormats.main([getFile(self.name + "_raw")])
     
     pass
 

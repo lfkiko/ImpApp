@@ -2,23 +2,26 @@ import codecs
 import json
 import os
 import sys
-from logging import error, warning
+from logging import error
 from tkinter.messagebox import askyesno
 
 from Scripts.addingUsers import categoriesAdaptation
-from Scripts.toolBoox.excelJsonToolBox import getCol, readJson
+from Scripts.toolBoox.excelJsonToolBox import getCol, readJson, getheader
 from Scripts.toolBoox.logs import startLog, endLog
 from Scripts.toolBoox.toolBoox import getPath, getSolution, getFile
 
 
-def createLanguages(fileName):
+def createLanguages(fileName, lanNames):
     languages = list()
-    lang1 = getCol(fileName, 'language 1')
-    lang2 = getCol(fileName, 'language 2')
-    lang3 = getCol(fileName, 'language 3')
-    lang4 = getCol(fileName, 'language 4')
-    for i in range(len(lang1)):
-        languages.append([lang1[i], lang2[i], lang3[i], lang4[i]])
+    tmpLanguages = dict()
+    for i in range(len(lanNames)):
+        print(getCol(fileName, lanNames[i]))
+        tmpLanguages["lang" + str(i + 1)] = getCol(fileName, lanNames[i])
+    for j in range(len(tmpLanguages["lang1"])):
+        tmpList = []
+        for lang in tmpLanguages.keys():
+            tmpList.append(tmpLanguages[lang][j])
+        languages.append(tmpList)
     return languages
 
 
@@ -75,7 +78,7 @@ def writeCategoriesJson(fileName, json_object):
 def main(argv):
     startLog()
     try:
-        solution = os.path.join(getSolution(argv[4]), 'SEntities')
+        solution = os.path.join(getSolution(getPath('solution')), 'SEntities')
         try:
             os.path.exists(solution)
         except:
@@ -84,22 +87,18 @@ def main(argv):
         error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
     
-    jsonName = os.path.join(solution, argv[3] + ".json")
+    jsonName = os.path.join(solution, argv[1] + ".json")
     categories = getCol(argv[0], 'CG')
     direction = getCol(argv[0], 'direction')
-    languages = createLanguages(argv[0])
-    langNum = argv[1]
-    if type(langNum) == 'Choose number of languages':
-        error('langNum is not an integer')
-        warning("SCategoryGroups.json wasn't overridden")
-        return
-    lanNames = argv[2]
-    categoryGroups = createSCategoryGroups(categories, direction, languages, langNum, lanNames, argv[3])
+    lanNames = getheader(argv[0])[1:-1]
+    langNum = len(lanNames)
+    languages = createLanguages(argv[0], lanNames)
+    categoryGroups = createSCategoryGroups(categories, direction, languages, langNum, lanNames, argv[1])
     if categoryGroups == -1:
         error('Stop while running: SCategoryGroups.json stopped without completing the task')
         return
     writeCategoriesJson(jsonName, categoryGroups)
-    if askyesno('Confirmation', 'Would you like to run categoriesAdaptation.py?') and argv[3] == 'SCategoryGroups':
+    if askyesno('Confirmation', 'Would you like to run categoriesAdaptation.py?') and argv[1] == 'SCategoryGroups':
         try:
             solution = getSolution(getPath('solution')) + '$QA'
         except Exception as e:
@@ -113,7 +112,4 @@ if __name__ == "__main__":
     main(sys.argv[1:])
     
     # 0 excel file
-    # 1 number of languages
-    # 2 list of languages
-    # 3 type
-    # 4 path
+    # 1 type

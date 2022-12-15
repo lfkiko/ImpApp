@@ -9,7 +9,10 @@ fileManger = 'Scripts/Source/fileManger.json'
 
 
 def getheader(fileName):
-    data = pd.read_excel(fileName).columns
+    try:
+        data = pd.read_excel(fileName).columns
+    except:
+        data = pd.read_csv(fileName).columns
     categories = list()
     for c in data:
         if c == 'dynamicTechType':
@@ -70,8 +73,7 @@ def readJsonZip(path, zipDir, fileName):
                 if fileName in names:
                     with z.open(names) as j:
                         inputJson = j.read().decode(encoding='utf-8')
-                        
-                        return inputJson
+                        return json.loads(inputJson)
     except Exception as e:
         error(e.__str__())
         return
@@ -121,3 +123,7 @@ def prettyPrintJson(jsonData):
 def checkEndCode(filePath):
     with open(filePath) as rawData:
         return rawData.encoding
+
+
+def isNan(val):
+    return pd.isna(val)

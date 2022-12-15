@@ -1,13 +1,9 @@
+from Scripts.toolBoox import *
 import os
-import shutil
 import sys
 import zipfile
 from logging import info, warning, error
-
 from Scripts.addingUsers import categoriesAdaptation
-from Scripts.toolBoox.excelJsonToolBox import getCol, readCsv, writeCsv
-from Scripts.toolBoox.logs import startLog, endLog
-from Scripts.toolBoox.toolBoox import createPath, getSolution, getPath, filesInZip
 
 
 def findRelevantUsers(corePath, extraUsers, bUsers, modified):
@@ -52,12 +48,12 @@ def copyUsers(relevantUser, corePath, solutionQaPath):
                             error("Something went wrong while copping: " + file + ' to ' + user)
                     if not srcFiles:
                         errors = True
-                        error("User: " + user + " do not exists in the core ")
+                        warning("User: " + user + " do not exists in the core ")
                         os.rmdir(trgPath)
                         pass
     
     if errors:
-        info("Copying users finished with warnings")
+        warning("Copying users finished with warnings")
     else:
         info("Copying users finished")
     return errors

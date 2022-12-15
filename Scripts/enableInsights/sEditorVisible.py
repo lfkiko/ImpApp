@@ -40,7 +40,7 @@ def main(argv):
     except Exception as e:
         error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
-    jsonData = json.loads(readJsonZip(getPath('DataLoad'), 'product-editor-engage-biz-unit.zip', 'SEditorVisible.json'))
+    jsonData = readJsonZip(getPath('DataLoad'), 'product-editor-engage-biz-unit.zip', 'SEditorVisible.json')
     transfer.main([argv[0], 'visible'])
     fileName = getFile(argv[0])
     jsonData = modifyJson(fileName, jsonData)

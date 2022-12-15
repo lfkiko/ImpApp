@@ -2,9 +2,9 @@ import sys
 import os
 from logging import error, warning
 
-from Scripts.toolBoox.excelJsonToolBox import readJson, updateJson, checkEndCode, readJsonUtf8Sig, updateJsonUtf8Sig
+from Scripts.toolBoox.excelJsonToolBox import readJson, updateJson, readJsonUtf8Sig, updateJsonUtf8Sig
 from Scripts.toolBoox.logs import startLog, endLog
-from Scripts.toolBoox.toolBoox import getPath, getSolution, createPath
+from Scripts.toolBoox.toolBoox import getPath, getSolution
 
 
 def updateFacts(insightPath, insightUc, fact, fieldName, fieldType, fieldVal):

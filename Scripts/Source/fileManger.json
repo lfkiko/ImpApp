@@ -1,6 +1,7 @@
 {
     "categoryGroups_raw": "Scripts/Source/categoryGroups/CategoryGroupsInput.xlsm",
     "categoryGroups_source": "Scripts/Source/categoryGroups/SCategoryGroups.json",
+    "expressionsFormats_raw": "Scripts/Source/expressionsFormats/expressionsFormats.xlsm",
     "dataLibrary_raw": "Scripts/Source/dataLibrary/DataLibrary.xlsm",
     "dataLibrarytamplet": "Scripts/Source/dataLibrary/tamplet.json",
     "enableInsights": "Scripts/Source/enableInsights/input_insights.csv",

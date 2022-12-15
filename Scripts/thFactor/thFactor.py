@@ -1,12 +1,7 @@
 import sys
-import os
-import zipfile
-from logging import error
+from Scripts.toolBoox import *
 
 from Scripts.enableInsights.newEnableInsights import searchInsightInCore
-from Scripts.toolBoox.excelJsonToolBox import updateJson, readJsonZip, writeJson
-from Scripts.toolBoox.logs import startLog, endLog
-from Scripts.toolBoox.toolBoox import getPath, getSolution
 
 
 def searchForInsight(solution, core, insight, factor):
