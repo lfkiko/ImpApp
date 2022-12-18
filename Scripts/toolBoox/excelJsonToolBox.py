@@ -1,9 +1,9 @@
 import json
 import os
 import zipfile
-from logging import error
-
 import pandas as pd
+
+from logging import error
 
 fileManger = 'Scripts/Source/fileManger.json'
 
@@ -93,6 +93,16 @@ def updateJson(filePath, jsonObject):
 def updateJsonUtf8Sig(filePath, jsonObject):
     with open(filePath, "w", encoding='utf-8-sig') as f:
         json.dump(jsonObject, f, indent=4)
+
+
+def updateJsonMultiLang(filePath, jsonObject):
+    with open(filePath, "w", encoding=checkEndCode(filePath)) as f:
+        json.dump(jsonObject, f, ensure_ascii=False, indent=4)
+
+
+def updateJsonMultiLangUtf8Sig(filePath, jsonObject):
+    with open(filePath, "w", encoding='utf-8-sig') as f:
+        json.dump(jsonObject, f, ensure_ascii=False, indent=4)
 
 
 def readCsv(filePath):

@@ -1,10 +1,7 @@
+from Scripts.toolBoox import *
 import sys
 import os
 from logging import error, warning
-
-from Scripts.toolBoox.excelJsonToolBox import readJson, updateJson, readJsonUtf8Sig, updateJsonUtf8Sig
-from Scripts.toolBoox.logs import startLog, endLog
-from Scripts.toolBoox.toolBoox import getPath, getSolution
 
 
 def updateFacts(insightPath, insightUc, fact, fieldName, fieldType, fieldVal):
@@ -20,9 +17,9 @@ def updateFacts(insightPath, insightUc, fact, fieldName, fieldType, fieldVal):
                 row.append(fieldVal)
             insightFacts[fact]['attributesTypes'].append(fieldType)
             try:
-                updateJson(insightFactsPath, insightFacts)
+                updateJsonMultiLang(insightFactsPath, insightFacts)
             except:
-                updateJsonUtf8Sig(insightFactsPath, insightFacts)
+                updateJsonMultiLangUtf8Sig(insightFactsPath, insightFacts)
         else:
             warning(fact + 'is not part of ' + insightPath)
     else:
@@ -37,7 +34,6 @@ def checkFacts(solution, insights, fact, fieldName, fieldType, fieldVal):
             insightUcs = dirNames
             break
         for useCase in insightUcs:
-            
             try:
                 updateFacts(insightPath, useCase, fact, fieldName, fieldType, fieldVal)
             except Exception as e:

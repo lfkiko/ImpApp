@@ -16,7 +16,6 @@ from kivy.properties import ObjectProperty, BooleanProperty
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 
-from Scripts import newFactField
 from Scripts.addingUsers import demoData
 from Scripts.batches import batches
 from Scripts.batches.batchesJson import batchJson
@@ -126,7 +125,7 @@ class newFieldToFactWindow(Screen):
     Builder.load_file('Scripts/newFactField/newFactField.kv')
     
     def runFunc(self):
-        newFactField.factUpdate.main(
+        newFactField.main(
             [self.fact.text, self.field.text, self.value.text, self.type.text])
     
     pass
