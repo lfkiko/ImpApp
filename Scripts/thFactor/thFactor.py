@@ -3,13 +3,13 @@ from Scripts.toolBoox import *
 
 searchedCoreFolders = ['product-act-biz-unit.zip', 'product-budgets-biz-unit.zip',
                        'product-data-and-assets-biz-unit.zip', 'product-debt-biz-unit.zip',
-                       'product-engage-unified-biz-unit.zip', 'product-goals-biz-unit.zip', 'product-mt-biz-unit.zip']
+                       'product-engage-biz-unit.zip', 'product-goals-biz-unit.zip', 'product-mt-biz-unit.zip']
 
 
 def searchInsightInCore(corePath, insightName):
     zips = os.listdir(corePath)
     zips.remove('perso-biz.zip')
-    for dirZip in zips:
+    for dirZip in searchedCoreFolders:
         if 'bank' in dirZip or 'docs' in dirZip:
             zips.remove(dirZip)
     for zipDir in zips:
@@ -51,8 +51,10 @@ def searchForInsight(solution, core, insight, factor):
     parList = []
     for parameter in jsonData[parType]:
         if 'name' in parameter.keys():
-            if 'Amount' in parameter['name'] or 'Balance' in parameter['name']:
-                oldVal = float(parameter['value'])
+            if parameter['name'] == 'A_Amount' or parameter['name'] == 'A_amount' or 'Balance' in parameter[
+                'name'] or 'balance' in parameter['name'] or (
+                len(parameter['name']) > 1 and (parameter['name'][0] == 'A' and parameter['name'][1].isnumeric())):
+                oldVal = int(parameter['value'])
                 newVal = oldVal * int(factor)
                 parameter['value'] = str(newVal)
                 parList.append(parameter)
