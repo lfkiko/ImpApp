@@ -136,8 +136,8 @@ def modelVersion(projectPath):
 
 def filesInZip(path, zippedDir, pathTo):
     zippedPath = os.path.join(path, zippedDir)
+    files = []
     with zipfile.ZipFile(zippedPath) as z:
-        files = []
         for names in z.namelist():
             if pathTo in names and pathTo != names:
                 files.append(names)

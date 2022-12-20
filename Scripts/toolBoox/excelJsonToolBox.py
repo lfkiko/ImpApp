@@ -68,12 +68,17 @@ def readJsonUtf8Sig(filePath):
 
 def readJsonZip(path, zipDir, fileName):
     try:
-        with zipfile.ZipFile(os.path.join(path, zipDir)) as z:
+        zipPath = os.path.join(path, zipDir)
+        with zipfile.ZipFile(zipPath) as z:
             for names in z.namelist():
                 if fileName in names:
-                    with z.open(names) as j:
-                        inputJson = j.read().decode(encoding='utf-8')
-                        return json.loads(inputJson)
+                    try:
+                        with z.open(names) as j:
+                            inputJson = j.read().decode(encoding='utf-8-sig')
+                            return json.loads(inputJson)
+                    except Exception as e:
+                        error(e.__str__())
+                        return
     except Exception as e:
         error(e.__str__())
         return
@@ -127,7 +132,7 @@ def prettyPrintJson(jsonData):
         jsonPrint = json.dumps(jsonData, indent=4)
         print(jsonPrint)
     else:
-        error('Type Error: TheObject\'s type needs to be dict() or str() and not {0}'.format(type(jsonData)))
+        error('Type Error: The Object\'s type needs to be dict() or str() and not {0}'.format(type(jsonData)))
 
 
 def checkEndCode(filePath):

@@ -1,41 +1,65 @@
 import sys
 from Scripts.toolBoox import *
 
-from Scripts.enableInsights.newEnableInsights import searchInsightInCore
+searchedCoreFolders = ['product-act-biz-unit.zip', 'product-budgets-biz-unit.zip',
+                       'product-data-and-assets-biz-unit.zip', 'product-debt-biz-unit.zip',
+                       'product-engage-unified-biz-unit.zip', 'product-goals-biz-unit.zip', 'product-mt-biz-unit.zip']
+
+
+def searchInsightInCore(corePath, insightName):
+    zips = os.listdir(corePath)
+    zips.remove('perso-biz.zip')
+    for dirZip in zips:
+        if 'bank' in dirZip or 'docs' in dirZip:
+            zips.remove(dirZip)
+    for zipDir in zips:
+        insightsInPath = filesInZip(corePath, zipDir, 'Core/Insights/' + insightName)
+        if len(insightsInPath) != 0:
+            return zipDir
+    return FileNotFoundError
 
 
 def searchForInsight(solution, core, insight, factor):
     overridden = False
+    notFound = True
     try:
         insightZipDir = searchInsightInCore(core, insight)
     except Exception as e:
         error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
+    if insightZipDir == FileNotFoundError:
+        return
     with zipfile.ZipFile(os.path.join(core, insightZipDir)) as z:
         for file in z.namelist():
             if insight in file:
                 if 'SThresholds.json' in file:
-                    filePath = file
                     fileType = 'SThresholds.json'
-                elif 'SParameters.json' in file:
+                    parType = 'thresholds'
                     filePath = file
+                    notFound = False
+                elif 'SParameters.json' in file:
                     fileType = 'SParameters.json'
-                else:
-                    Warning('Missing json' + insight + " has no SThresholds.json or SParameters.json to modify")
-                    return
+                    parType = 'parameters'
+                    filePath = file
+                    notFound = False
+        if notFound:
+            Warning('Missing json' + insight + " has no SThresholds.json or SParameters.json to modify")
+            return
     
     jsonData = readJsonZip(core, insightZipDir, filePath)
     parType = fileType[1:fileType.index('.')].lower()
     parList = []
-    
     for parameter in jsonData[parType]:
-        if 'Amount' in parameter['name'] or 'Balance' in parameter['name']:
-            oldVal = int(parameter['value'])
-            newVal = oldVal * int(factor)
-            parameter['value'] = str(newVal)
-            parList.append(parameter)
-            if not overridden:
-                overridden = True
+        if 'name' in parameter.keys():
+            if 'Amount' in parameter['name'] or 'Balance' in parameter['name']:
+                oldVal = float(parameter['value'])
+                newVal = oldVal * int(factor)
+                parameter['value'] = str(newVal)
+                parList.append(parameter)
+                if not overridden:
+                    overridden = True
+        else:
+            print(insight)
     
     if overridden:
         jsonData.update({parType: parList})

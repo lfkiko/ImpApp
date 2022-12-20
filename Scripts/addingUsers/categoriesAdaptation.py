@@ -5,12 +5,24 @@ import warnings
 from logging import error
 
 
-def updateUsers(product, users, categories):
+def mergedCategories(file):
+    cgCore = getCol(file, 'ID')
+    cgMerge = getCol(file, 'Merged')
+    mergedCgs = dict()
+    for i in len(cgCore):
+        if cgCore[i] != cgMerge[i]:
+            mergedCgs[cgCore[i]] = cgMerge[i]
+    return mergedCgs
+
+
+def updateUsers(product, users, categories, mergedCgs):
     defaultCg = 'CG0'
     
     def updateCategoryGroupId(currentCategory):
         if currentCategory in categories:
             return currentCategory
+        elif currentCategory in mergedCgs.key():
+            return mergedCgs[currentCategory]
         else:
             return defaultCg
     
@@ -65,7 +77,9 @@ def main(argv):
         error('problem with getCategories')
         return
     else:
-        updateUsers(solution, users, categories)
+        pass
+        # mergedCgs = mergedCategories(mergedCategoryFile)
+        # updateUsers(solution, users, categories, mergedCgs)
     
     endLog(not (len(categories) == 0))
 
@@ -73,4 +87,5 @@ def main(argv):
 if __name__ == "__main__":
     main(sys.argv[1:])
 
+# 0 demo data path
 # 0 demo data path

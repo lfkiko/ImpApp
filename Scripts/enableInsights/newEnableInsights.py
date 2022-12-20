@@ -14,6 +14,11 @@ searchedCoreFolders = ['product-act-biz-unit.zip', 'product-budgets-biz-unit.zip
 
 
 def searchInsightInCore(corePath, insightName):
+    zips = os.listdir(corePath)
+    zips.remove('perso-biz.zip')
+    for dirZip in zips:
+        if 'bank' in dirZip:
+            zips.remove(dirZip)
     for zipDir in searchedCoreFolders:
         insightsInPath = filesInZip(corePath, zipDir, 'Core/Insights/')
         if insightName in insightsInPath:

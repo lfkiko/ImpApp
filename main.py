@@ -60,6 +60,8 @@ class MenuWindow(Screen):
                         mvnTime = raw.replace('T', ' ').replace('Z', '')
             if mvnTime.split(' ')[0] == newTime.split(' ')[0] and mvnTime.split(' ')[1] >= newTime.split(' ')[1]:
                 return
+            elif mvnTime.split(' ')[0] > newTime.split(' ')[0]:
+                return
         if askyesno('Confirmation', 'Do you need to install MAVENs?'):
             p = subprocess.run('mvn clean install -DskipTests -U', shell=True, cwd=checkPath)
             if p.returncode != 0:
