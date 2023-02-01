@@ -1,27 +1,27 @@
+from logging import warning
+
+from Scripts.toolBoox import *
 import json
 import os
-import shutil
 import sys
 import zipfile
-from logging import error, warning
 
-from Scripts.toolBoox.excelJsonToolBox import readCsv, readJson, updateJson
-from Scripts.toolBoox.logs import startLog, endLog
-from Scripts.toolBoox.toolBoox import getPath, getSolution, modelVersion, createPath, filesInZip
+
 
 searchedCoreFolders = ['product-act-biz-unit.zip', 'product-budgets-biz-unit.zip',
-                       'product-data-and-assets-biz-unit.zip', 'product-engage-unified-biz-unit.zip']
+                       'product-data-and-assets-biz-unit.zip', 'product-debt-biz-unit.zip',
+                       'product-engage-biz-unit.zip', 'product-goals-biz-unit.zip', 'product-mt-biz-unit.zip']
 
 
 def searchInsightInCore(corePath, insightName):
     zips = os.listdir(corePath)
     zips.remove('perso-biz.zip')
-    for dirZip in zips:
-        if 'bank' in dirZip:
+    for dirZip in searchedCoreFolders:
+        if 'bank' in dirZip or 'docs' in dirZip:
             zips.remove(dirZip)
-    for zipDir in searchedCoreFolders:
-        insightsInPath = filesInZip(corePath, zipDir, 'Core/Insights/')
-        if insightName in insightsInPath:
+    for zipDir in zips:
+        insightsInPath = filesInZip(corePath, zipDir, 'Core/Insights/' + insightName)
+        if len(insightsInPath) != 0:
             return zipDir
     return FileNotFoundError
 
@@ -86,6 +86,8 @@ def overwriteInsight(solutionPath, corePath, insightName, ucs):
     try:
         insightZipDir = searchInsightInCore(corePath, insightName)
         insightCorePath = os.path.join(corePath, insightZipDir)
+        if insightZipDir == FileNotFoundError:
+            return
     except Exception as e:
         error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return

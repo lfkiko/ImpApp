@@ -34,12 +34,10 @@ def searchForInsight(solution, core, insight, factor):
             if insight in file:
                 if 'SThresholds.json' in file:
                     fileType = 'SThresholds.json'
-                    parType = 'thresholds'
                     filePath = file
                     notFound = False
                 elif 'SParameters.json' in file:
                     fileType = 'SParameters.json'
-                    parType = 'parameters'
                     filePath = file
                     notFound = False
         if notFound:
@@ -51,9 +49,11 @@ def searchForInsight(solution, core, insight, factor):
     parList = []
     for parameter in jsonData[parType]:
         if 'name' in parameter.keys():
-            if parameter['name'] == 'A_Amount' or parameter['name'] == 'A_amount' or 'Balance' in parameter[
-                'name'] or 'balance' in parameter['name'] or (
-                len(parameter['name']) > 1 and (parameter['name'][0] == 'A' and parameter['name'][1].isnumeric())):
+            if parameter['name'] == 'A_Amount' or parameter['name'] == 'A_amount' \
+                or 'Balance' in parameter['name'] \
+                or 'balance' in parameter['name'] \
+                or (len(parameter['name']) > 1 and
+                    (parameter['name'][0] == 'A' and parameter['name'][1].isnumeric())):
                 oldVal = int(parameter['value'])
                 newVal = oldVal * int(factor)
                 parameter['value'] = str(newVal)

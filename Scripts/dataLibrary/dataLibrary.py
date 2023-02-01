@@ -5,6 +5,17 @@ from Scripts.toolBoox.excelJsonToolBox import getheader, getRow, getCol, readJso
 from Scripts.toolBoox.logs import startLog, endLog
 from Scripts.toolBoox.toolBoox import createPath, getSolution, getPath
 
+attributesID = ['accounts', 'committedTransactions', 'DAAccount', 'DACategory', 'DAccount',
+                'DAcrossaccountrelationship', 'DAParty', 'DATansaction', 'DCard', 'DConsent', 'DHolding',
+                'DIntradayTransaction', 'DInvoicePayable', 'DInvoiceReceivable', 'DLocation', 'DMerchant', 'DParty',
+                'DPartyAccount', 'DPortfolio', 'DScheduledBillPay', 'DScheduledTransfer', 'DTransaction',
+                'EligibilitySegment', 'ExternalEvent', 'fundingAccounts', 'GoalAccount', 'GoalTransaction',
+                'intradayTransactions', 'invoicePayable', 'invoiceReceivable', 'minBalanceParameters', 'PBudget',
+                'periods', 'PExternalEvent', 'PMicroSavingsEligibilitySegment', 'PMicroSavingsMoneyTransfer',
+                'PMicroSavingsSettings', 'ProgramAccountEligibilityData', 'ProgramPermissionSettings',
+                'ProgramSettings', 'ProgramTransferPreferences', 'ProgramTransferRequestData', 'ProgramUserSettings',
+                'PTime', 'PUserSettings', 'scheduledBillpay', 'subscriptions', 'transactions', 'transferLimitations']
+
 requireFieldsForTriggerLogic = ['type', 'dataAttributeId', 'droolClass', 'relatedEntity']
 javaEntitiesStrings = dict({})
 
@@ -176,12 +187,58 @@ def removeDeactivated(solution):
             countFalse += 1
             os.remove(jsonPath)
     print(str(countFalse) + " out of " + str(countAll))
-    endLog(True, removeDeactivated)
+    endLog(True, 'removeDeactivated')
+
+
+def createAttribute(solution, attributeName, row, allHeaders, rowNumber, corePath):
+    jsonEntity = {}
+    colsRange = range(len(allHeaders))
+    for index in colsRange:
+        colName = allHeaders[index]
+        if colName == 'activate' or colName == 'visibleLogic' and row[index] != 'noData':
+            colVal = str(row[index]).upper()
+        else:
+            colVal = row[index]
+        newData = getVal(colName, colVal)
+        jsonEntity[colName] = newData
+    try:
+        currentJson = readJsonUtf8Sig(os.path.join(solution, attributeName + '.json'))
+        exsits = True
+    except:
+        currentJson = {'activate': jsonEntity['activate']}
+        exsits = False
+    
+    noData = []
+    for entity in jsonEntity:
+        if type(jsonEntity[entity]) == dict:
+            pass
+        elif type(jsonEntity[entity]) == list \
+            and len(jsonEntity[entity]) == 1 and jsonEntity[entity][0] == 'noData':
+            noData.append(entity)
+        if jsonEntity[entity] == 'noData':
+            noData.append(entity)
+    
+    for entity in noData:
+        jsonEntity.pop(entity)
+    jsonEntity = buildTriggerLogic(jsonEntity, rowNumber, corePath)
+    
+    if exsits:
+        change = False
+        for attribute in jsonEntity:
+            if attribute in currentJson.keys() and jsonEntity[attribute] != 'noData' and type(jsonEntity[attribute]) != list:
+                if currentJson[attribute] != jsonEntity[attribute]:
+                    currentJson[attribute] = jsonEntity[attribute]
+                    change = True
+        jsonEntity['id'] = attributeName
+        if change:
+            updateJsonUtf8Sig(os.path.join(solution, attributeName + '.json'), currentJson)
+        return None
+    else:
+        return jsonEntity
 
 
 def main(argv):
     startLog()
-    
     try:
         solution = createPath(getSolution(getPath('solution')), 'SEditorDefinition\\DataAttribute')
     except Exception as e:
@@ -189,28 +246,32 @@ def main(argv):
         return
     
     try:
-        corePath = createPath(getPath('solution'), 'package\\target\\DataLoad')
+        corePath = getPath('corePath')
     except Exception as e:
         error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
     if argv[1]:
+        upperAttributesID = []
+        for x in attributesID:
+            upperAttributesID.append(x.upper())
+        
         attributes = getCol(argv[0], 'id')
         allHeaders = getheader(argv[0])
-        colsRange = range(len(allHeaders))
-        rowNumber = 1
-        for rows in attributes:
-            row = getRow(argv[0], attributes.index(rows) + 1)
-            jsonEntity = {}
-            for index in colsRange:
-                colName = allHeaders[index]
-                colVal = row[index]
-                colVal = getVal(colName, colVal)
-                if colVal == "":
-                    continue
-                
-                jsonEntity[colName] = colVal
-            jsonEntity = buildTriggerLogic(jsonEntity, rowNumber, corePath)
-            saveJson(jsonEntity, rowNumber, solution)
+        rowNumber = 2
+        for attribute in attributes:
+            row = getRow(argv[0], attributes.index(attribute) + 1)
+            # num = attributes.index(attribute) + 1
+            attributeName = attribute[:attribute.index('-')]
+            if attributeName.upper() in upperAttributesID:
+                attributeName = attributesID[upperAttributesID.index(attributeName.upper())] + attribute[
+                                                                                               attribute.index('-'):]
+            else:
+                attributeName = attribute
+            if attributeName == 'visibleContent':
+                print(row)
+            jsonEntity = createAttribute(solution, attributeName, row, allHeaders, rowNumber, corePath)
+            if type(jsonEntity) is dict:
+                saveJson(jsonEntity, rowNumber, solution)
             rowNumber += 1
     
     if argv[2]:

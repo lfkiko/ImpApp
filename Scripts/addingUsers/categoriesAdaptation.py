@@ -78,7 +78,7 @@ def main(argv):
         return
     else:
         pass
-        # mergedCgs = mergedCategories(mergedCategoryFile)
+        # mergedCgs = mergedCategories(<<filePath>>)
         # updateUsers(solution, users, categories, mergedCgs)
     
     endLog(not (len(categories) == 0))
