@@ -25,12 +25,13 @@ WindowManger:
     ThFactorWindow:
     SettingsWindow:
     jsonsWindow:
+    updateFactAttributeWindow:
 
 <WindowManger>
     size: root.width, root.height
     canvas.before:
         Color:
-            rgba: (177/255,212/255,224/255,1)
+            rgba: (254/255,224/255,0/255,1)
         Rectangle:
             pos: self.pos
             size: self.size
@@ -43,7 +44,7 @@ WindowManger:
         size: root.width, root.height
 
         HeaderLabel:
-            text: "Main Menu"
+            text: "Menu"
             font_size: 64
 
         MyFileChooserBox:
@@ -56,7 +57,7 @@ WindowManger:
                     text: "C:\\GIT\\solution"
 
             fileChooserButton:
-                spacing: 20
+                pos_hint:{'x': 1}
                 on_release: Factory.MenuWindow().selected(root,"s")
 
 
@@ -98,13 +99,13 @@ WindowManger:
                     root.manager.transition.direction = "left"
             RoundedButton:
                 markup: True
-                text: "[s][color=000000]Breaking Changes[/color][/s]"
+                text: "[s][color=FFFFFF]Breaking Changes[/color][/s]"
 #                on_release:
 #                    app.root.current = "breakingChange"
 #                    root.manager.transition.direction = "left"
             RoundedButton:
                 markup: True
-                text: "[s][color=000000]Post-man[/color][/s]"
+                text: "[s][color=FFFFFF]Post-man[/color][/s]"
                 on_release:
                     app.root.current = "PostMan"
                     root.manager.transition.direction = "left"
@@ -115,7 +116,7 @@ WindowManger:
                     root.manager.transition.direction = "left"
             RoundedButton:
                 markup: True
-                text: "[s][color=000000]A-2-A[/color][/s]"
+                text: "[s][color=FFFFFF]A-2-A[/color][/s]"
 #                on_release:
 #                    app.root.current = "breakingChange"
 #                    root.manager.transition.direction = "left"
@@ -170,7 +171,7 @@ WindowManger:
                     root.manager.transition.direction = "left"
             RoundedButton:
                 markup: True
-                text: "[s][color=000000]Batches[/color][/s]"
+                text: "[s][color=FFFFFF]Batches[/color][/s]"
                 on_release:
                     app.root.current = "batches"
                     root.manager.transition.direction = "left"
@@ -182,10 +183,19 @@ WindowManger:
                     root.manager.transition.direction = "left"
 
             RoundedButton:
-                text: "expressions Formats"
+                markup: True
+                text: "[s][color=FFFFFF]Expressions Formats[/color][/s]"
                 on_release:
                     app.root.current = "expressionsFormats"
                     root.manager.transition.direction = "left"
+
+            RoundedButton:
+                markup: True
+                text: "Update Fact Attribute"
+                on_release:
+                    app.root.current = "updateFactAttribute"
+                    root.manager.transition.direction = "left"
+
         tailBoxLayout:
             RoundedButton:
                 text: "Back"
@@ -212,95 +222,134 @@ WindowManger:
         HeaderLabel:
             text: "Settings"
 
-        Label:
-            id: defaultPath
-            text: root.currentDefaultPath
-            font_size: 24
-            color: (0,0,0)
-            size_hint: None, None
-            size: self.texture_size
+        ScrollView:
+            do_scroll_y: True
+            do_scroll_x: False
+#            size_hint: (0.9,0.9)
+            pos_hint:{'center_x':0.5,'center_y':0.5}
+#            BoxLayout:
+#                valign: 'top'
+#                orientation: "vertical"
+#                size_hint_y: None
+#                height: 1000
+            GridLayout:
+                cols: 1
+                size_hint: None, None
+                size: (root.width, root.height)
+                height: self.minimum_height
+                Label:
+                    id: defaultPath
+                    text: root.currentDefaultPath
+                    font_size: 24
+                    color: (0,0,0)
+                    size_hint: None, None
+                    size: self.texture_size
 
-        UserInputBox
-            UserInputLabel:
-                text: "Git path:"
-            UserInput:
-                id: defaultNewPath
-            fileChooserButton:
-                text: "Submit"
-                spacing: 20
-                on_press: root.dpath(defaultNewPath.text, 'pathRoot')
+                UserInputBox
+                    size_hint_y: None
+                    height:100
+                    UserInputLabel:
+                        text: "Git path:"
+                    UserInputSetting:
+                        id: defaultNewPath
+                    fileChooserButton:
+                        text: "Submit"
+                        on_press: root.dpath(defaultNewPath.text, 'pathRoot')
 
-        Label:
-            id: IntelliJPath
-            text: root.currentIntelliJPath
-            font_size: 24
-            color: (0,0,0)
-            size_hint: None, None
-            size: self.texture_size
+                Label:
+                    id: IntelliJPath
+                    text: root.currentIntelliJPath
+                    font_size: 24
+                    color: (0,0,0)
+                    size_hint: None, None
+                    size: self.texture_size
 
-        UserInputBox
-            UserInputLabel:
-                text: "IntelliJ path:"
-            UserInput:
-                id: NewIntelliJPath
-            fileChooserButton:
-                text: "Submit"
-                spacing: 20
-                on_press: root.dpath(NewIntelliJPath.text, 'intelliJRoot')
+                UserInputBox
+                    size_hint_y: None
+                    height:100
+                    UserInputLabel:
+                        text: "IntelliJ path:"
+                    UserInputSetting:
+                        id: NewIntelliJPath
+                    fileChooserButton:
+                        text: "Submit"
+                        on_press: root.dpath(NewIntelliJPath.text, 'intelliJRoot')
 
-        Label:
-            id:CorePath
-            text: root.currentCorePath
-            font_size: 24
-            color: (0,0,0)
-            size_hint: None, None
-            size: self.texture_size
+                Label:
+                    id:CorePath
+                    text: root.currentCorePath
+                    font_size: 24
+                    color: (0,0,0)
+                    size_hint: None, None
+                    size: self.texture_size
 
-        UserInputBox
-            UserInputLabel:
-                text: "Perso-core path:"
-            UserInput:
-                id: NewCorePath
-            fileChooserButton:
-                text: "Submit"
-                spacing: 20
-                on_press: root.dpath(NewCorePath.text, 'corePath')
+                UserInputBox
+                    size_hint_y: None
+                    height:100
+                    UserInputLabel:
+                        text: "Perso-core path:"
+                    UserInputSetting:
+                        id: NewCorePath
+                    fileChooserButton:
+                        text: "Submit"
+                        on_press: root.dpath(NewCorePath.text, 'corePath')
 
-        Label:
-            id:ModelPath
-            text: root.currentModelPath
-            font_size: 24
-            color: (0,0,0)
-            size_hint: None, None
-            size: self.texture_size
+                Label:
+                    id:ModelPath
+                    text: root.currentModelPath
+                    font_size: 24
+                    color: (0,0,0)
+                    size_hint: None, None
+                    size: self.texture_size
 
-        UserInputBox
-            UserInputLabel:
-                text: "Perso-model path:"
-            UserInput:
-                id: NewModelPath
-            fileChooserButton:
-                text: "Submit"
-                spacing: 20
-                on_press: root.dpath(NewModelPath.text, 'modelPath')
+                UserInputBox:
+                    size_hint_y: None
+                    height:100
+                    UserInputLabel:
+                        text: "Perso-model path:"
+                    UserInputSetting:
+                        id: NewModelPath
+                    fileChooserButton:
+                        text: "Submit"
+                        on_press: root.dpath(NewModelPath.text, 'modelPath')
 
-        Label:
-            id:EBPath
-            text: root.currentEBPath
-            font_size: 24
-            color: (0,0,0)
-            size_hint: None, None
-            size: self.texture_size
+                Label:
+                    id:EBPath
+                    text: root.currentEBPath
+                    font_size: 24
+                    color: (0,0,0)
+                    size_hint: None, None
+                    size: self.texture_size
 
-        UserInputBox
-            UserInputLabel:
-                text: "EB path:"
-            UserInput:
-                id: NewEBPath
-            fileChooserButton:
-                text: "Submit"
-                spacing: 20
-                on_press: root.dpath(NewEBPath.text, 'EBPath')
+                UserInputBox:
+                    size_hint_y: None
+                    height:100
+                    UserInputLabel:
+                        text: "EB path:"
+                    UserInputSetting:
+                        id: NewEBPath
+                    fileChooserButton:
+                        text: "Submit"
+                        on_press: root.dpath(NewEBPath.text, 'EBPath')
+
+#                Label:
+#                    id: LogicPath
+#                    text: root.currentLogicPath
+#                    font_size: 24
+#                    color: (0,0,0)
+#                    size_hint: None, None
+#                    size: self.texture_size
+#
+#                UserInputBox:
+#                    size_hint_y: None
+#                    height:100
+#                    UserInputLabel:
+#                        text: "Git path:"
+#                    UserInputSetting:
+#                        id: NewLogicPath
+#                    fileChooserButton:
+#                        text: "Submit"
+#                        on_press: root.dpath(defaultLogicPath.text, 'LogicPath')
 
         #menu
         tailBoxLayout:
@@ -330,9 +379,10 @@ WindowManger:
 <RoundedButton@Button>
     background_color: (0,0,0,0)
     background_normal: ''
+    color: (0,0,0,1)
     canvas.before:
         Color:
-            rgba: utils.get_color_from_hex('#2E8BC0')
+            rgba: utils.get_color_from_hex('#A0A0A0')
         RoundedRectangle:
             pos: self.pos
             size: self.size
@@ -344,6 +394,7 @@ WindowManger:
 <RoundedExitButton@RoundedButton>
     background_color: (0,0,0,0)
     background_normal: ''
+    color: (0,0,0,1)
     canvas.before:
         Color:
             rgba: utils.get_color_from_hex('#c2320e')
@@ -397,6 +448,7 @@ WindowManger:
 
 <MyFileChooserLabel@Label>
     font_size: 32
+    color: (0,0,0)
     bold: True
     size_hint: None, None
     size: self.texture_size
@@ -410,11 +462,13 @@ WindowManger:
 
 <fileChooserButton@Button>
     text: "choose"
+    spacing: 20
+    color: (0,0,0,1)
     background_color: (0,0,0,0)
     background_normal: ''
     canvas.before:
         Color:
-            rgba: utils.get_color_from_hex('#0C2D48')
+            rgba: utils.get_color_from_hex('#A0A0A0')
         RoundedRectangle:
             pos: self.pos
             size: self.size
@@ -440,9 +494,10 @@ WindowManger:
     text: "OPEN"
     background_color: (0,0,0,0)
     background_normal: ''
+    color: (0,0,0,1)
     canvas.before:
         Color:
-            rgba: utils.get_color_from_hex('#0C2D48')
+            rgba: utils.get_color_from_hex('#A0A0A0')
         RoundedRectangle:
             pos: self.pos
             size: self.size
@@ -467,35 +522,51 @@ WindowManger:
 <HeaderLabel@Label>
     font_size: 45
     bold: True
-    color: (237/255, 242/255, 243/255, 1)
+    color: (0,0,0,1)
     size_hint: None, None
     size: self.texture_size
     halign:'left'
 
 <UserInputBox@BoxLayout>
+#    canvas:
+#        Color:
+#            rgba: 1,1,1, .9
+#        Line:
+#            width: 2.
+#            rectangle: (self.x, self.y, self.width, self.height)
     orientation: "horizontal"
     spacing:10
+    padding: 10
+#    size_hint_y: None
+#    height:100
+    pos_hint: {'center_y': 0.5}
 
 <UserInputLabel@Label>
     font_size: 20
     bold: True
     focus: True
     color: (0,0,0)
-    size_hint_x: None
-    width: 200
+    size_hint: None, None
+    size: self.texture_size
     pos_hint: {'center_y': 0.5}
 
 <UserInput@TextInput>
     font_size: 20
     multiline: False
-#    size_hint_y: None
+    size_hint:(None,None)
+    height: 50
+    width: 200
     pos_hint: {'center_y': 0.5}
     valign: 'bottom'
+
+<UserInputSetting@UserInput>
+    width: 625
 
 <MySpinner@Spinner>
     font_size: 20
     values_font_size:10
     pos_hint:{'center_y': 0.5}
+    color: (0,0,0)
     size_hint_y: None
     height:60
     size_hint_x: None
@@ -505,7 +576,7 @@ WindowManger:
 #    sync_height: True
     canvas.before:
         Color:
-            rgba: utils.get_color_from_hex('#2E8BC0')
+            rgba: utils.get_color_from_hex('#A0A0A0')
         RoundedRectangle:
             pos: self.pos
             size: self.size
@@ -513,16 +584,27 @@ WindowManger:
 
 <MyCheckBox@CheckBox>
     size_hint_y: None
-    height:50
+    height:25
     size_hint_x: None
-    width:100
+    width:25
     pos_hint: {'center_x': 0.5,'center_y': 0.5}
     spacing: 20
     canvas:
         Clear:
         Color:
             rgba: (0,0,0,1)
+        Line:
+            width: 1.
+            rectangle: (self.x, self.y, self.width, self.height)
         Rectangle:
             source: self._checkbox_image
-            size: sp(35), sp(35)
-            pos: int(self.center_x - sp(16)), int(self.center_y - sp(16))
+            size: sp(50), sp(50)
+            pos: int(self.center_x - sp(25)), int(self.center_y - sp(25))
+
+<GenericLabel@Label>
+    font_size: 32
+    color: (0,0,0)
+    bold: True
+    size_hint: None,None
+    size: self.texture_size
+    pos_hint: {'center_y': 0.5}

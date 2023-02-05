@@ -1,54 +1,58 @@
 #:import utils kivy.utils
-#:import Factory kivy.factory.Factory
-<newProjectWindow>
-    name: "newProject"
+<updateFactAttributeWindow>
+
+    fact:fact
+    field:field
+    value:value
+    oldVal:oldVal
+
+    name: "updateFactAttribute"
     BoxLayout:
         padding: 10
         spacing: 20
         orientation: "vertical"
         size: root.width, root.height
-        pos_hint:{'center_y': 0.5}
-
         HeaderLabel:
-            text: "New project configuration"
-
+            text: "Update Fact Attribute"
 
         GridLayout:
-            cols: 2
-            padding:20
+            cols:2
             UserInputBox:
                 UserInputLabel:
-                    text: "Add/update properties"
-                MyCheckBox:
-                    id: properties
-                    on_active: root.checkBoxClick('properties')
-
-            UserInputBox:
-                UserInputLabel:
-                    text: "update configurations"
-                MyCheckBox:
-                    id: configurations
-                    on_active: root.checkBoxClick('configurations')
-
-            UserInputBox:
-                UserInputLabel:
-                    text: "Channels name: "
+                    text: "Fact name"
                 UserInput:
-                    id: channel
+                    id: fact
 
+            UserInputBox:
+                UserInputLabel:
+                    text: "Field's name"
+                UserInput:
+                    id: field
 
-        #menu
+            UserInputBox:
+                UserInputLabel:
+                    text: "New value"
+                UserInput:
+                    id: value
+
+            UserInputBox
+                UserInputLabel:
+                    text: "Old value"
+                UserInput:
+                    id: oldVal
+
         tailBoxLayout:
             RoundedButton:
                 text: "Back"
+                pos_hint: {'center_x': 0.5}
                 on_release:
-                    app.root.current = "menu"
+                    app.root.current = "jsons"
                     root.manager.transition.direction = "right"
 
             RoundedButton:
                 text: "Help"
+                pos_hint: {'center_x': 0.5}
                 on_release: Factory.MenuWindow().openKB(root)
-
 
             RoundedButton:
                 text: "Run"

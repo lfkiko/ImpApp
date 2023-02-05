@@ -15,7 +15,7 @@ from kivy.core.window import Window
 from kivy.properties import ObjectProperty, BooleanProperty
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
-
+from kivy.uix.label import Label
 from Scripts.addingUsers import demoData
 from Scripts.batches import batches
 from Scripts.batches.batchesJson import batchJson
@@ -30,6 +30,7 @@ from Scripts.postMan import postManRequests
 from Scripts.toolBoox.excelJsonToolBox import prettyPrintJson
 from Scripts.toolBoox.toolBoox import rewriteText, verifyPath, openKB, getFile, currentPath, valPath, readJson, getPath, \
     getSolution
+from Scripts.updateFactAttribute import updateFactAttribute
 
 Builder.load_file('Scripts/Source/alerts.kv')
 fileManger = 'Scripts/Source/fileManger.json'
@@ -48,9 +49,15 @@ class MenuWindow(Screen):
     
     def selected(self, name, filterX):
         checkPath = filedialog.askdirectory(initialdir=os.path.normpath(SettingsWindow().currentDefaultPath))
+        if checkPath == "":
+            if askyesno('Confirmation', 'Please choose a project'):
+                self.selected(name, filterX)
+            else:
+                return
         verifyPath(name, filterX, checkPath)
-        operations = os.path.join(getSolution(checkPath, True), 'pack_dscr.properties')
+        operations = os.path.join(getSolution(getPath('solution'), True), 'pack_dscr.properties')
         if os.path.exists(operations):
+            mvnTime = ""
             newTime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(checkPath)))
             with open(operations, "r+") as f:
                 d = f.readlines()
@@ -58,10 +65,11 @@ class MenuWindow(Screen):
                     if 'PACKAGING_TIMESTAMP' in prop:
                         raw = prop.split('=')[-1]
                         mvnTime = raw.replace('T', ' ').replace('Z', '')
-            if mvnTime.split(' ')[0] == newTime.split(' ')[0] and mvnTime.split(' ')[1] >= newTime.split(' ')[1]:
+            newTimeStamp = datetime.strptime(newTime, '%Y-%m-%d %H:%M:%S').timestamp()
+            mvnTimeStamp = datetime.strptime(mvnTime[:-1], '%Y-%m-%d %H:%M:%S').timestamp()
+            if mvnTimeStamp <= newTimeStamp:
                 return
-            elif mvnTime.split(' ')[0] > newTime.split(' ')[0]:
-                return
+        
         if askyesno('Confirmation', 'Do you need to install MAVENs?'):
             p = subprocess.run('mvn clean install -DskipTests -U', shell=True, cwd=checkPath)
             if p.returncode != 0:
@@ -129,6 +137,16 @@ class newFieldToFactWindow(Screen):
     def runFunc(self):
         newFactField.main(
             [self.fact.text, self.field.text, self.value.text, self.type.text])
+    
+    pass
+
+
+class updateFactAttributeWindow(Screen):
+    Builder.load_file('Scripts/updateFactAttribute/updateFactAttribute.kv')
+    
+    def runFunc(self):
+        updateFactAttribute.main(
+            [self.fact.text, self.field.text, self.value.text, self.oldVal.text])
     
     pass
 
@@ -402,6 +420,7 @@ class WindowManger(ScreenManager):
 
 class ImplementationApp(App):
     def build(self):
+        self.icon = "persoLogo.png"
         return Builder.load_file('main.kv')
         Config.set('graphics', 'width', '1000')
         Config.set('graphics', 'height', '1000')

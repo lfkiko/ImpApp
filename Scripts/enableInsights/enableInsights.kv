@@ -11,21 +11,21 @@
         HeaderLabel:
             text: "Enable Insights"
 
-        #data file
-        BoxLayout:
+        BoxLayout
+            orientation: "horizontal"
             padding: 10
             spacing: 20
-            orientation: "vertical"
-            BoxLayout
-                orientation: "horizontal"
-                Label:
-                    text: "Input insights file - "
-                    font_size: 32
-                    bold: True
-                    pos_hint: {'center_x': 1, 'center_y': 0.5}
 
-                openFileButton:
-                    on_release: Factory.MenuWindow().openFile(root.name)
+            MyFileChooserLabel:
+                text: "Input insights file - "
+#                font_size: 32
+#                bold: True
+#                size_hint: None,None
+#                size: self.texture_size
+                pos_hint: {'center_x': 1, 'center_y': 0.5}
+
+            openFileButton:
+                on_release: Factory.MenuWindow().openFile(root.name)
 
 
         #menu

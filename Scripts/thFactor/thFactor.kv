@@ -7,17 +7,18 @@
         spacing: 20
         orientation: "vertical"
         size: root.width, root.height
-
         HeaderLabel:
             text: "TH Factor"
 
-        UserInputBox:
-            UserInputLabel:
-                text: "FACTOR"
-            UserInput:
-                id: factor
-
-
+        BoxLayout:
+            orientation: "horizontal"
+            padding: 10
+            spacing: 20
+            UserInputBox:
+                GenericLabel:
+                    text: "FACTOR: "
+                UserInput:
+                    id: factor
 
     #menu
         tailBoxLayout:
