@@ -66,6 +66,16 @@ def searchForInsight(solution, core, insight, factor):
     if overridden:
         jsonData.update({parType: parList})
         if os.path.exists(os.path.join(solution, insight, fileType)):
+            idList = []
+            for par in parList:
+                idList.append(par['name'])
+            try:
+                currentJson = readJson(os.path.join(solution, insight, fileType))
+            except:
+                currentJson = readJsonUtf8Sig(os.path.join(solution, insight, fileType))
+            for currentPar in currentJson[parType]:
+                if currentPar['name'] not in parList:
+                    jsonData[parType].append(currentPar)
             updateJson(os.path.join(solution, insight, fileType), jsonData)
         else:
             writeJson(os.path.join(solution, insight, fileType), jsonData)

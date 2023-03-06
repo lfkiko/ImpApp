@@ -52,12 +52,7 @@ def createSCategoryGroups(categories, direction, languages, numOfLang, listOfLan
         for j in range(langs):
             new_cg['description']['langMap'][listOfLanguages[j]] = languages[i][j]
         if not sub:
-            new_cg['clientCategoryId'] = getFromSource(categories[i], 'clientCategoryId')
-            if direction[i] in ["Both", "Income", "Expenses"]:
-                new_cg['direction'] = direction[i]
-            else:
-                new_cg['direction'] = getFromSource(categories[i], 'direction')
-            data['categoryGroups'].append(new_cg)
+            new_cg['clientCategoryId'] = "C" + categories[i]
         elif sub:
             data['subCategories'].append(new_cg)
     return data

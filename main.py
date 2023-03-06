@@ -30,7 +30,7 @@ from Scripts.postMan import postManRequests
 from Scripts.toolBoox.excelJsonToolBox import prettyPrintJson
 from Scripts.toolBoox.toolBoox import rewriteText, verifyPath, openKB, getFile, currentPath, valPath, readJson, getPath, \
     getSolution
-from Scripts.updateFactAttribute import updateFactAttribute
+from Scripts.updateFactAttribute import updateFactAttribute, updateFactCategory
 
 Builder.load_file('Scripts/Source/alerts.kv')
 fileManger = 'Scripts/Source/fileManger.json'
@@ -100,7 +100,7 @@ class enableInsightsWindow(Screen):
     Builder.load_file('Scripts/enableInsights/enableInsights.kv')
     
     def runFunc(self):
-        transfer.main([self.name, 'active'])
+        # transfer.main([self.name, 'active'])
         newEnableInsights.main([getFile(self.name)])
     
     pass
@@ -384,6 +384,8 @@ class ThFactorWindow(Screen):
 
 
 class jsonsWindow(Screen):
+    def runFunc(self):
+        updateFactCategory.main([])
     pass
 
 

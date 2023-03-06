@@ -1,0 +1,60 @@
+#:import utils kivy.utils
+<updateFactAttributeWindow>
+
+    fact:fact
+    field:field
+    value:value
+    oldVal:oldVal
+
+    name: "updateFactAttribute"
+    BoxLayout:
+        padding: 10
+        spacing: 20
+        orientation: "vertical"
+        size: root.width, root.height
+        HeaderLabel:
+            text: "Update Fact Attribute"
+
+        GridLayout:
+            cols:2
+            UserInputBox:
+                UserInputLabel:
+                    text: "Fact name"
+                UserInput:
+                    id: fact
+
+            UserInputBox:
+                UserInputLabel:
+                    text: "Field's name"
+                UserInput:
+                    id: field
+
+            UserInputBox:
+                UserInputLabel:
+                    text: "New value"
+                UserInput:
+                    id: value
+
+            UserInputBox
+                UserInputLabel:
+                    text: "Old value"
+                UserInput:
+                    id: oldVal
+
+        tailBoxLayout:
+            RoundedButton:
+                text: "Back"
+                pos_hint: {'center_x': 0.5}
+                on_release:
+                    app.root.current = "jsons"
+                    root.manager.transition.direction = "right"
+
+            RoundedButton:
+                text: "Help"
+                pos_hint: {'center_x': 0.5}
+                on_release: Factory.MenuWindow().openKB(root)
+
+            RoundedButton:
+                text: "Run"
+                pos_hint: {'center_x': 0.5}
+                on_release: root.runFunc()

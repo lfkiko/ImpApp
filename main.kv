@@ -196,6 +196,12 @@ WindowManger:
                     app.root.current = "updateFactAttribute"
                     root.manager.transition.direction = "left"
 
+            RoundedButton:
+                markup: True
+                text: "Update Fact Attribute"
+                on_release: root.runFunc()
+
+
         tailBoxLayout:
             RoundedButton:
                 text: "Back"

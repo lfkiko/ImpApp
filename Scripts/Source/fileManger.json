@@ -4,7 +4,7 @@
     "expressionsFormats_raw": "Scripts/Source/expressionsFormats/expressionsFormats.xlsm",
     "dataLibrary_raw": "Scripts/Source/dataLibrary/DataLibrary.xlsm",
     "dataLibrarytamplet": "Scripts/Source/dataLibrary/tamplet.json",
-    "enableInsights": "Scripts/Source/enableInsights/input_insights.csv",
+    "enableInsights": "Scripts/Source/enableInsights/input_insights.xlsm",
     "enableInsights_raw": "Scripts/Source/enableInsights/input_insights.xlsm",
     "sEditorVisible": "Scripts/Source/sEditorVisible/input_insights.csv",
     "demoData_raw": "Scripts/Source/demoData/demoData.xlsm",
