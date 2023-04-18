@@ -15,7 +15,6 @@ def createLanguages(fileName, lanNames):
     languages = list()
     tmpLanguages = dict()
     for i in range(len(lanNames)):
-        print(getCol(fileName, lanNames[i]))
         tmpLanguages["lang" + str(i + 1)] = getCol(fileName, lanNames[i])
     for j in range(len(tmpLanguages["lang1"])):
         tmpList = []
@@ -82,13 +81,13 @@ def main(argv):
         error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
     
-    jsonName = os.path.join(solution, argv[1] + ".json")
+    jsonName = os.path.join(solution, argv[3] + ".json")
     categories = getCol(argv[0], 'CG')
     direction = getCol(argv[0], 'direction')
-    lanNames = getheader(argv[0])[1:-1]
-    langNum = len(lanNames)
+    langNum = int(argv[1])
+    lanNames = argv[2][0: langNum]
     languages = createLanguages(argv[0], lanNames)
-    categoryGroups = createSCategoryGroups(categories, direction, languages, langNum, lanNames, argv[1])
+    categoryGroups = createSCategoryGroups(categories, direction, languages, langNum, lanNames, argv[3])
     if categoryGroups == -1:
         error('Stop while running: SCategoryGroups.json stopped without completing the task')
         return
@@ -107,4 +106,6 @@ if __name__ == "__main__":
     main(sys.argv[1:])
     
     # 0 excel file
-    # 1 type
+    # 1 num_of_lang
+    # 2 list of languages
+    # 3 Type

@@ -8,29 +8,28 @@ from tkinter import filedialog
 from tkinter.messagebox import askyesno
 from datetime import datetime
 import openpyxl
-from dateutil.parser import parser
 from kivy import Config
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.properties import ObjectProperty, BooleanProperty
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.uix.label import Label
 from Scripts.addingUsers import demoData
 from Scripts.batches import batches
 from Scripts.batches.batchesJson import batchJson
 from Scripts.categoryGroups import categoryGroups
 from Scripts.dataLibrary import dataLibrary
-from Scripts.enableInsights import enable_insights, transfer, sEditorVisible, newEnableInsights
+from Scripts.enableInsights import sEditorVisible, newEnableInsights
 from Scripts.expressionsFormats import expressionsFormats
 from Scripts.newFactField import newFactField
 from Scripts.newProject import newProject
 from Scripts.thFactor import thFactor
 from Scripts.postMan import postManRequests
 from Scripts.toolBoox.excelJsonToolBox import prettyPrintJson
-from Scripts.toolBoox.toolBoox import rewriteText, verifyPath, openKB, getFile, currentPath, valPath, readJson, getPath, \
+from Scripts.toolBoox.toolBoox import rewriteText, verifyPath, openKB, getFile, readJson, getPath, \
     getSolution
-from Scripts.updateFactAttribute import updateFactAttribute, updateFactCategory
+from Scripts.updateFactAttribute import updateFactAttribute
+from Scripts.updateFactCategory import updateFactCategory
 
 Builder.load_file('Scripts/Source/alerts.kv')
 fileManger = 'Scripts/Source/fileManger.json'
@@ -146,6 +145,16 @@ class updateFactAttributeWindow(Screen):
     
     def runFunc(self):
         updateFactAttribute.main(
+            [self.fact.text, self.field.text, self.value.text, self.oldVal.text])
+    
+    pass
+
+
+class updateFactCategoryWindow(Screen):
+    Builder.load_file('Scripts/updateFactCategory/updateFactCategory.kv')
+    
+    def runFunc(self):
+        updateFactCategory.main(
             [self.fact.text, self.field.text, self.value.text, self.oldVal.text])
     
     pass

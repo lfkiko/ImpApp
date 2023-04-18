@@ -8,7 +8,7 @@ from Scripts.addingUsers import categoriesAdaptation
 
 def findRelevantUsers(corePath, extraUsers, bUsers, modified):
     relevantUser = []
-    coreUsers = filesInZip(corePath, 'attribute', 'Core/DemoData')
+    coreUsers = filesInZip(corePath, 'product-data-and-assets-biz-unit.zip', 'Core/DemoData')
     if bUsers:
         for d in coreUsers:
             if d.startswith("B_") and d[2].isnumeric():
@@ -37,7 +37,8 @@ def copyUsers(relevantUser, corePath, solutionQaPath):
                 warning("User: " + user + " is all ready exists in the solution level from ")
             finally:
                 with zipfile.ZipFile(coreDemoDataPath) as z:
-                    srcFiles = filesInZip(corePath, 'product-data-and-assets-biz-unit.zip', 'Core/DemoData/' + user + '/')
+                    srcFiles = filesInZip(corePath, 'product-data-and-assets-biz-unit.zip',
+                                          'Core/DemoData/' + user + '/')
                     for file in srcFiles:
                         try:
                             with z.open(file) as f:

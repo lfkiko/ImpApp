@@ -26,6 +26,7 @@ WindowManger:
     SettingsWindow:
     jsonsWindow:
     updateFactAttributeWindow:
+    updateFactCategoryWindow:
 
 <WindowManger>
     size: root.width, root.height
@@ -152,12 +153,6 @@ WindowManger:
             padding:10
             spacing: 20
             size: root.width, root.height
-#            canvas:
-#                Color:
-#                    rgba: 1,1,1, .9
-#                Line:
-#                    width: 2.
-#                    rectangle: (self.x, self.y, self.width, self.height)
             RoundedButton:
                 text: "SCategory Groups"
                 on_release:
@@ -198,8 +193,10 @@ WindowManger:
 
             RoundedButton:
                 markup: True
-                text: "Update Fact Attribute"
-                on_release: root.runFunc()
+                text: "Update Fact Category"
+                on_release:
+                    app.root.current = "updateFactCategory"
+                    root.manager.transition.direction = "left"
 
 
         tailBoxLayout:

@@ -84,10 +84,11 @@ def main(argv):
         error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
     
-    insights = os.listdir(solution)
-    insights.remove('SEntities')
-    categoriesDict = creatDict(categoriesJson)
-    checkFacts(solution, insights, categoriesDict)
+    # insights = os.listdir(solution)
+    # insights.remove('SEntities')
+    # categoriesDict = creatDict(categoriesJson)
+    # checkFacts(solution, insights, categoriesDict)
+    print('Not ready yet')
     endLog()
 
 
