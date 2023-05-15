@@ -1,9 +1,9 @@
 import os
 import sys
 from logging import error
-from Scripts.toolBoox.excelJsonToolBox import getheader, getRow, getCol, readJsonUtf8Sig, updateJsonUtf8Sig
+from Scripts.toolBoox.excelJsonToolBox import getheader, getRow, getCol, readJsonUtf8Sig, updateJsonUtf8Sig, writeJson
 from Scripts.toolBoox.logs import startLog, endLog
-from Scripts.toolBoox.toolBoox import createPath, getSolution, getPath
+from Scripts.toolBoox.toolBoox import createPath, getSolution, getPath, filesInZip
 
 attributesID = ['accounts', 'committedTransactions', 'DAAccount', 'DACategory', 'DAccount',
                 'DAcrossaccountrelationship', 'DAParty', 'DATansaction', 'DCard', 'DConsent', 'DHolding',
@@ -18,6 +18,15 @@ attributesID = ['accounts', 'committedTransactions', 'DAAccount', 'DACategory', 
 
 requireFieldsForTriggerLogic = ['type', 'dataAttributeId', 'droolClass', 'relatedEntity']
 javaEntitiesStrings = dict({})
+
+
+def inCore(attribute, corePath):
+    coreAttributes = filesInZip(corePath, 'product-editor-engage-biz-unit.zip', 'Core/SEditorDefinition/DataAttribute')
+    print(attribute)
+    if 'Core/SEditorDefinition/DataAttribute/' + attribute + '.json' in coreAttributes:
+        return True
+    else:
+        return False
 
 
 def getVal(colName, colVal):
@@ -225,7 +234,8 @@ def createAttribute(solution, attributeName, row, allHeaders, rowNumber, corePat
     if exsits:
         change = False
         for attribute in jsonEntity:
-            if attribute in currentJson.keys() and jsonEntity[attribute] != 'noData' and type(jsonEntity[attribute]) != list:
+            if attribute in currentJson.keys() and jsonEntity[attribute] != 'noData' and type(
+                jsonEntity[attribute]) != list:
                 if currentJson[attribute] != jsonEntity[attribute]:
                     currentJson[attribute] = jsonEntity[attribute]
                     change = True
@@ -237,42 +247,71 @@ def createAttribute(solution, attributeName, row, allHeaders, rowNumber, corePat
         return jsonEntity
 
 
+def createJson(row, headers):
+    return True
+
+
 def main(argv):
     startLog()
+    # solution path
     try:
         solution = createPath(getSolution(getPath('solution')), 'SEditorDefinition\\DataAttribute')
     except Exception as e:
         error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
-    
+    # path to DataLoad
     try:
-        corePath = getPath('corePath')
+        corePath = getPath('DataLoad')
     except Exception as e:
         error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
+    
     if argv[1]:
         upperAttributesID = []
+        # what's lines 259- 260?
         for x in attributesID:
             upperAttributesID.append(x.upper())
-        
+        coreAttributes = []
+        customAttributes = []
         attributes = getCol(argv[0], 'id')
-        allHeaders = getheader(argv[0])
-        rowNumber = 2
-        for attribute in attributes:
-            row = getRow(argv[0], attributes.index(attribute) + 1)
-            # num = attributes.index(attribute) + 1
-            attributeName = attribute[:attribute.index('-')]
-            if attributeName.upper() in upperAttributesID:
-                attributeName = attributesID[upperAttributesID.index(attributeName.upper())] + attribute[
-                                                                                               attribute.index('-'):]
+        for a in attributes:
+            if inCore(a, corePath):
+                coreAttributes.append(a)
             else:
-                attributeName = attribute
-            if attributeName == 'visibleContent':
-                print(row)
-            jsonEntity = createAttribute(solution, attributeName, row, allHeaders, rowNumber, corePath)
-            if type(jsonEntity) is dict:
-                saveJson(jsonEntity, rowNumber, solution)
-            rowNumber += 1
+                customAttributes.append(a)
+        allHeaders = getheader(argv[0])
+        
+        for cAttribute in coreAttributes:
+            if cAttribute + '.json' not in solution:
+                # add to solution
+                pass
+            else:
+                # compare attribute json
+                pass
+        for custom in customAttributes:
+            customJson = createJson(getRow(argv[0], attributes.index(custom)), allHeaders)
+            if custom + '.json' not in solution:
+                writeJson(os.path.join(solution, custom + '.json'), customJson)
+            else:
+                # compare Json
+                pass
+        
+        # rowNumber = 2
+        # for attribute in attributes:
+        #     row = getRow(argv[0], attributes.index(attribute) + 1)
+        #     # num = attributes.index(attribute) + 1
+        #     attributeName = attribute[:attribute.index('-')]
+        #     if attributeName.upper() in upperAttributesID:
+        #         attributeName = attributesID[upperAttributesID.index(attributeName.upper())] + attribute[
+        #                                                                                        attribute.index('-'):]
+        #     else:
+        #         attributeName = attribute
+        #     if attributeName == 'visibleContent':
+        #         print(row)
+        #     jsonEntity = createAttribute(solution, attributeName, row, allHeaders, rowNumber, corePath)
+        #     if type(jsonEntity) is dict:
+        #         saveJson(jsonEntity, rowNumber, solution)
+        #     rowNumber += 1
     
     if argv[2]:
         removeDeactivated(solution)

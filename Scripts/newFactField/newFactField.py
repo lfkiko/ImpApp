@@ -43,10 +43,19 @@ def checkFacts(solution, insights, fact, fieldName, fieldType, fieldVal):
 def main(argv):
     startLog()
     try:
-        solution = os.path.join(getSolution(getPath('solution')), 'Insights')
+        solution = getSolution(getPath('solution'))
+        # os.path.join(getSolution(getPath('solution')), 'Insights')
     except Exception as e:
         error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
+    channels = getChannels(solution)
+    if len(channels) > 3:
+        theChannel = chooseChanel(channels)
+        try:
+            solution = os.path.join(solution + theChannel, 'Insights')
+        except Exception as e:
+            error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
+            return
     fact = argv[0]
     fieldName = argv[1]
     fieldVal = argv[2]

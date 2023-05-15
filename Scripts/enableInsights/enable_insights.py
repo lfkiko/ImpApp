@@ -2,8 +2,8 @@ import os
 import shutil
 import sys
 from logging import error, warning
-import PySimpleGUI as sg
 
+from Scripts.enableInsights.newEnableInsights import getChannels, chooseChanel
 from Scripts.toolBoox.excelJsonToolBox import readCsv, readJson, updateJson
 from Scripts.toolBoox.logs import startLog, endLog
 from Scripts.toolBoox.toolBoox import getSolution, modelVersion, getPath
@@ -11,16 +11,6 @@ from Scripts.toolBoox.toolBoox import getSolution, modelVersion, getPath
 searchedCoreFolders = ["product-subscriptions-biz-unit", "product-budgets-biz-unit", "product-debt-biz-unit",
                        os.path.join("product-engage-biz-unit", "Projects"), "product-pa-biz-unit"]
 searchedModelFolders = ['product-subscriptions-biz-unit', 'product-portfolio-biz-unit']
-
-
-def getChannels(solution):
-    path = os.path.dirname(solution)
-    channels = []
-    for x in os.listdir(path):
-        if os.path.isdir(os.path.join(path, x)):
-            channels.append(x)
-    return channels
-
 
 def validInsight(insightName):
     try:
@@ -121,13 +111,7 @@ def runOverInsights(core, solution, modelPath, enableCsv, useModel):
     return notFound
 
 
-def chooseChanel(channels):
-    event, values = sg.Window('Choose an option', [
-        [sg.Text('Select one->'), sg.Listbox(channels, size=(20, 3), key='LB')],
-        [sg.Button('Ok')]]).read(close=True)
-    channel = values["LB"][0]
-    channel = channel[channel.index('$'):]
-    return channel
+
 
 
 def main(argv):

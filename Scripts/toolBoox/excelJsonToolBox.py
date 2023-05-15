@@ -102,12 +102,12 @@ def updateJsonUtf8Sig(filePath, jsonObject):
 
 def updateJsonMultiLang(filePath, jsonObject):
     with open(filePath, "w", encoding=checkEndCode(filePath)) as f:
-        json.dump(jsonObject, f, ensure_ascii=False, indent=4)
+        json.dumps(jsonObject, f, ensure_ascii=False, indent=4)
 
 
 def updateJsonMultiLangUtf8Sig(filePath, jsonObject):
     with open(filePath, "w", encoding='utf-8-sig') as f:
-        json.dump(jsonObject, f, ensure_ascii=False, indent=4)
+        json.dumps(jsonObject, f, ensure_ascii=False, indent=4)
 
 
 def readCsv(filePath):

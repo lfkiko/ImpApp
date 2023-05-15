@@ -2,9 +2,8 @@ import os
 import webbrowser
 import zipfile
 from logging import error
-import tkinter as tk
-from tkinter import filedialog
-from tkinter.ttk import Combobox, Button
+
+import PySimpleGUI as Sg
 
 from bs4 import BeautifulSoup
 from kivy.app import App
@@ -19,7 +18,8 @@ def createDirectory(solutionsPath, path):
     for p in directories:
         try:
             os.mkdir(solutionsPath + os.sep + p)
-        except:
+        except Exception as e:
+            error(e.__str__())
             pass
         solutionsPath = solutionsPath + os.sep + p
 
@@ -63,7 +63,7 @@ def verifyPath(self, filterX, path):
             self.ids.solutionPath.text = fixedPath
 
 
-def openKB(self):
+def openKB():
     webbrowser.open('https://track.personetics.com/youtrack/articles/S-A-306/Solution-Imp--')
 
 
@@ -142,3 +142,27 @@ def filesInZip(path, zippedDir, pathTo):
             if pathTo in names and pathTo != names:
                 files.append(names)
     return files
+
+
+def getChannels(solution):
+    path = os.path.dirname(solution)
+    channels = []
+    for x in os.listdir(path):
+        if os.path.isdir(os.path.join(path, x)):
+            channels.append(x)
+    return channels
+
+
+def chooseChanel(channels):
+    listLayout = [
+        [
+            Sg.Text('Select one->'),
+            Sg.Listbox(channels, size=(30, 10), key='LB')
+        ],
+        [Sg.Button('Ok')]
+    ]
+    event, values = Sg.Window('Choose an option', listLayout).read(close=True)
+    channel = values["LB"][0]
+    channel = channel[channel.index('$'):]
+    
+    return channel
