@@ -20,26 +20,10 @@ def searchInsightInCore(corePath, insightName):
     for zipDir in zips:
         insightsInPath = filesInZip(corePath, zipDir, 'Core/Insights/' + insightName)
         if len(insightsInPath) != 0:
+            if '-docs' in zipDir:
+                zipDir = zipDir[0:zipDir.rindex('-')] + zipDir[zipDir.rindex('.'):]
             return zipDir
     return FileNotFoundError
-
-
-def getChannels(solution):
-    path = os.path.dirname(solution)
-    channels = []
-    for x in os.listdir(path):
-        if os.path.isdir(os.path.join(path, x)):
-            channels.append(x)
-    return channels
-
-
-def chooseChanel(channels, sg=None):
-    event, values = sg.Window('Choose an option', [
-        [sg.Text('Select one->'), sg.Listbox(channels, size=(20, 3), key='LB')],
-        [sg.Button('Ok')]]).read(close=True)
-    channel = values["LB"][0]
-    channel = channel[channel.index('$'):]
-    return channel
 
 
 def validInsight(insightName):
@@ -62,25 +46,42 @@ def getUcsList(insightName, ucs):
 
 
 def cleanSInsight(ucsList, SInsightPath):
-    SInsightData = readJson(SInsightPath)
-    SInsightData.pop('dependencies')
-    for key in SInsightData['insightMetadata'].keys():
-        if key not in ['activated', 'name', 'description']:
-            SInsightData['insightMetadata'].pop(key)
-        if key == 'activated':
-            SInsightData['insightMetadata'][key] = 'TRUE'
-    for uc in SInsightData['useCases']:
+    try:
+        SInsightData = readJson(SInsightPath)
+    except Exception as e:
+        print(SInsightPath)
+        error(e.__str__())
+        return
+    if 'dependencies' in SInsightData.keys():
+        SInsightData.pop('dependencies')
+    
+    keysToRemove = list(SInsightData['insightMetadata'].keys())
+    for key in ['activated', 'name', 'description']:
+        keysToRemove.remove(key)
+    
+    for key in keysToRemove:
+        SInsightData['insightMetadata'].pop(key)
+        
+    SInsightData['insightMetadata']['activated'] = 'TRUE'
+    ucs = len(SInsightData['useCases'])
+    toRemove = []
+    for uc in range(ucs):
         if SInsightData['useCases'][uc]['id'] in ucsList:
             SInsightData['useCases'][uc]['activated'] = 'TRUE'
         else:
-            try:
-                SInsightData['useCases'].remove(uc)
-            except Exception as e:
-                error(e.__str__())
+            toRemove.append(uc)
+            # try:
+            #     pass
+            # except Exception as e:
+            #     print(SInsightPath)
+            #     error(e.__str__())
+    if len(toRemove) == 0:
+        for i in reversed(toRemove):
+            SInsightData['useCases'].remove(i)
     updateJson(SInsightPath, SInsightData)
 
 
-def overwriteInsight(solutionPath, corePath, insightName, ucs):
+def reOverwriteInsight(solutionPath, corePath, insightName, ucs):
     try:
         insightZipDir = searchInsightInCore(corePath, insightName)
         insightCorePath = os.path.join(corePath, insightZipDir)
@@ -129,13 +130,101 @@ def sortInsights(solutionPath, corePath, enableCsv):
         if not validInsight(insightName):
             warning("insight name is illegal: " + insightName)
         ucs = enableCsv['UC'][i]
-        overwriteInsight(solutionPath, corePath, insightName, ucs)
+        reOverwriteInsight(solutionPath, corePath, insightName, ucs)
+
+
+def createInsightDirectory(solutionPath, insights):
+    for i in insights:
+        try:
+            os.mkdir(os.path.join(solutionPath, i))
+        except Exception as e:
+            if 'already exists' in e.__str__():
+                warning('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
+
+
+def createUcDirectory(solutionPath, ucs):
+    for u in ucs:
+        insight = u[0: u.rindex('_')]
+        try:
+            os.mkdir(os.path.join(solutionPath, insight, u))
+        except Exception as e:
+            if 'already exists' in e.__str__():
+                warning('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
+
+
+def ucsDict(insights, ucs):
+    tmpDict = dict()
+    for i in insights:
+        tmpDict[i] = list()
+        for u in ucs:
+            if i == u[0: u.rindex('_')]:
+                tmpDict[i].append(u)
+    return tmpDict
+
+
+def overwriteInsight(solution, corePath, insight, allUcs):
+    try:
+        insightZipDir = searchInsightInCore(corePath, insight)
+        insightCorePath = os.path.join(corePath, insightZipDir)
+        if insightZipDir == FileNotFoundError:
+            return
+    except Exception as e:
+        error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
+        return
+    
+    finally:
+        insightPath = os.path.join(solution, insight)
+        with zipfile.ZipFile(insightCorePath) as z:
+            srcFiles = filesInZip(corePath, insightZipDir, 'Core/Insights/' + insight + '/')
+            for file in srcFiles:
+                if file.split('/')[-1] == 'SInsight.json':
+                    try:
+                        with z.open(file) as j:
+                            sInsight = jsonifyZip(j.read())
+                            if os.path.exists(os.path.join(insightPath, 'SInsight.json')):
+                                updateJson(os.path.join(insightPath, 'SInsight.json'), sInsight)
+                            else:
+                                writeJson(os.path.join(insightPath, 'SInsight.json'), sInsight)
+                    except Exception as e:
+                        error(e.__str__())
+                    cleanSInsight(allUcs[insight], os.path.join(insightPath, 'SInsight.json'))
+                # print(file.split('/')[-1])
+                # if file.split('/')[-2] in allUcs[insight] and file.split('/')[-1] != '':
+                #     print(allUcs[insight])
+                #     print(file)
+                if file.split('/')[-2] in allUcs[insight] and file.split('/')[-1] != '':
+                    # print('here')
+                    # ucFiles = filesInZip(corePath, insightZipDir, 'Core/DemoData/' + insight + '/' + file + '/')
+                    # for uc in ucFiles:
+                    tempInsightPath = os.path.join(insightPath, file.split('/')[-2], file.split('/')[-1])
+                    try:
+                        with z.open(file) as ucj:
+                            jsonFile = jsonifyZip(ucj.read())
+                            if os.path.exists(tempInsightPath):
+                                updateJsonMultiLang(tempInsightPath, jsonFile)
+                            else:
+                                writeJsonMultiLang(tempInsightPath, jsonFile)
+                    except Exception as e:
+                        print('here - ' + file.split('/')[-2] + '/' + file.split('/')[-1])
+                        error(e.__str__())
+                    # print(file)
+                    # ucFiles = filesInZip(corePath, insightZipDir, 'Core/DemoData/' + insight + '/' + file + '/')
+                    # for ucFile in ucFiles:
+                    #     try:
+                    #         with z.open(ucFile) as ucJ:
+                    #             jsonFile = jsonifyZip(j.read())
+                    #             writeJson(os.path.join(insightPath, ucFile), jsonFile)
+                    #             # newJason = open(os.path.join(insightPath, file.split('/')[-1]), 'a')
+                    #             # newJason.write(
+                    #             #     json.dumps(json.loads(ucJ.read().decode(encoding='utf-8-sig')), indent=4))
+                    #     except Exception as e:
+                    #         error(e.__str__())
 
 
 def main(argv):
     startLog()
     try:
-        solutionPath = os.path.join(getSolution(getPath('solution')), 'Insights')
+        solution = getSolution(getPath('solution'))
     except:
         error(getPath('solution') + ' is not a correct path Demo data didn\'t run')
         return
@@ -144,45 +233,48 @@ def main(argv):
     except Exception as e:
         error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
-    channels = getChannels(getSolution(getPath('solution')))
+    channels = getChannels(solution)
     if len(channels) > 3:
         theChannel = chooseChanel(channels)
-        solutionPath = solutionPath + theChannel
-    print(solutionPath)
-    print(corePath)
-    print(channels)
-    print(argv[0])
+        try:
+            solution = os.path.join(solution + theChannel, 'Insights')
+        except Exception as e:
+            error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
+            return
+    else:
+        try:
+            solution = os.path.join(getSolution(getPath('solution')), 'Insights')
+        except Exception as e:
+            error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
+            return
+    
     insights = getCol(argv[0], 'Insight')
-    tmpInsights = list()
-    for i in insights:
-        if i not in tmpInsights:
-            tmpInsights.append(i)
-    insights = tmpInsights
     ucs = getCol(argv[0], 'UC')
     activated = getCol(argv[0], 'Activated')
-    tmpUc = list()
-    for uc in range(len(ucs)):
-        if activated[uc] != None:
-            tmpUc.append(ucs[uc])
-    ucs = tmpUc
-    print(insights)
-    # insights = set(insights)
-    # insights = list(insights).sort()
+    tmpInsights = list()
+    tmpUcs = list()
+    for i in range(len(insights)):
+        if activated[i] == 'V':
+            tmpInsights.append(insights[i])
+            tmpUcs.append(ucs[i])
+    insights = tmpInsights
+    ucs = tmpUcs
+    insights = set(insights)
+    createInsightDirectory(solution, insights)
+    createUcDirectory(solution, ucs)
+    ucsDictionary = ucsDict(list(insights), ucs)
+    
+    # prettyPrintJson(ucsDictionary)
     # print(insights)
-    # UCS = getRow(argv[0], 'UC')
-    # insights = getRow(argv[0], 'insight')
-    # insights = getRow(argv[0], 'insight')
-    # printExcel(argv[0])
-    # print(getColCsv(argv[0], 'insight'))
-    # print(getColCsv(argv[0], 'UC'))
-    # print(getColCsv(argv[0], 'EB'))
-    # print(getColCsv(argv[0], 'Activated'))
-    #
+    # print(ucs)
+    
+    for insight in insights:
+        overwriteInsight(solution, corePath, insight, ucsDictionary)
     # if not os.path.exists(solutionPath):
     #     error(solutionPath + ' dosn\'t exists')
     #     return
     # inputFile = argv[0]
-    # # print(argv[0])
+    # print(argv[0])
     # enableCsv = readCsv(inputFile)
     # print(enableCsv)
     # sortInsights(solutionPath, corePath, enableCsv)

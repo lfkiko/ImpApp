@@ -8,7 +8,7 @@ def updateFacts(insightPath, insightUc, fact, fieldName, fieldType, fieldVal):
     insightFactsPath = os.path.join(insightPath, insightUc, "JInsightFacts.json")
     if os.path.exists(insightPath):
         try:
-            insightFacts = readJsonUtf8Sig(insightFactsPath)
+            insightFacts = readJson(insightFactsPath)
         except Exception as e:
             error(e.__str__())
         if fact in insightFacts.keys():
@@ -17,8 +17,9 @@ def updateFacts(insightPath, insightUc, fact, fieldName, fieldType, fieldVal):
                 for row in insightFacts[fact]['rows']:
                     row.append(fieldVal)
                 insightFacts[fact]['attributesTypes'].append(fieldType)
+                
                 try:
-                    updateJsonMultiLangUtf8Sig(insightFactsPath, insightFacts)
+                    updateJsonMultiLang(insightFactsPath, insightFacts)
                 except Exception as e:
                     error(e.__str__())
             else:
@@ -54,9 +55,14 @@ def main(argv):
     channels = getChannels(solution)
     if len(channels) > 3:
         theChannel = chooseChanel(channels)
-        print(theChannel)
         try:
             solution = os.path.join(solution + theChannel, 'Insights')
+        except Exception as e:
+            error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
+            return
+    else:
+        try:
+            solution = os.path.join(getSolution(getPath('solution')), 'Insights')
         except Exception as e:
             error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
             return

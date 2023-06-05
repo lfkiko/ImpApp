@@ -1,14 +1,8 @@
 import codecs
-import json
-import os
 import sys
-from logging import error
 from tkinter.messagebox import askyesno
-
+from Scripts.toolBoox import *
 from Scripts.addingUsers import categoriesAdaptation
-from Scripts.toolBoox.excelJsonToolBox import getCol, readJson, getheader
-from Scripts.toolBoox.logs import startLog, endLog
-from Scripts.toolBoox.toolBoox import getPath, getSolution, getFile
 
 
 def createLanguages(fileName, lanNames):
@@ -33,6 +27,7 @@ def getFromSource(categoryId, value):
 
 
 def createSCategoryGroups(categories, direction, languages, numOfLang, listOfLanguages, CType):
+    sub = bool()
     try:
         langs = int(numOfLang)
     except Exception as e:
@@ -48,12 +43,14 @@ def createSCategoryGroups(categories, direction, languages, numOfLang, listOfLan
     for i in range(len(categories)):
         new_cg = {'id': categories[i],
                   'description': {'langMap': {}}}
+        
         for j in range(langs):
             new_cg['description']['langMap'][listOfLanguages[j]] = languages[i][j]
-        if not sub:
-            new_cg['clientCategoryId'] = "C" + categories[i]
-        elif sub:
+        if sub:
             data['subCategories'].append(new_cg)
+        else:
+            new_cg['clientCategoryId'] = "C" + categories[i]
+            data['categoryGroups'].append(new_cg)
     return data
 
 
@@ -84,13 +81,31 @@ def main(argv):
     jsonName = os.path.join(solution, argv[3] + ".json")
     categories = getCol(argv[0], 'CG')
     direction = getCol(argv[0], 'direction')
-    langNum = int(argv[1])
+    if argv[1] == 'Choose number of languages':
+        error('Please choose number of languages')
+        return
+    else:
+        langNum = int(argv[1])
     lanNames = argv[2][0: langNum]
+    print(argv[2])
+    print(lanNames)
     languages = createLanguages(argv[0], lanNames)
+    print(languages)
     categoryGroups = createSCategoryGroups(categories, direction, languages, langNum, lanNames, argv[3])
     if categoryGroups == -1:
         error('Stop while running: SCategoryGroups.json stopped without completing the task')
         return
+    if os.path.exists(jsonName):
+        try:
+            updateJsonMultiLang(jsonName, categoryGroups)
+        except Exception as e:
+            error(e.__str__())
+    else:
+        try:
+            writeJsonMultiLang(jsonName, categoryGroups)
+        except Exception as e:
+            error(e.__str__())
+    
     writeCategoriesJson(jsonName, categoryGroups)
     if askyesno('Confirmation', 'Would you like to run categoriesAdaptation.py?') and argv[1] == 'SCategoryGroups':
         try:

@@ -90,6 +90,12 @@ def writeJson(filePath, jsonObject):
     f.close()
 
 
+def writeJsonMultiLang(filePath, jsonObject):
+    f = open(filePath, "a", encoding='utf-8')
+    f.write(json.dumps(jsonObject, ensure_ascii=False, indent=4))
+    f.close()
+
+
 def updateJson(filePath, jsonObject):
     with open(filePath, "w", encoding=checkEndCode(filePath)) as f:
         json.dump(jsonObject, f, indent=4)
@@ -102,12 +108,12 @@ def updateJsonUtf8Sig(filePath, jsonObject):
 
 def updateJsonMultiLang(filePath, jsonObject):
     with open(filePath, "w", encoding=checkEndCode(filePath)) as f:
-        json.dumps(jsonObject, f, ensure_ascii=False, indent=4)
+        json.dump(jsonObject, f, ensure_ascii=False, indent=4)
 
 
 def updateJsonMultiLangUtf8Sig(filePath, jsonObject):
     with open(filePath, "w", encoding='utf-8-sig') as f:
-        json.dumps(jsonObject, f, ensure_ascii=False, indent=4)
+        json.dump(jsonObject, f, ensure_ascii=False, indent=4)
 
 
 def readCsv(filePath):
@@ -138,6 +144,13 @@ def prettyPrintJson(jsonData):
 def checkEndCode(filePath):
     with open(filePath) as rawData:
         return rawData.encoding
+
+
+def jsonifyZip(text):
+    tmpData = text.decode(encoding='utf-8-sig')
+    tmpData = tmpData.replace('\n', '')
+    tmpData = tmpData.replace('\t', '')
+    return json.loads(tmpData)
 
 
 def isNan(val):

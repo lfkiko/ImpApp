@@ -163,6 +163,9 @@ def chooseChanel(channels):
     ]
     event, values = Sg.Window('Choose an option', listLayout).read(close=True)
     channel = values["LB"][0]
-    channel = channel[channel.index('$'):]
+    if '$' in channel:
+        channel = channel[channel.index('$'):]
+    else:
+        channel = ""
     
     return channel
