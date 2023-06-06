@@ -295,7 +295,7 @@ class sEditorVisibleWindow(Screen):
     Builder.load_file('Scripts/enableInsights/sEditorVisible.kv')
     
     def runFunc(self):
-        sEditorVisible.main([self.name])
+        sEditorVisible.main([getFile(self.name + "_raw")])
     
     pass
 

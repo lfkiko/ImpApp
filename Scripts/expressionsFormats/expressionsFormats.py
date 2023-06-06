@@ -1,108 +1,114 @@
-import os
+import os.path
 import sys
-from logging import error
-
-from Scripts.toolBoox.excelJsonToolBox import readJsonZip, prettyPrintJson, getCol, getheader, isNan
-from Scripts.toolBoox.logs import startLog, endLog
-from Scripts.toolBoox.toolBoox import getPath, getSolution
+from Scripts.toolBoox import *
+import zipfile
 
 
-def createLanguages(fileName, lanNames):
-    languages = list()
-    tmpLanguages = dict()
-    for i in range(len(lanNames)):
-        print(getCol(fileName, lanNames[i]))
-        tmpLanguages["lang" + str(i + 1)] = getCol(fileName, lanNames[i])
-    for j in range(len(tmpLanguages["lang1"])):
-        tmpList = []
-        for lang in tmpLanguages.keys():
-            tmpList.append(tmpLanguages[lang][j])
-        languages.append(tmpList)
-    return languages
-
-
-def createSExpressionsFormats(jsonData: dict, expressions, languages, langNum, lanNames):
-    newJsonData = jsonData
-    afterDecimal = list()
-    amountFormats = list()
-    for j in range(langNum):
-        try:
-            after = int(languages[expressions.index('No. of Digits after decimal')][j])
-        except Exception as e:
-            error(e.__str__())
-            return -1
-        num = languages[expressions.index('Decimal Symbol')][j]
-        for x in range(after):
-            num += '0'
-        afterDecimal.append(num)
+def createAmounts(formats, amountFormat, languages):
+    ids = ['Sum', 'Avg']
+    for k in ['balance', 'OneTx', 'OneTxAbs', 'Sum', 'SumAbs', 'Avg', 'AvgAbs']:
+        formats[k] = dict()
+    for i in languages:
+        tmp = amountFormat[languages.index(i) + 1].replace("\'", "")
+        formats['balance'][i] = tmp
+        formats['OneTx'][i] = tmp
+        if tmp.find('-') > 0:
+            formats['OneTxAbs'][i] = tmp.replace('-', '+')
+        else:
+            formats['OneTxAbs'][i] = tmp[:tmp.index('#')] + '+' + tmp[tmp.index('#'):]
         
-        groupSign = languages[expressions.index('Digit grouping')][j][1:][3]
-        amountFormat = '###' + groupSign + '###' + groupSign + '###'
-        currencySign = languages[expressions.index('Currency Symbol Location')][j]
-        currencyLocation = '@'
-        if currencySign[0] == '$':
-            for space in currencySign[1:]:
-                if not space.isnumeric():
-                    currencyLocation += space
-                else:
-                    break
-            amountFormat = currencyLocation + amountFormat
-        elif currencySign[-1] == '$':
-            for space in currencySign[-2::-1]:
-                if not space.isnumeric():
-                    currencyLocation = space + currencyLocation
-                else:
-                    break
-            amountFormat = amountFormat + currencyLocation
-        amountFormats.append(amountFormat)
+        if tmp.index('@') < len(tmp):
+            if tmp[tmp.index('@') + 1] == " ":
+                sign = 2
+            else:
+                sign = 1
+        
+        else:
+            if tmp[tmp.index('@') - 1] == " ":
+                sign = -2
+            else:
+                sign = -1
+        for d in ids:
+            plus = d + 'Abs'
+            if sign > 0:
+                formats[d][i] = tmp[sign:]
+                formats[plus][i] = formats['OneTxAbs'][i][sign:]
+            else:
+                formats[d][i] = tmp[:sign]
+                formats[plus][i] = formats['OneTxAbs'][i][:sign]
     
-    for key in range(len(jsonData['formats'])):
-        tmp = {}
-        if newJsonData['formats'][key]['name'] in expressions:
-            if newJsonData['formats'][key]['type'] == 'Date':
-                for i in range(langNum):
-                    tmp[lanNames[i]] = languages[expressions.index(newJsonData['formats'][key]['name'])][i]
-        if newJsonData['formats'][key]['type'] == 'Amount':
-            for i in range(langNum):
-                if newJsonData['formats'][key]['id'] == 'Balance':
-                    tmp[lanNames[i]] = amountFormats[i][:amountFormats[i].rindex('#') + 1] + afterDecimal[i] + \
-                                       amountFormats[i][amountFormats[i].rindex('#') + 1:]
-                elif 'Abs' in newJsonData['formats'][key]['id']:
-                    tmp[lanNames[i]] = '+' + amountFormats[i]
-                else:
-                    tmp[lanNames[i]] = amountFormats[i]
-        if len(tmp) > 0:
-            check = True
-            for x in tmp.keys():
-                if isNan(tmp[x]):
-                    check = False
-            if check:
-                newJsonData['formats'][key]['formats'] = tmp
+    return formats
+
+
+def copyJson(corePath, solution, fileName):
+    try:
+        zipDir = searchInsightInCore(corePath, 'SEntities')
+        
+        insightCorePath = os.path.join(corePath, zipDir)
+        if zipDir == FileNotFoundError:
+            return
+    except Exception as e:
+        error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
+        return
     
-    return newJsonData
+    finally:
+        with zipfile.ZipFile(insightCorePath) as z:
+            srcFiles = filesInZip(corePath, zipDir, 'Core/Insights/')
+            for file in srcFiles:
+                if file.split('/')[-1] == fileName:
+                    try:
+                        with z.open(file) as j:
+                            sInsight = jsonifyZip(j.read())
+                            if os.path.exists(os.path.join(solution, fileName)):
+                                updateJson(os.path.join(solution, fileName), sInsight)
+                            else:
+                                writeJson(os.path.join(solution, fileName), sInsight)
+                    
+                    except Exception as e:
+                        error(e.__str__())
+    return
+
+
+def updateFormats(solution, formats, mainJson, fileName):
+    for i in range(len(mainJson['formats'])):
+        if mainJson['formats'][i]['id'] in formats.keys() or mainJson['formats'][i]['name'] in formats.keys():
+            mainJson['formats'][i]['formats'] = formats[mainJson['formats'][i]['id']]
+    try:
+        updateJson(os.path.join(solution, fileName), mainJson)
+    except Exception as e:
+        error(e.__str__())
 
 
 def main(argv):
     startLog()
+    fileName = 'SExpressionsFormats.json'
     try:
         solution = os.path.join(getSolution(getPath('solution')), 'Insights', 'SEntities')
+    except:
+        error(getPath('solution') + ' is not a correct path Demo data didn\'t run')
+        return
+    try:
+        corePath = createPath(getPath('solution'), 'package\\target\\DataLoad')
     except Exception as e:
         error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
-    jsonData = readJsonZip(getPath('DataLoad'), 'product-engage-biz-unit.zip', 'SExpressionsFormats.json')
-    expressions = getCol(argv[0], 'format')
-    lanNames = getheader(argv[0])[1:]
-    langNum = len(lanNames)
     
-    languages = createLanguages(argv[0], lanNames)
-    sExpressionsFormats = createSExpressionsFormats(jsonData, expressions, languages, langNum, lanNames)
-    if sExpressionsFormats == -1:
-        error('Stop while running: SCategoryGroups.json stopped without completing the task')
-        return
-    # for x in range(len(sExpressionsFormats['formats'])):
-    #     if len(sExpressionsFormats['formats'][x]['formats']) == 0:
-    #         sExpressionsFormats['formats'][x].update({'formats': jsonData['formats'][x]['formats']})
-    prettyPrintJson(sExpressionsFormats)
+    languages = getRow(argv[0], 0)
+    ids = getCol(argv[0], languages[0])
+    languages = languages[1:]
+    formats = dict()
+    for i in range(len(ids) - 1):
+        data = getRow(argv[0], i + 1)
+        key = ids[i].replace(" ", "")
+        formats[key] = dict()
+        for n in range(len(languages)):
+            formats[key] = data[n + 1]
+    
+    formats = createAmounts(formats, getRow(argv[0], len(ids)), languages)
+    copyJson(corePath, solution, fileName)
+    mainJson = readJson(os.path.join(solution, fileName))
+    updateFormats(solution, formats, mainJson, fileName)
+    
     endLog()
     
     if __name__ == "__main__":

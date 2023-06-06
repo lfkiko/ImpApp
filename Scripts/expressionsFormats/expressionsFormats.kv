@@ -1,24 +1,32 @@
 #:import utils kivy.utils
 #:import Factory kivy.factory.Factory
-
 <expressionsFormatsWindow>
     name: "expressionsFormats"
+
     BoxLayout:
         padding: 10
         spacing: 20
         orientation: "vertical"
         size: root.width, root.height
-        pos_hint:{'center_y': 0.5}
-
 
         HeaderLabel:
             text: "Expressions Formats"
 
-        BoxLayout:
+        BoxLayout
             orientation: "horizontal"
-            size: root.width, root.height
-            pos_hint:{'center_y': 0.5}
-            padding:20
+            padding: 10
+            spacing: 20
+
+            MyFileChooserLabel:
+                text: "Expressions formats file - "
+#                font_size: 32
+#                bold: True
+#                size_hint: None,None
+#                size: self.texture_size
+                pos_hint: {'center_x': 1, 'center_y': 0.5}
+
+            openFileButton:
+                on_release: Factory.MenuWindow().openFile(root.name)
 
 
         #menu

@@ -4,6 +4,7 @@ import sys
 from logging import error
 
 from Scripts.enableInsights import transfer
+from Scripts.enableInsights.newEnableInsights import ucsDict
 from Scripts.toolBoox.excelJsonToolBox import readCsv, writeJson, readJsonZip, getCol, updateJson
 from Scripts.toolBoox.logs import startLog, endLog
 from Scripts.toolBoox.toolBoox import getFile, getPath, getSolution
@@ -40,10 +41,26 @@ def main(argv):
     except Exception as e:
         error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
-    jsonData = readJsonZip(getPath('DataLoad'), 'product-editor-engage-biz-unit.zip', 'SEditorVisible.json')
-    transfer.main([argv[0], 'visible'])
-    fileName = getFile(argv[0])
-    jsonData = modifyJson(fileName, jsonData)
+    
+    insights = getCol(argv[0], 'Insight')
+    ucs = getCol(argv[0], 'UC')
+    exposed = getCol(argv[0], 'Exposed in EB')
+    tmpInsights = list()
+    tmpUcs = list()
+    for i in range(len(insights)):
+        if exposed[i] == 'V':
+            tmpInsights.append(insights[i])
+            tmpUcs.append(ucs[i])
+    insights = list(set(tmpInsights))
+    insights.sort()
+    # print(insights)
+    # insights.sort()
+    # print(insights)
+    ucsDictionary = ucsDict(insights, ucs)
+    jsonData = {"visible": ucsDictionary}
+    # transfer.main([argv[0], 'visible'])
+    # fileName = getFile(argv[0])
+    # jsonData = modifyJson(fileName, jsonData)
     jsonPath = os.path.join(solution, 'SEditorVisible.json')
     if os.path.exists(jsonPath):
         updateJson(jsonPath, jsonData)

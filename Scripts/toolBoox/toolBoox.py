@@ -12,6 +12,10 @@ from Scripts.toolBoox.excelJsonToolBox import readJson, updateJson
 
 fileManger = 'Scripts/Source/fileManger.json'
 
+searchedCoreFolders = ['product-act-biz-unit.zip', 'product-budgets-biz-unit.zip',
+                       'product-data-and-assets-biz-unit.zip', 'product-debt-biz-unit.zip',
+                       'product-engage-biz-unit.zip', 'product-goals-biz-unit.zip', 'product-mt-biz-unit.zip']
+
 
 def createDirectory(solutionsPath, path):
     directories = path.split(os.sep)
@@ -169,3 +173,18 @@ def chooseChanel(channels):
         channel = ""
     
     return channel
+
+
+def searchInsightInCore(corePath, insightName):
+    zips = os.listdir(corePath)
+    zips.remove('perso-biz.zip')
+    for dirZip in searchedCoreFolders:
+        if 'bank' in dirZip or 'docs' in dirZip:
+            zips.remove(dirZip)
+    for zipDir in zips:
+        insightsInPath = filesInZip(corePath, zipDir, 'Core/Insights/' + insightName)
+        if len(insightsInPath) != 0:
+            if '-docs' in zipDir:
+                zipDir = zipDir[0:zipDir.rindex('-')] + zipDir[zipDir.rindex('.'):]
+            return zipDir
+    return FileNotFoundError
