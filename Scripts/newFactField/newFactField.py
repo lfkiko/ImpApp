@@ -1,3 +1,5 @@
+from tkinter.messagebox import askyesno
+
 from Scripts.toolBoox import *
 import sys
 import os
@@ -13,11 +15,13 @@ def updateFacts(insightPath, insightUc, fact, fieldName, fieldType, fieldVal):
             error(e.__str__())
         if fact in insightFacts.keys():
             if fieldName not in insightFacts[fact]['cols']:
+                prettyPrintJson(insightFacts[fact])
                 insightFacts[fact]['cols'].append(fieldName)
                 for row in insightFacts[fact]['rows']:
                     row.append(fieldVal)
                 insightFacts[fact]['attributesTypes'].append(fieldType)
-                
+                prettyPrintJson(insightFacts[fact])
+
                 try:
                     updateJsonMultiLang(insightFactsPath, insightFacts)
                 except Exception as e:
@@ -75,24 +79,25 @@ def main(argv):
     checkFacts(solution, insights, fact, fieldName, fieldType, fieldVal)
     staticFacts = os.path.join(getSolution(getPath('solution')), "SEditorDefinition", "SStaticInsightFacts.json")
     if os.path.exists(staticFacts):
-        try:
-            insightFacts = readJsonUtf8Sig(staticFacts)
-        except Exception as e:
-            error(e.__str__())
-        if fact in insightFacts['factsData']['dataModels'].keys():
-            if fieldName not in insightFacts['factsData']['dataModels'][fact]['cols']:
-                insightFacts['factsData']['dataModels'][fact]['cols'].append(fieldName)
-                for row in insightFacts['factsData']['dataModels'][fact]['rows']:
-                    row.append(fieldVal)
-                insightFacts['factsData']['dataModels'][fact]['attributesTypes'].append(fieldType)
-                try:
-                    updateJsonMultiLangUtf8Sig(staticFacts, insightFacts)
-                except Exception as e:
-                    error(e.__str__())
+        if askyesno('Confirmation', 'Would you like to update the SStaticInsightFacts.json?'):
+            try:
+                insightFacts = readJsonUtf8Sig(staticFacts)
+            except Exception as e:
+                error(e.__str__())
+            if fact in insightFacts['factsData']['dataModels'].keys():
+                if fieldName not in insightFacts['factsData']['dataModels'][fact]['cols']:
+                    insightFacts['factsData']['dataModels'][fact]['cols'].append(fieldName)
+                    for row in insightFacts['factsData']['dataModels'][fact]['rows']:
+                        row.append(fieldVal)
+                    insightFacts['factsData']['dataModels'][fact]['attributesTypes'].append(fieldType)
+                    try:
+                        updateJsonMultiLangUtf8Sig(staticFacts, insightFacts)
+                    except Exception as e:
+                        error(e.__str__())
+                else:
+                    warning(fieldName + ' is already part of staticFacts')
             else:
-                warning(fieldName + ' is already part of staticFacts')
-        else:
-            warning(fact + ' is not part of ' + staticFacts)
+                warning(fact + ' is not part of ' + staticFacts)
     else:
         warning("SStaticInsightFacts.json is not overridden")
     endLog()
