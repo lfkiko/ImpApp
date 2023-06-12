@@ -10,7 +10,7 @@ def updateFacts(insightPath, insightUc, fact, fieldName, fieldType, fieldVal):
     insightFactsPath = os.path.join(insightPath, insightUc, "JInsightFacts.json")
     if os.path.exists(insightPath):
         try:
-            insightFacts = readJson(insightFactsPath)
+            insightFacts = readJsonMultilingual(insightFactsPath)
         except Exception as e:
             error(e.__str__())
         if fact in insightFacts.keys():
@@ -81,7 +81,7 @@ def main(argv):
     if os.path.exists(staticFacts):
         if askyesno('Confirmation', 'Would you like to update the SStaticInsightFacts.json?'):
             try:
-                insightFacts = readJsonUtf8Sig(staticFacts)
+                insightFacts = readJsonMultilingual(staticFacts)
             except Exception as e:
                 error(e.__str__())
             if fact in insightFacts['factsData']['dataModels'].keys():
@@ -91,7 +91,7 @@ def main(argv):
                         row.append(fieldVal)
                     insightFacts['factsData']['dataModels'][fact]['attributesTypes'].append(fieldType)
                     try:
-                        updateJsonMultiLangUtf8Sig(staticFacts, insightFacts)
+                        updateJsonMultiLang(staticFacts, insightFacts)
                     except Exception as e:
                         error(e.__str__())
                 else:

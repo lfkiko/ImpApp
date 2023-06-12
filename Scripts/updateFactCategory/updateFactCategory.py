@@ -4,57 +4,75 @@ import os
 from logging import error, warning
 
 
-def updateFacts(insightPath, insightUc, categoriesDict):
+def updateCategories(insightPath, insightUc, categoriesDict):
     insightFactsPath = os.path.join(insightPath, insightUc, "JInsightFacts.json")
-    factUpdated = False
     if os.path.exists(insightPath):
         try:
-            insightFacts = readJson(insightFactsPath)
-        except:
-            insightFacts = readJsonUtf8Sig(insightFactsPath)
+            insightFacts = readJsonMultilingual(insightFactsPath)
+        except Exception as e:
+            error(e.__str__())
+        factUpdated = False
+        # if 'categories' in insightFacts.keys():
+        #     cgRemove = []
+        #     for category in range(len(insightFacts['categories']['rows'])):
+        #         cg = insightFacts['categories']['rows'][category][0]
+        #         if cg in categoriesDict.keys():
+        #             insightFacts['categories']['rows'][category][1] = categoriesDict[cg]
+        #         else:
+        #             cgRemove.append(category)
         for fact in insightFacts.keys():
-            if fact != 'storyId' and 'category' in insightFacts[fact]['cols']:
-                factLen = len(insightFacts[fact]['cols'])
+            if fact == 'categories':
+                cgRemove = []
+                for category in range(len(insightFacts[fact]['rows'])):
+                    cg = insightFacts[fact]['rows'][category][0]
+                    if cg in categoriesDict.keys():
+                        insightFacts[fact]['rows'][category][1] = categoriesDict[cg]
+                    else:
+                        cgRemove.append(category)
+                if len(cgRemove) > 0:
+                    for cg in reversed(cgRemove):
+                        fact['categories']['rows'].remove(cg)
+                factUpdated = True
+                
+            elif fact != 'storyId' and any(col in insightFacts[fact]['cols'] for col in ('categoryGroup', 'categoryDescription')):
                 cgIndex = insightFacts[fact]['cols'].index('category')
-                if 'categoryDescription' in insightFacts[fact]['cols']:
-                    descriptionIndex = insightFacts[fact]['cols'].index('categoryDescription')
-                else:
-                    descriptionIndex = factLen
-                if 'categoryGroup' in insightFacts[fact]['cols']:
-                    categoryGroupIndex = insightFacts[fact]['cols'].index('categoryGroup')
-                else:
-                    categoryGroupIndex = factLen
-                if descriptionIndex != factLen or categoryGroupIndex != factLen:
-                    factUpdated = True
-                    for row in range(len(insightFacts[fact]['rows']) - 1):
-                        cgDescription = categoriesDict[insightFacts[fact]['rows'][row][cgIndex]]
-                        if descriptionIndex != factLen:
-                            insightFacts[fact]['rows'][row][descriptionIndex] = cgDescription
-                        if categoryGroupIndex != factLen:
-                            insightFacts[fact]['rows'][row][categoryGroupIndex] = cgDescription
+                indexes = {'categoryGroup': 0, 'categoryDescription': 0}
+                for col in ['categoryGroup', 'categoryDescription']:
+                    if col in insightFacts[fact]['cols']:
+                        indexes[col] = insightFacts[fact]['cols'].index(col)
+                    else:
+                        indexes[col] = -1
+                for row in range(len(insightFacts[fact]['rows'])):
+                    cgDescription = categoriesDict[insightFacts[fact]['rows'][row][cgIndex]]
+                    if indexes['categoryGroup'] > 0:
+                        insightFacts[fact]['rows'][row][indexes['categoryGroup']] = cgDescription
+                    if indexes['categoryDescription'] > 0:
+                        insightFacts[fact]['rows'][row][indexes['categoryDescription']] = cgDescription
+                factUpdated = True
         
         if factUpdated:
             try:
                 updateJsonMultiLang(insightFactsPath, insightFacts)
-            except:
-                updateJsonMultiLangUtf8Sig(insightFactsPath, insightFacts)
+            except Exception as e:
+                print('check')
+                error(e.__str__())
+        else:
+            warning('There are no categories in = ' + insightPath)
     
     else:
         warning('There is no such file = ' + insightPath)
 
 
-def checkFacts(solution, insights, categoriesDict):
+def checkFactsCatefories(solution, insights, categoriesDict):
     for insight in insights:
         insightUcs = []
         insightPath = os.path.join(solution, insight)
         for root, dirNames, filenames in os.walk(insightPath):
             insightUcs = dirNames
-            if 'doc' in insightUcs:
-                insightUcs.remove('doc')
             break
         for useCase in insightUcs:
             try:
-                updateFacts(insightPath, useCase, categoriesDict)
+                updateCategories(insightPath, useCase, categoriesDict)
             except Exception as e:
                 error(e.__str__() + ' ' + insight + ' ' + useCase)
 
@@ -74,21 +92,18 @@ def main(argv):
         error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
     try:
-        categoriesPath = os.path.join(getSolution(getPath('solution')), 'SEntities')
-    except Exception as e:
-        error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
-        return
-    try:
-        categoriesJson = readJson(os.path.join(categoriesPath, 'SCategoryGroups.json'))
+        categoriesPath = os.path.join(getSolution(getPath('solution')), 'SEntities', 'SCategoryGroups.json')
     except Exception as e:
         error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
     
-    # insights = os.listdir(solution)
-    # insights.remove('SEntities')
-    # categoriesDict = creatDict(categoriesJson)
-    # checkFacts(solution, insights, categoriesDict)
-    print('Not ready yet')
+    categoriesJson = readJsonMultilingual(categoriesPath)
+    
+    insights = os.listdir(solution)
+    insights.remove('SEntities')
+    categoriesDict = creatDict(categoriesJson)
+    prettyPrintJson(categoriesDict)
+    checkFactsCatefories(solution, insights, categoriesDict)
     endLog()
 
 

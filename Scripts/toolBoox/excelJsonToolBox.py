@@ -57,13 +57,23 @@ def getColCsv(fileName, colCategories):
 def readJson(filePath):
     with open(filePath, "r", encoding=checkEndCode(filePath)) as f:
         inputJson = json.load(f)
-        return inputJson
+    return inputJson
+
+
+def readJsonMultilingual(filePath):
+    try:
+        with open(filePath, "r", encoding='utf-8') as f:
+            inputJson = json.load(f)
+    except UnicodeDecodeError:
+        with open(filePath, "r", encoding='utf-8-sig') as f:
+            inputJson = json.load(f)
+    return inputJson
 
 
 def readJsonUtf8Sig(filePath):
     with open(filePath, "r", encoding='utf-8-sig') as f:
-        inputJson = json.loads(f.read())
-        return inputJson
+        inputJson = json.load(f)
+    return inputJson
 
 
 def readJsonZip(path, zipDir, fileName):
@@ -107,8 +117,12 @@ def updateJsonUtf8Sig(filePath, jsonObject):
 
 
 def updateJsonMultiLang(filePath, jsonObject):
-    with open(filePath, "w", encoding=checkEndCode(filePath)) as f:
-        json.dump(jsonObject, f, ensure_ascii=False, indent=4)
+    try:
+        with open(filePath, "w", encoding='utf-8') as f:
+            json.dump(jsonObject, f, ensure_ascii=False, indent=4)
+    except UnicodeDecodeError:
+        with open(filePath, "w", encoding='utf-8-sig') as f:
+            json.dump(jsonObject, f, ensure_ascii=False, indent=4)
 
 
 def updateJsonMultiLangUtf8Sig(filePath, jsonObject):
@@ -135,7 +149,7 @@ def prettyPrintJson(jsonData):
         jsonPrint = json.loads(jsonData)
         prettyPrintJson(jsonPrint)
     elif type(jsonData) == dict:
-        jsonPrint = json.dumps(jsonData, indent=4)
+        jsonPrint = json.dumps(jsonData, ensure_ascii=False, indent=4)
         print(jsonPrint)
     else:
         error('Type Error: The Object\'s type needs to be dict() or str() and not {0}'.format(type(jsonData)))
