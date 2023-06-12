@@ -96,38 +96,38 @@ def readJsonZip(path, zipDir, fileName):
 
 def writeJson(filePath, jsonObject):
     f = open(filePath, "a", encoding='utf-8')
-    f.write(json.dumps(jsonObject, indent=4))
+    f.write(json.dumps(jsonObject, indent='\t'))
     f.close()
 
 
 def writeJsonMultiLang(filePath, jsonObject):
     f = open(filePath, "a", encoding='utf-8')
-    f.write(json.dumps(jsonObject, ensure_ascii=False, indent=4))
+    f.write(json.dumps(jsonObject, ensure_ascii=False, indent='\t'))
     f.close()
 
 
 def updateJson(filePath, jsonObject):
     with open(filePath, "w", encoding=checkEndCode(filePath)) as f:
-        json.dump(jsonObject, f, indent=4)
+        json.dump(jsonObject, f, indent='\t')
 
 
 def updateJsonUtf8Sig(filePath, jsonObject):
     with open(filePath, "w", encoding='utf-8-sig') as f:
-        json.dump(jsonObject, f, indent=4)
+        json.dump(jsonObject, f, indent='\t')
 
 
 def updateJsonMultiLang(filePath, jsonObject):
     try:
         with open(filePath, "w", encoding='utf-8') as f:
-            json.dump(jsonObject, f, ensure_ascii=False, indent=4)
+            json.dump(jsonObject, f, ensure_ascii=False, indent='\t')
     except UnicodeDecodeError:
         with open(filePath, "w", encoding='utf-8-sig') as f:
-            json.dump(jsonObject, f, ensure_ascii=False, indent=4)
+            json.dump(jsonObject, f, ensure_ascii=False, indent='\t')
 
 
 def updateJsonMultiLangUtf8Sig(filePath, jsonObject):
     with open(filePath, "w", encoding='utf-8-sig') as f:
-        json.dump(jsonObject, f, ensure_ascii=False, indent=4)
+        json.dump(jsonObject, f, ensure_ascii=False, indent='\t')
 
 
 def readCsv(filePath):
@@ -149,7 +149,7 @@ def prettyPrintJson(jsonData):
         jsonPrint = json.loads(jsonData)
         prettyPrintJson(jsonPrint)
     elif type(jsonData) == dict:
-        jsonPrint = json.dumps(jsonData, ensure_ascii=False, indent=4)
+        jsonPrint = json.dumps(jsonData, ensure_ascii=False, indent='\t')
         print(jsonPrint)
     else:
         error('Type Error: The Object\'s type needs to be dict() or str() and not {0}'.format(type(jsonData)))

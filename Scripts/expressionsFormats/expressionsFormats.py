@@ -58,11 +58,11 @@ def copyJson(corePath, solution, fileName):
                 if file.split('/')[-1] == fileName:
                     try:
                         with z.open(file) as j:
-                            sInsight = jsonifyZip(j.read())
+                            formats = jsonifyZip(j.read())
                             if os.path.exists(os.path.join(solution, fileName)):
-                                updateJson(os.path.join(solution, fileName), sInsight)
+                                updateJson(os.path.join(solution, fileName), formats)
                             else:
-                                writeJson(os.path.join(solution, fileName), sInsight)
+                                writeJson(os.path.join(solution, fileName), formats)
                     
                     except Exception as e:
                         error(e.__str__())
@@ -102,11 +102,14 @@ def main(argv):
         key = ids[i].replace(" ", "")
         formats[key] = dict()
         for n in range(len(languages)):
-            formats[key] = data[n + 1]
-    
+            formats[key][languages[n]] = data[n + 1]
+    formats['Month']=formats.pop('Monthlong')
+    formats['ShortMonth']=formats.pop('Monthshort')
     formats = createAmounts(formats, getRow(argv[0], len(ids)), languages)
-    copyJson(corePath, solution, fileName)
+    if not os.path.exists(os.path.join(solution, 'fileName')):
+        copyJson(corePath, solution, fileName)
     mainJson = readJson(os.path.join(solution, fileName))
+    prettyPrintJson(formats)
     updateFormats(solution, formats, mainJson, fileName)
     
     endLog()
