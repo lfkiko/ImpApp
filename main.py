@@ -25,7 +25,7 @@ from Scripts.newFactField import newFactField
 from Scripts.newProject import newProject
 from Scripts.thFactor import thFactor
 from Scripts.postMan import postManRequests
-from Scripts.toolBoox.excelJsonToolBox import prettyPrintJson
+from Scripts.toolBoox.excelJsonToolBox import prettyPrintJson, readExcel
 from Scripts.toolBoox.toolBoox import rewriteText, verifyPath, openKB, getFile, readJson, getPath, \
     getSolution
 from Scripts.updateFactAttribute import updateFactAttribute
@@ -79,20 +79,31 @@ class MenuWindow(Screen):
     
     def cleanExcels(self):
         files = readJson(fileManger)
-        for file in files:
-            if '_raw' in file:
-                fileName = files[file]
-                book = openpyxl.load_workbook(filename=fileName, read_only=False, keep_vba=True)
-                sheet = book['Sheet1']
-                lines = False
-                for row in sheet.rows:
-                    if lines:
-                        for cell in row:
-                            cell.value = None
-                    else:
-                        lines = not lines
-                book.save(fileName)
-        raise SystemExit
+        for file in files.keys():
+            if file == 'expressionsFormats_raw':
+                df = openpyxl.load_workbook(files[file])
+                sheet = df['Sheet1']
+                sheet.delete_cols(2, sheet.max_column)
+                df.save(files[file])
+            elif '_raw' in file:
+                df = openpyxl.load_workbook(files[file])
+                sheet = df['Sheet1']
+                sheet.delete_rows(2, sheet.max_row)
+                df.save(files[file])
+                # df = df.head(1)
+                # df.to_excel(files[file], index=False)
+                # fileName = files[file]
+                # book = openpyxl.load_workbook(files[file])
+                #
+                # lines = False
+                # for row in sheet.rows:
+                #     if lines:
+                #         for cell in row:
+                #             cell.value = None
+                #     else:
+                #         lines = not lines
+                # book.save(fileName)
+        # raise SystemExit
 
 
 class enableInsightsWindow(Screen):
@@ -395,6 +406,7 @@ class ThFactorWindow(Screen):
 class jsonsWindow(Screen):
     def runFunc(self):
         updateFactCategory.main([])
+    
     pass
 
 

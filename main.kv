@@ -135,8 +135,9 @@ WindowManger:
                 text: "Exit"
                 bold: True
                 pos_hint: {'center_x': 0.5}
-                on_press: root.cleanExcels()
-#                on_release: app.stop()
+                on_press:
+#                    root.cleanExcels()
+                    app.stop()
 
 <jsonsWindow>
     name: "jsons"

@@ -255,7 +255,7 @@ def main(argv):
     startLog()
     # solution path
     try:
-        solution = createPath(getSolution(getPath('solution')), 'SEditorDefinition\\DataAttribute')
+        solution = os.path.join(getSolution(getPath('solution')), 'SEditorDefinition', 'DataAttribute')
     except Exception as e:
         error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
@@ -267,6 +267,7 @@ def main(argv):
         return
     
     if argv[1]:
+        coreAttributesPath = filesInZip(corePath, 'product-editor-engage-biz-unit.zip', 'Core/SEditorDefinition/DataAttribute')
         upperAttributesID = []
         # what's lines 259- 260?
         for x in attributesID:
@@ -280,7 +281,7 @@ def main(argv):
             else:
                 customAttributes.append(a)
         allHeaders = getheader(argv[0])
-        
+    
         for cAttribute in coreAttributes:
             if cAttribute + '.json' not in solution:
                 # add to solution
@@ -295,7 +296,7 @@ def main(argv):
             else:
                 # compare Json
                 pass
-        
+    
         # rowNumber = 2
         # for attribute in attributes:
         #     row = getRow(argv[0], attributes.index(attribute) + 1)

@@ -12,14 +12,6 @@ def updateCategories(insightPath, insightUc, categoriesDict):
         except Exception as e:
             error(e.__str__())
         factUpdated = False
-        # if 'categories' in insightFacts.keys():
-        #     cgRemove = []
-        #     for category in range(len(insightFacts['categories']['rows'])):
-        #         cg = insightFacts['categories']['rows'][category][0]
-        #         if cg in categoriesDict.keys():
-        #             insightFacts['categories']['rows'][category][1] = categoriesDict[cg]
-        #         else:
-        #             cgRemove.append(category)
         for fact in insightFacts.keys():
             if fact == 'categories':
                 cgRemove = []
@@ -33,8 +25,15 @@ def updateCategories(insightPath, insightUc, categoriesDict):
                     for cg in reversed(cgRemove):
                         fact['categories']['rows'].remove(cg)
                 factUpdated = True
-                
-            elif fact != 'storyId' and any(col in insightFacts[fact]['cols'] for col in ('categoryGroup', 'categoryDescription')):
+            
+            elif fact == 'budgets':
+                cgIndex = insightFacts[fact]['cols'].index('budgetCategoryKey')
+                index = insightFacts[fact]['cols'].index('budgetCategoryName')
+                for row in range(len(insightFacts[fact]['rows'])):
+                    insightFacts[fact]['rows'][row][index] = categoriesDict[insightFacts[fact]['rows'][row][cgIndex]]
+            
+            elif fact != 'storyId' and any(
+                col in insightFacts[fact]['cols'] for col in ('categoryGroup', 'categoryDescription')):
                 cgIndex = insightFacts[fact]['cols'].index('category')
                 indexes = {'categoryGroup': 0, 'categoryDescription': 0}
                 for col in ['categoryGroup', 'categoryDescription']:

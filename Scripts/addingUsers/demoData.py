@@ -11,7 +11,9 @@ def findRelevantUsers(corePath, extraUsers, bUsers, modified):
     coreUsers = filesInZip(corePath, 'product-data-and-assets-biz-unit.zip', 'Core/DemoData')
     if bUsers:
         for d in coreUsers:
-            if d.startswith("B_") and d[2].isnumeric():
+            # print(d)
+            # print(d[2])
+            if d.startswith("B_") and d.split("_")[2].isnumeric():
                 relevantUser.append(d)
     if modified:
         for x in extraUsers:
@@ -42,7 +44,7 @@ def copyUsers(relevantUser, corePath, solutionQaPath):
                     for file in srcFiles:
                         try:
                             with z.open(file) as f:
-                                tf = open(os.path.join(trgPath, file.split('/')[-1]), 'a')
+                                tf = open(os.path.join(trgPath, file.split('/')[-1]), 'w')
                                 tf.write(f.read().decode(encoding='utf-8-sig'))
                         except:
                             errors = True
@@ -50,7 +52,7 @@ def copyUsers(relevantUser, corePath, solutionQaPath):
                     if not srcFiles:
                         errors = True
                         warning("User: " + user + " do not exists in the core ")
-                        os.rmdir(trgPath)
+                        # os.rmdir(trgPath)
                         pass
     
     if errors:
@@ -127,9 +129,12 @@ def modifyUser(usersPath, user, localCurrency, foreignCurrency, countryName, cou
 
 def modifyUsersInSolution(solutionDemoDataPath, input_json, relevantUser):
     for user in relevantUser:
-        modifyUser(os.path.join(solutionDemoDataPath, user), user, input_json['LocalCurrency'],
+        if user in os.listdir(solutionDemoDataPath):
+            modifyUser(os.path.join(solutionDemoDataPath, user), user, input_json['LocalCurrency'],
                    input_json['ForeignCurrency'], input_json['CountryName'], input_json['CountryCode'],
                    input_json['Factor'])
+        else:
+            warning("User: " + user + " do not exists in the core ")
 
 
 def main(argv):
@@ -147,7 +152,7 @@ def main(argv):
     extraUsers = getCol(argv[3], 'USERS')
     relevantUser = findRelevantUsers(corePath, extraUsers, argv[1], argv[2])
     err: bool = copyUsers(relevantUser, corePath, solution)
-    modifyUsersInSolution(os.path.join(solution, 'DemoData'), argv[0], os.listdir(os.path.join(solution, 'DemoData')))
+    modifyUsersInSolution(os.path.join(solution, 'DemoData'), argv[0], relevantUser)
     categoriesAdaptation.main([solution])
     endLog(err)
 
