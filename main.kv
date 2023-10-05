@@ -27,6 +27,7 @@ WindowManger:
     jsonsWindow:
     updateFactAttributeWindow:
     updateFactCategoryWindow:
+    mergeCategoriesWindow:
 
 <WindowManger>
     size: root.width, root.height
@@ -197,6 +198,13 @@ WindowManger:
                 text: "Update Fact Category"
                 on_release:
                     app.root.current = "updateFactCategory"
+                    root.manager.transition.direction = "left"
+
+            RoundedButton:
+                markup: True
+                text: "Merged CGs"
+                on_release:
+                    app.root.current = "mergeCategories"
                     root.manager.transition.direction = "left"
 
 

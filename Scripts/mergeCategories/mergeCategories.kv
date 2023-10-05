@@ -1,0 +1,80 @@
+<mergeCategoriesWindow>
+
+    name: "mergeCategories"
+
+    BoxLayout:
+        padding: 10
+        spacing: 20
+        orientation: "vertical"
+        size: root.width, root.height
+        HeaderLabel:
+            text: "CG merging"
+
+        BoxLayout:
+            orientation: "horizontal"
+            size: root.width, root.height
+            pos_hint:{'center_y': 0.5}
+#            open_fileBoxLayout:
+            Label:
+                text: "Edit the file --> "
+                font_size: 32
+                bold: True
+                size_hint_y: None
+                height:80
+                size_hint_x: None
+                width:240
+                pos_hint:{'center_y': 0.5}
+
+            openFileButton:
+                on_release: Factory.MenuWindow().openFile(root.name)
+
+        GridLayout:
+            id: checkBoxs
+            text: ""
+            cols: 2
+            spacing: 50
+            padding: 50
+            UserInputBox:
+                MyCheckBox:
+                    id: BUsers
+                UserInputLabel:
+                    text: "B_users"
+                    size_hint_y: None
+                    height:50
+                    size_hint_x: None
+                    width:100
+                    pos_hint: {'center_x': 0.5,'center_y': 0.5}
+                    spacing: 20
+
+
+            UserInputBox:
+                MyCheckBox:
+                    id: Insights
+                UserInputLabel:
+                    text: "JInsightFacts"
+                    size_hint_y: None
+                    height:50
+                    size_hint_x: None
+                    width:100
+                    pos_hint: {'center_x': 0.5,'center_y': 0.5}
+                    spacing: 20
+
+
+        #menu
+        tailBoxLayout:
+            RoundedButton:
+                text: "Back"
+                pos_hint: {'center_x': 0.5}
+                on_release:
+                    app.root.current = "jsons"
+                    root.manager.transition.direction = "right"
+
+            RoundedButton:
+                text: "Help"
+                pos_hint: {'center_x': 0.5}
+                on_release: Factory.MenuWindow().openKB(root)
+
+            RoundedButton:
+                text: "Run"
+                pos_hint: {'center_x': 0.5}
+                on_release: root.runFunc()

@@ -22,10 +22,7 @@ def createAmounts(formats, amountFormat, languages):
 		otherTmp = tmp.replace("0", "")
 		otherTmp = otherTmp.replace(otherTmp[otherTmp.rindex("#") + 1], "")
 		tmpAbs = formats['OneTxAbs'][i].replace("0", "")
-		tmpAbs = tmpAbs.replace(otherTmp[otherTmp.rindex("#") + 1], "")
-		print(otherTmp.index('@'))
-		print(len(otherTmp))
-		print(otherTmp)
+		tmpAbs = tmpAbs.replace(tmpAbs[tmpAbs.rindex("#") + 1], "")
 		if otherTmp.index('@') + 1 < len(otherTmp):
 			if otherTmp[otherTmp.index('@') + 1] == " ":
 				sign = 2
@@ -120,7 +117,7 @@ def main(argv):
 	if not os.path.exists(os.path.join(solution, 'fileName')):
 		copyJson(corePath, solution, fileName)
 	mainJson = readJson(os.path.join(solution, fileName))
-	prettyPrintJson(formats)
+	# prettyPrintJson(formats)
 	updateFormats(solution, formats, mainJson, fileName)
 
 	endLog()
