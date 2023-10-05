@@ -3,4 +3,5 @@ dist/
 main.spec
 Scripts/Source/postMan
 *.xls;xlsx;csv
+*xlsm
 Scripts/Source/pathRoot.json
