@@ -134,7 +134,7 @@ def modelVersion(projectPath):
             version = data[(data.find('>')) + 1: data.find('<', 1)].split('.')
             if int(version[0]) >= 5 and int(version[1]) > 5:
                 return True
-            
+
             return False
 
 
@@ -171,16 +171,19 @@ def chooseChanel(channels):
         channel = channel[channel.index('$'):]
     else:
         channel = ""
-    
+
     return channel
 
 
 def searchInsightInCore(corePath, insightName):
     zips = os.listdir(corePath)
     zips.remove('perso-biz.zip')
-    for dirZip in searchedCoreFolders:
+    zipToRemove = list()
+    for dirZip in zips:
         if 'bank' in dirZip or 'docs' in dirZip:
-            zips.remove(dirZip)
+            zipToRemove.append(dirZip)
+    for badZip in zipToRemove:
+        zips.remove(badZip)
     for zipDir in zips:
         insightsInPath = filesInZip(corePath, zipDir, 'Core/Insights/' + insightName)
         if len(insightsInPath) != 0:
