@@ -16,9 +16,10 @@
             width: self.parent.width
             HeaderLabel:
                 text: "Data-assets"
-            openFileButton:
-                text: "Auto-fill"
-                on_release: root.autoFill()
+            MySpinner:
+                id: methodDataAssets
+                text: "Choose a Method"
+                values: ['New Batch','Modify']
 
         ScrollView:
             canvas:
@@ -253,9 +254,10 @@
             size_hint: None, 0.05
             HeaderLabel:
                 text: "Batches"
-            openFileButton:
-                text: "Auto-fill"
-                on_release: root.autoFill()
+            MySpinner:
+                id: methodPushNoti
+                text: "Choose a Method"
+                values: ['New Batch','Modify']
 
 
 
@@ -447,9 +449,10 @@
             size_hint: None, 0.05
             HeaderLabel:
                 text: "Batches"
-            openFileButton:
-                text: "Auto-fill"
-                on_release: root.autoFill()
+            MySpinner:
+                id: methodActData
+                text: "Choose a Method"
+                values: ['New Batch','Modify']
 
 
 
@@ -638,9 +641,10 @@
             width: self.parent.width
             HeaderLabel:
                 text: "Purging"
-            openFileButton:
-                text: "Auto-fill"
-                on_release: root.autoFill()
+            MySpinner:
+                id: methodPurging
+                text: "Choose a Method"
+                values: ['New Batch','Modify']
 
         BoxLayout:
             orientation: "vertical"

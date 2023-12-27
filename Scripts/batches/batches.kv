@@ -15,72 +15,49 @@
         BoxLayout:
             orientation: "vertical"
             size: root.width, root.height
-            padding: 10
+            padding: 20
             spacing: 20
+#            GridLayout:
+#                cols: 1
             GridLayout:
-                cols: 1
-                MySpinner:
-                    id: method
-                    text: "Choose a Method"
-                    values: 'New Batch','Modify existing batch'
+                id: checkBoxs
+                text: ""
+                cols: 2
+                UserInputBox:
+                    UserInputLabel:
+                        text: "data-assets:"
+                    openFileButton:
+                        text: "NEXT"
+                        on_release:
+                            app.root.current = "data-assets"
+                            root.manager.transition.direction = "left"
 
-                GridLayout:
-                    id: checkBoxs
-                    text: ""
-                    cols: 2
-                    UserInputBox:
-                        UserInputLabel:
-                            text: "data-assets:"
-                        openFileButton:
-                            text: "NEXT"
-                            on_release:
-                                app.root.current = "data-assets"
-                                root.manager.transition.direction = "left"
-#                        MyCheckBox:
-#                            id: DataAssets
-#                            group: 'batches'
-#                            on_release: root.checkBoxClick('data-assets')
+                UserInputBox:
+                    UserInputLabel:
+                        text: "push:"
+                    openFileButton:
+                        text: "NEXT"
+                        on_release:
+                            app.root.current = "push-notification-only-send"
+                            root.manager.transition.direction = "left"
 
+                UserInputBox:
+                    UserInputLabel:
+                        text: "ACT:"
+                    openFileButton:
+                        text: "NEXT"
+                        on_release:
+                            app.root.current = "act-data-assets"
+                            root.manager.transition.direction = "left"
 
-                    UserInputBox:
-                        UserInputLabel:
-                            text: "push:"
-                        openFileButton:
-                            text: "NEXT"
-                            on_release:
-                                app.root.current = "push-notification-only-send"
-                                root.manager.transition.direction = "left"
-#                        MyCheckBox:
-#                            id: Push
-#                            group: 'batches'
-#                            on_release: root.checkBoxClick('push')
-
-
-                    UserInputBox:
-                        UserInputLabel:
-                            text: "ACT:"
-                        openFileButton:
-                            text: "NEXT"
-                            on_release:
-                                app.root.current = "act-data-assets"
-                                root.manager.transition.direction = "left"
-#                        MyCheckBox:
-#                            id: ACT
-#                            group: 'batches'
-#                            on_release: root.checkBoxClick('ACT')
-
-                    UserInputBox:
-                        UserInputLabel:
-                            text: "purging:"
-                        openFileButton:
-                            text: "NEXT"
-                            on_release:
-                                app.root.current = "purging"
-                                root.manager.transition.direction = "left"
-#                        MyCheckBox:
-#                            id: Purging
-#                            group: 'batches'
-#                            on_release: root.checkBoxClick('purging')
+                UserInputBox:
+                    UserInputLabel:
+                        text: "purging:"
+                    openFileButton:
+                        text: "NEXT"
+                        on_release:
+                            app.root.current = "purging"
+                            root.manager.transition.direction = "left"
 
         #menu
         tailBoxLayout:

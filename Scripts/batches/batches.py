@@ -2,7 +2,7 @@ import os.path
 import sys
 from logging import error
 
-from Scripts.toolBoox.excelJsonToolBox import readJson, updateJson
+from Scripts.toolBoox.excelJsonToolBox import readJson, updateJson, prettyPrintJson
 from Scripts.toolBoox.logs import startLog, endLog
 from Scripts.toolBoox.toolBoox import getPath, getSolution, createPath
 
@@ -87,13 +87,14 @@ def main(argv):
     except Exception as e:
         error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
-    
+    prettyPrintJson(argv[1])
     sourceFile = getSource(corePath, argv[0])
-    overrideFile = checkBatch(sourceFile, argv[1])
-    overrideBatch(solution, argv[0], overrideFile, argv[2], argv[3])
-    if overrideFile['importMethods'] == 'autoRegister':
-        updateContexts(getSolution(getPath('solution')), argv[4], overrideFile['groupName'])
-        updateProperties(getPath('solution'), argv[5])
+    prettyPrintJson(sourceFile)
+    # overrideFile = checkBatch(sourceFile, argv[1])
+    # overrideBatch(solution, argv[0], overrideFile, argv[2], argv[3])
+    # if overrideFile['importMethods'] == 'autoRegister':
+    #     updateContexts(getSolution(getPath('solution')), argv[4], overrideFile['groupName'])
+    #     updateProperties(getPath('solution'), argv[5])
     endLog()
 
 

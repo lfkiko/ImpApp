@@ -175,6 +175,14 @@ class batchesWindow(Screen):
 			me.ids.batchId.text = 'data-assets'
 			me.ids.batchId.hint_text = 'data-assets'
 
+	def getMethod (self):
+		methods = {
+			"data-assets": "methodDataAssets",
+			"push-notification-only-send": "methodPushNoti",
+			"act-data-assets": "methodActData",
+			"purging": "methodPurging"
+		}
+
 	def runFunc(self):
 		adhocBatch = False
 		apiContext = ''
@@ -186,8 +194,10 @@ class batchesWindow(Screen):
 			adhocBatch = True
 			apiContext = self.ids.context.text
 			AutoRegisterApi = self.ids.API.text
-		batches.main([self.name, batchData, qaBatch, adhocBatch, apiContext, AutoRegisterApi])
-		prettyPrintJson(batchData)
+		print(self.name)
+		print(self.ids.method.text)
+		# batches.main([self.name, batchData, qaBatch, adhocBatch, apiContext, AutoRegisterApi])
+		# prettyPrintJson(batchData)
 
 
 class DataAssetsPropertiesWindow(Screen):

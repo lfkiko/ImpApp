@@ -109,6 +109,7 @@ def main(argv):
     writeCategoriesJson(jsonName, categoryGroups)
     if askyesno('Confirmation', 'Would you like to run categoriesAdaptation.py?') and argv[1] == 'SCategoryGroups':
         try:
+
             solution = getSolution(getPath('solution')) + '$QA'
         except Exception as e:
             error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
