@@ -178,22 +178,7 @@ def main(argv):
 	if "autoRegister" in argv[0]['importMethods']:
 		updateProperties(getPath('solution'), argv[0]['API'])
 		updateContexts(getSolution(getPath('solution')), argv[0]['context'], argv[0]['groupName'])
-		pass
 
-	# if argv[0]["method"] == "New Batch":
-	# 	writeJsonMultiLang(os.path.join(solution, batchData["id"] + ".json"))
-	# else:
-	# 	if os.path.exists(os.path.join(solution, batchData["id"] + ".json")):
-	# 		updateBatch(solution, batchData)
-	# 	else:
-	# 		showwarning("No batch", "You choosed Modify for method but there's nothing to modify.\nPlease change method and press thr RUN button.")
-	# 		return
-
-	# overrideFile = checkBatch(sourceFile, argv[1])
-	# overrideBatch(solution, argv[0], overrideFile, argv[2], argv[3])
-	# if overrideFile['importMethods'] == 'autoRegister':
-	#     updateContexts(getSolution(getPath('solution')), argv[4], overrideFile['groupName'])
-	#     updateProperties(getPath('solution'), argv[5])
 	endLog()
 
 
