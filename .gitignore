@@ -2,6 +2,6 @@ build/
 dist/
 main.spec
 Scripts/Source/postMan
-*.xls;xlsx;csv
+*.xls;xlsx;csv;xlsm
 *.xlsm
 Scripts/Source/pathRoot.json
