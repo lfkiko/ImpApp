@@ -5,7 +5,7 @@ import time
 import tkinter as tk
 from logging import error
 from tkinter import filedialog
-from tkinter.messagebox import askyesno
+from tkinter.messagebox import askyesno, showwarning
 from datetime import datetime
 import openpyxl
 from kivy import Config
@@ -27,7 +27,8 @@ from Scripts.newProject import newProject
 from Scripts.thFactor import thFactor
 from Scripts.postMan import postManRequests
 from Scripts.toolBoox.excelJsonToolBox import prettyPrintJson, readExcel
-from Scripts.toolBoox.toolBoox import rewriteText, verifyPath, openKB, getFile, readJson, getPath, getSolution
+from Scripts.toolBoox.toolBoox import rewriteText, verifyPath, openKB, getFile, readJson, getPath, getSolution, \
+	getChannels
 from Scripts.updateFactAttribute import updateFactAttribute
 from Scripts.updateFactCategory import updateFactCategory
 
@@ -162,114 +163,110 @@ class updateFactCategoryWindow(Screen):
 
 class batchesWindow(Screen):
 	Builder.load_file('Scripts/batches/batches.kv')
-	Builder.load_file('Scripts/batches/batchesProperties.kv')
 	corePath = ObjectProperty(None)
 	solutionPath = ObjectProperty(None)
 	checkBoxs = ObjectProperty(None)
 
-	def checkBoxClick(self, batch):
-		self.ids.checkBoxs.text = batch
+	def methodType(self, methodType):
+		if methodType != "Choose a method":
+			self.ids.batch.disabled = False
+		if methodType == "Choose a method" and self.ids.channel.text == "":
+			self.ids.batch.disabled = True
+			self.ids.method.text = methodType
 
-	def update(self, me, check):
-		if ImplementationApp.batch_use == 'data-assets':
-			me.ids.batchId.text = 'data-assets'
-			me.ids.batchId.hint_text = 'data-assets'
-
-	def getMethod (self):
-		methods = {
-			"data-assets": "methodDataAssets",
-			"push-notification-only-send": "methodPushNoti",
-			"act-data-assets": "methodActData",
-			"purging": "methodPurging"
+	def batchType(self, batchType):
+		flows = {
+			"data-assets": "data-assets-flow",
+			"push-notification-only-send": "push-notification-only-send-flow",
+			"act-data-assets": "data-assets-microsavings-eligibility-flow",
+			"purging": "purging-flow"
 		}
+		try:
+			self.ids.channel.text = getChannels(getSolution(App.get_running_app().root.ids.Menu_Window.ids.solutionPath.text), True)
+		except Exception as e:
+			error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
+			showwarning("No solution", "Please choose a solution before configuring the batch.")
+			self.ids.batch.text = "Choose a batch"
+
+		if self.ids.channel.text != "":
+			self.ids.flowId.text = flows[batchType]
+			if batchType != "Choose a batch":
+				self.ids.startingTime.disabled = False
+				self.ids.endingTime.disabled = False
+				self.ids.excludeDays.disabled = False
+				self.ids.intervalInMin.disabled = False
+				self.ids.flowId.disabled = False
+				self.ids.maxResult.disabled = False
+				self.ids.importPagingSize.disabled = False
+				self.ids.threadSplitter.disabled = False
+				self.ids.recurrencePattern.disabled = False
+				self.ids.taskType.disabled = False
+				self.ids.groupName.disabled = False
+				self.ids.channel.disabled = False
+				self.ids.autoGenerate.disabled = False
+				if batchType != "purging":
+					self.ids.importMethods.disabled = False
+					self.ids.pushNotificationOptIn.disabled = False
+					self.ids.serverSynchronization.disabled = True
+					self.ids.Context.disabled = True
+
+					if self.ids.importMethods.text == "autoRegister":
+						self.ids.API.disabled = False
+						self.ids.Context.disabled = False
+
+				elif batchType == "purging":
+					self.ids.serverSynchronization.disabled = False
+					self.ids.Context.disabled = False
+					self.ids.API.disabled = True
+					self.ids.importMethods.disabled = True
+					self.ids.pushNotificationOptIn.disabled = True
+					self.ids.Context.text = "insightsDefault"
+					self.ids.taskType.text = "etlBatchContinues"
+		pass
+
+	def methods_update(self, value):
+		print(self)
+		if value == "autoRegister":
+			self.ids.API.disabled = False
+			self.ids.Context.disabled = False
+		else:
+			self.ids.API.disabled = True
+			self.ids.Context.disabled = True
+
+		pass
+
+	pass
 
 	def runFunc(self):
-		adhocBatch = False
-		apiContext = ''
-		AutoRegisterApi = ''
-		batchDataCreator = batchJson()
-		batchData = batchDataCreator.jsonData(self.name, self)
-		qaBatch = self.ids.QaBatch
-		if self.ids.taskType == 'adhoc':
-			adhocBatch = True
-			apiContext = self.ids.context.text
-			AutoRegisterApi = self.ids.API.text
-		print(self.name)
-		print(self.ids.method.text)
-		# batches.main([self.name, batchData, qaBatch, adhocBatch, apiContext, AutoRegisterApi])
-		# prettyPrintJson(batchData)
-
-
-class DataAssetsPropertiesWindow(Screen):
-	batchId = ObjectProperty(None)
-	disabled = BooleanProperty(False)
-
-	def methods_update(self, value):
-		print(self)
-		if value == "autoRegister":
-			self.ids.API.disabled = False
-			self.ids.Context.disabled = False
+		batchData = {
+			"method": self.ids.method.text,
+			"id": self.ids.batch.text,
+			"active": True,
+			"channel": self.ids.channel.text,
+			"QA": self.ids.QaBatch.active,
+			"startingTime": self.ids.startingTime.text,
+			"endingTime": self.ids.endingTime.text,
+			"excludeDays": self.ids.excludeDays.text,
+			"recurrencePattern": self.ids.recurrencePattern.text,
+			"flowId": self.ids.flowId.text,
+			"maxResult": int(self.ids.maxResult.text),
+			"importPagingSize": int(self.ids.importPagingSize.text),
+			"threadSplitter": int(self.ids.threadSplitter.text),
+			"importMethods": [self.ids.importMethods.text],
+			"taskType": self.ids.taskType.text,
+			"intervalInMin": int(self.ids.intervalInMin.text),
+			"pushNotificationOptIn": self.ids.pushNotificationOptIn.text,
+			"groupName": self.ids.groupName.text,
+			"autoGenerate": self.ids.autoGenerate.text,
+			"serverSynchronization": self.ids.serverSynchronization.text,
+			"API": self.ids.API.text,
+			"context": self.ids.Context.text
+		}
+		if batchData["pushNotificationOptIn"] == "True":
+			batchData["pushNotificationOptIn"] = True
 		else:
-			self.ids.API.disabled = True
-			self.ids.Context.disabled = True
-
-		pass
-
-	pass
-
-
-class PushPropertiesWindow(Screen):
-	batchId = ObjectProperty(None)
-	disabled = BooleanProperty(False)
-
-	def methods_update(self, value):
-		print(self)
-		if value == "autoRegister":
-			self.ids.API.disabled = False
-			self.ids.Context.disabled = False
-		else:
-			self.ids.API.disabled = True
-			self.ids.Context.disabled = True
-
-		pass
-
-	pass
-
-
-class ACTPropertiesWindow(Screen):
-	batchId = ObjectProperty(None)
-	disabled = BooleanProperty(False)
-
-	def methods_update(self, value):
-		print(self)
-		if value == "autoRegister":
-			self.ids.API.disabled = False
-			self.ids.Context.disabled = False
-		else:
-			self.ids.API.disabled = True
-			self.ids.Context.disabled = True
-
-		pass
-
-	pass
-
-
-class PurgingPropertiesWindow(Screen):
-	batchId = ObjectProperty(None)
-	disabled = BooleanProperty(False)
-
-	def methods_update(self, value):
-		print(self)
-		if value == "autoRegister":
-			self.ids.API.disabled = False
-			self.ids.Context.disabled = False
-		else:
-			self.ids.API.disabled = True
-			self.ids.Context.disabled = True
-
-		pass
-
-	pass
+			batchData["pushNotificationOptIn"] = False
+		batches.main([batchData])
 
 
 class demoDataWindow(Screen):

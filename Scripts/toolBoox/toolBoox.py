@@ -148,12 +148,16 @@ def filesInZip(path, zippedDir, pathTo):
     return files
 
 
-def getChannels(solution):
+def getChannels(solution, getLive: bool = False):
     path = os.path.dirname(solution)
     channels = []
     for x in os.listdir(path):
         if os.path.isdir(os.path.join(path, x)):
             channels.append(x)
+    if getLive:
+        for x in channels:
+            if x.find("$LIVE") > 0:
+                return x.replace("$","_")
     return channels
 
 

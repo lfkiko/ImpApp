@@ -12,7 +12,7 @@ def createAmounts(formats, amountFormat, languages):
 		tmp = amountFormat[languages.index(i) + 1].replace("\'", "")
 		formats['Balance'][i] = tmp
 		formats['OneTx'][i] = tmp
-		if tmp.find('-') > 0:
+		if tmp.find('-') >= 0:
 			formats['OneTxAbs'][i] = tmp.replace('-', '+')
 		else:
 			if tmp.index("#") == 0:

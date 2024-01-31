@@ -8,56 +8,194 @@
         spacing: 20
         orientation: "vertical"
         size: root.width, root.height
-
-        HeaderLabel:
-            text: "Batches"
-
-        BoxLayout:
-            orientation: "vertical"
-            size: root.width, root.height
-            padding: 20
+        size_hint_x: None
+        GridLayout:
+            cols:2
+            padding: 10
             spacing: 20
-#            GridLayout:
-#                cols: 1
-            GridLayout:
-                id: checkBoxs
-                text: ""
-                cols: 2
-                UserInputBox:
-                    UserInputLabel:
-                        text: "data-assets:"
-                    openFileButton:
-                        text: "NEXT"
-                        on_release:
-                            app.root.current = "data-assets"
-                            root.manager.transition.direction = "left"
+            size_hint: None, None
+            height: self.minimum_height
+            width: self.parent.width
+            HeaderLabel:
+                text: "Data-assets"
+            MySpinner:
+                id: method
+                text: "Choose a method"
+                values: ['New Batch','Modify']
+                on_text: root.methodType(method.text)
 
-                UserInputBox:
-                    UserInputLabel:
-                        text: "push:"
-                    openFileButton:
-                        text: "NEXT"
-                        on_release:
-                            app.root.current = "push-notification-only-send"
-                            root.manager.transition.direction = "left"
+        ScrollView:
+            do_scroll_x: False
+            do_scroll_y: True
+            BoxLayout:
+                orientation: "vertical"
+                size_hint: None, None
+                size: (self.parent.width, 500)
+                GridLayout:
+                    cols:2
+                    row_force_default: True
+                    row_default_height: 50
+                    BatchGrid:
+                        BatchUserInputLabel:
+                            text: "id:"
+                        BatchMySpinner:
+                            id: batch
+                            disabled: True
+                            text: "Choose a batch"
+                            values: ['data-assets','push-notification-only-send','act-data-assets','purging']
+                            on_text: root.batchType(batch.text)
 
-                UserInputBox:
-                    UserInputLabel:
-                        text: "ACT:"
-                    openFileButton:
-                        text: "NEXT"
-                        on_release:
-                            app.root.current = "act-data-assets"
-                            root.manager.transition.direction = "left"
+                    UserInputBox:
+#                        spacing: 0
+#                        padding: 0
+                        BatchUserInputLabel:
+                            text: "QA Batch?:"
+                        MyCheckBox:
+                            id: QaBatch
+                            active: False
 
-                UserInputBox:
-                    UserInputLabel:
-                        text: "purging:"
-                    openFileButton:
-                        text: "NEXT"
-                        on_release:
-                            app.root.current = "purging"
-                            root.manager.transition.direction = "left"
+                    BatchGrid:
+                        BatchUserInputLabel:
+                            text: "startingTime:"
+                        BatchUserInput:
+                            id: startingTime
+                            disabled: True
+                            text: '11:01:00'
+
+                    BatchGrid:
+                        BatchUserInputLabel:
+                            text: "endingTime:"
+                        BatchUserInput:
+                            id: endingTime
+                            disabled: True
+                            text: '13:00:00'
+
+                    BatchGrid:
+                        BatchUserInputLabel:
+                            text: "excludeDays:"
+                        BatchUserInput:
+                            id: excludeDays
+                            disabled: True
+
+                    BatchGrid:
+                        BatchUserInputLabel:
+                            text: "recurrencePattern:"
+                        BatchUserInput:
+                            id: recurrencePattern
+                            disabled: True
+                            text: 'MINUTES'
+
+                    BatchGrid:
+                        BatchUserInputLabel:
+                            text: "flowId:"
+                        BatchUserInput:
+                            id: flowId
+                            disabled: True
+                            text: ''
+
+                    BatchGrid:
+                        BatchUserInputLabel:
+                            text: "maxResult:"
+                        BatchUserInput:
+                            id: maxResult
+                            disabled: True
+                            text: '50'
+
+                    BatchGrid:
+                        BatchUserInputLabel:
+                            text: "importPagingSize:"
+                        BatchUserInput:
+                            id: importPagingSize
+                            disabled: True
+                            text: '50'
+
+                    BatchGrid:
+                        BatchUserInputLabel:
+                            text: "threadSplitter:"
+                        BatchUserInput:
+                            id: threadSplitter
+                            disabled: True
+                            text: '1'
+
+                    BatchGrid:
+                        BatchUserInputLabel:
+                            text: "importMethods:"
+                        BatchMySpinner:
+                            id: importMethods
+                            disabled: True
+                            text: "whiteList"
+                            values: 'whiteList','autoRegister', 'userSettings'
+                            on_text: root.methods_update(importMethods.text)
+
+                    BatchGrid:
+                        BatchUserInputLabel:
+                            text: "taskType:"
+                        BatchMySpinner:
+                            id: taskType
+                            disabled: True
+                            text: "schedule"
+                            values: 'schedule','adhoc','etlBatchContinues'
+
+                    BatchGrid:
+                        BatchUserInputLabel:
+                            text: "intervalInMin:"
+                        BatchUserInput:
+                            id: intervalInMin
+                            disabled: True
+                            text: '20160'
+
+                    BatchGrid:
+                        BatchUserInputLabel:
+                            text: "pushNotificationOptIn:"
+                        BatchUserInput:
+                            id: pushNotificationOptIn
+                            disabled: True
+                            text: 'True'
+
+                    BatchGrid:
+                        BatchUserInputLabel:
+                            text: "groupName:"
+                        BatchUserInput:
+                            id: groupName
+                            disabled: True
+
+                    BatchGrid:
+                        BatchUserInputLabel:
+                            text: "channel:"
+                        BatchUserInput:
+                            id: channel
+                            disabled: True
+
+                    BatchGrid:
+                        BatchUserInputLabel:
+                            text: "autoGenerate:"
+                        BatchUserInput:
+                            id: autoGenerate
+                            disabled: True
+                            text: 'False'
+                    BatchGrid:
+                        BatchUserInputLabel:
+                            text: "serverSynchronization:"
+                        BatchUserInput:
+                            id: serverSynchronization
+                            disabled: True
+                            text: 'True'
+                    BatchGrid:
+                        BatchUserInputLabel:
+                            text: "Auto register API:"
+                        BatchMySpinner:
+                            id: API
+                            disabled: True
+                            text: "getInsights"
+                            values: 'getInsights','genereateInsights', 'executeFlow', 'getNumberOfInsights'
+
+                    BatchGrid:
+                        BatchUserInputLabel:
+                            text: "Context for this API:"
+                        BatchUserInput:
+                            id: Context
+                            disabled: True
+                            text: 'insightsDefault'
 
         #menu
         tailBoxLayout:
@@ -66,18 +204,45 @@
                 on_release:
                     app.root.current = "jsons"
                     root.manager.transition.direction = "right"
+                    root.methodType("Choose a method")
 
             RoundedButton:
                 text: "Help"
                 on_release: Factory.MenuWindow().openKB(root)
 
-#            RoundedButton:
-#                text: "Next"
-##                on_press: root.update(Factory.batchesPropertiesWindow(),self.ids.checkBoxs.text)
-#                on_release:
-#                    app.root.current = self.ids.checkBoxs.text
-#                    root.manager.transition.direction = "left"
+            RoundedButton:
+                text: "Run"
+                on_release: Factory.batchesWindow.runFunc(root)
 
 
 
 
+
+<BatchMySpinner@MySpinner>
+    size_hint: None, None
+    height: self.parent.height - 5
+    width: self.parent.width/2
+
+<BatchUserInput@TextInput>
+    font_size: 20
+    multiline: False
+    size_hint:(None,None)
+    height: self.parent.height-5
+    width: self.parent.width/2
+
+<BatchUserInputLabel@UserInputLabel>
+    size_hint: None, None
+    height: self.parent.height
+    width: self.parent.width/2
+    halign: 'left'
+    valign: 'center'
+
+<BatchGrid@GridLayout>
+    cols: 2
+    row_force_default: True
+    row_default_height: 50
+
+<BatchMySpinner@MySpinner>
+    size_hint: None, None
+    height: self.parent.height - 5
+    width: self.parent.width/2

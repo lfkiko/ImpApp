@@ -82,13 +82,15 @@ def readJsonZip(path, zipDir, fileName):
 		with zipfile.ZipFile(zipPath) as z:
 			for names in z.namelist():
 				if fileName in names:
-					try:
-						with z.open(names) as j:
-							inputJson = j.read().decode(encoding='utf-8-sig')
-							return json.loads(inputJson)
-					except Exception as e:
-						error(e.__str__())
-						return
+					check = os.path.basename(names)
+					if fileName == check:
+						try:
+							with z.open(names) as j:
+								inputJson = j.read().decode(encoding='utf-8-sig')
+								return json.loads(inputJson)
+						except Exception as e:
+							error(e.__str__())
+							return
 	except Exception as e:
 		error(e.__str__())
 		return
