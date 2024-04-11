@@ -15,12 +15,12 @@ def updateFacts(insightPath, insightUc, fact, fieldName, fieldType, fieldVal):
             error(e.__str__())
         if fact in insightFacts.keys():
             if fieldName not in insightFacts[fact]['cols']:
-                prettyPrintJson(insightFacts[fact])
+                # prettyPrintJson(insightFacts[fact])
                 insightFacts[fact]['cols'].append(fieldName)
                 for row in insightFacts[fact]['rows']:
                     row.append(fieldVal)
                 insightFacts[fact]['attributesTypes'].append(fieldType)
-                prettyPrintJson(insightFacts[fact])
+                # prettyPrintJson(insightFacts[fact])
 
                 try:
                     updateJsonMultiLang(insightFactsPath, insightFacts)

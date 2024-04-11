@@ -5,18 +5,17 @@ import time
 import tkinter as tk
 from logging import error
 from tkinter import filedialog
-from tkinter.messagebox import askyesno, showwarning
+from tkinter.messagebox import askyesno, showwarning, showinfo
 from datetime import datetime
 import openpyxl
 from kivy import Config
 from kivy.app import App
 from kivy.core.window import Window
-from kivy.properties import ObjectProperty, BooleanProperty
+from kivy.properties import ObjectProperty
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 from Scripts.addingUsers import demoData
 from Scripts.batches import batches
-from Scripts.batches.batchesJson import batchJson
 from Scripts.categoryGroups import categoryGroups
 from Scripts.dataLibrary import dataLibrary
 from Scripts.enableInsights import sEditorVisible, newEnableInsights
@@ -26,7 +25,6 @@ from Scripts.newFactField import newFactField
 from Scripts.newProject import newProject
 from Scripts.thFactor import thFactor
 from Scripts.postMan import postManRequests
-from Scripts.toolBoox.excelJsonToolBox import prettyPrintJson, readExcel
 from Scripts.toolBoox.toolBoox import rewriteText, verifyPath, openKB, getFile, readJson, getPath, getSolution, \
 	getChannels
 from Scripts.updateFactAttribute import updateFactAttribute
@@ -45,6 +43,8 @@ class MenuWindow(Screen):
 	# channels = list(os.listdir(getSolution(getPath('solution'))))
 
 	def openFile(self, name):
+		if name == "expressionsFormats":
+			showinfo("Attention", "Please note the following steps: \n\t* you must \"en\" col even if it have the same data. \n\t* you must put \' for the amount, like this : \n\t\'###,###,###.00\'")
 		os.startfile(os.path.normpath(getFile(name + "_raw")), 'edit')
 
 	def selected(self, name, filterX):

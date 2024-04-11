@@ -105,19 +105,22 @@ def main(argv):
 	ids = getCol(argv[0], languages[0])
 	languages = languages[1:]
 	formats = dict()
+	prettyPrintJson(formats)
+	ids[ids.index("Month long")] = "Month"
+	ids[ids.index("Month short")] = "ShortMonth"
 	for i in range(len(ids) - 1):
 		data = getRow(argv[0], i + 1)
 		key = ids[i].replace(" ", "")
 		formats[key] = dict()
 		for n in range(len(languages)):
 			formats[key][languages[n]] = data[n + 1]
-	formats['Month'] = formats.pop('Monthlong')
-	formats['ShortMonth'] = formats.pop('Monthshort')
+	prettyPrintJson(formats)
+	prettyPrintJson(formats)
 	formats = createAmounts(formats, getRow(argv[0], len(ids)), languages)
 	if not os.path.exists(os.path.join(solution, 'fileName')):
 		copyJson(corePath, solution, fileName)
 	mainJson = readJson(os.path.join(solution, fileName))
-	# prettyPrintJson(formats)
+	prettyPrintJson(formats)
 	updateFormats(solution, formats, mainJson, fileName)
 
 	endLog()

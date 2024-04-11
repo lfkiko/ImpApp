@@ -41,7 +41,6 @@ def main(argv):
     except Exception as e:
         error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
-    
     insights = getCol(argv[0], 'Insight')
     ucs = getCol(argv[0], 'UC')
     exposed = getCol(argv[0], 'Exposed in EB')

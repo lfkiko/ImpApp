@@ -71,6 +71,7 @@ def ucsDict(insights, ucs):
 
 
 def overwriteInsight(solution, corePath, insight, allUcs):
+	insightCorePath = ""
 	try:
 		insightZipDir = searchInsightInCore(corePath, insight)
 		insightCorePath = os.path.join(corePath, insightZipDir)
@@ -82,6 +83,8 @@ def overwriteInsight(solution, corePath, insight, allUcs):
 
 	finally:
 		insightPath = os.path.join(solution, insight)
+		if insightCorePath == "":
+			return
 		with zipfile.ZipFile(insightCorePath) as z:
 			srcFiles = filesInZip(corePath, insightZipDir, 'Core/Insights/' + insight + '/')
 			for file in srcFiles:
@@ -136,9 +139,12 @@ def main(argv):
 		except Exception as e:
 			error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
 			return
-
+	# print(argv[0])
 	insights = getCol(argv[0], 'Insight')
 	ucs = getCol(argv[0], 'UC')
+	print(insights)
+	print(ucs)
+
 	activated = getCol(argv[0], 'Activated')
 	tmpInsights = list()
 	tmpUcs = list()
@@ -150,7 +156,6 @@ def main(argv):
 	ucs = tmpUcs
 	insights = set(insights)
 	createInsightDirectory(solution, insights)
-	# print(ucs)
 	createUcDirectory(solution, ucs)
 	ucsDictionary = ucsDict(list(insights), ucs)
 	for insight in insights:
