@@ -70,7 +70,7 @@ def ucsDict(insights, ucs):
 	return tmpDict
 
 
-def overwriteInsight(solution, corePath, insight, allUcs):
+def overwriteInsight(solution, corePath, insight, allUcs, starterVersion):
 	insightCorePath = ""
 	try:
 		insightZipDir = searchInsightInCore(corePath, insight)
@@ -100,7 +100,12 @@ def overwriteInsight(solution, corePath, insight, allUcs):
 						error(e.__str__())
 					cleanSInsight(allUcs[insight], os.path.join(insightPath, 'SInsight.json'))
 				if file.split('/')[-2] in allUcs[insight] and file.split('/')[-1] != '':
-					tempInsightPath = os.path.join(insightPath, file.split('/')[-2], file.split('/')[-1])
+					if int(starterVersion[0]) > 7 or (int(starterVersion[0]) == 7 and int(starterVersion[1]) >= 7):
+						client = chooseClient()
+						tempInsightPath = os.path.join(insightPath, client, file.split('/')[-2], file.split('/')[-1])
+					else:
+						tempInsightPath = os.path.join(insightPath, file.split('/')[-2], file.split('/')[-1])
+
 					try:
 						with z.open(file) as ucj:
 							jsonFile = jsonifyZip(ucj.read())
@@ -120,11 +125,15 @@ def main(argv):
 	except:
 		error(getPath('solution') + ' is not a correct path Demo data didn\'t run')
 		return
+
 	try:
 		corePath = createPath(getPath('solution'), 'package\\target\\DataLoad')
 	except Exception as e:
 		error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
 		return
+
+	starterVersion = getStarterVersion(getPath('solution'))
+
 	channels = getChannels(solution)
 	if len(channels) > 3:
 		theChannel = chooseChanel(channels)
@@ -139,11 +148,11 @@ def main(argv):
 		except Exception as e:
 			error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
 			return
-	# print(argv[0])
+	print(argv[0])
 	insights = getCol(argv[0], 'Insight')
 	ucs = getCol(argv[0], 'UC')
-	print(insights)
-	print(ucs)
+	# print(insights)
+	# print(ucs)
 
 	activated = getCol(argv[0], 'Activated')
 	tmpInsights = list()
@@ -159,7 +168,7 @@ def main(argv):
 	createUcDirectory(solution, ucs)
 	ucsDictionary = ucsDict(list(insights), ucs)
 	for insight in insights:
-		overwriteInsight(solution, corePath, insight, ucsDictionary)
+		overwriteInsight(solution, corePath, insight, ucsDictionary, starterVersion)
 	endLog()
 
 

@@ -43,7 +43,7 @@ def createSCategoryGroups(categories, direction, languages, numOfLang, listOfLan
     for i in range(len(categories)):
         new_cg = {'id': categories[i],
                   'description': {'langMap': {}}}
-        
+
         for j in range(langs):
             new_cg['description']['langMap'][listOfLanguages[j]] = languages[i][j]
         if sub:
@@ -63,7 +63,7 @@ def writeCategoriesJson(fileName, json_object):
         except Exception as e:
             error(e)
     with codecs.open(fileName, 'a+', 'utf-8') as f:
-        f.write(json.dumps(json_object, ensure_ascii=False, indent=4))
+        f.write(json.dumps(json_object, ensure_ascii=False))
 
 
 def main(argv):
@@ -77,7 +77,7 @@ def main(argv):
     except Exception as e:
         error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
-    
+
     jsonName = os.path.join(solution, argv[3] + ".json")
     categories = getCol(argv[0], 'CG')
     direction = getCol(argv[0], 'direction')
@@ -105,11 +105,10 @@ def main(argv):
             writeJsonMultiLang(jsonName, categoryGroups)
         except Exception as e:
             error(e.__str__())
-    
+
     writeCategoriesJson(jsonName, categoryGroups)
     if askyesno('Confirmation', 'Would you like to run categoriesAdaptation.py?') and argv[1] == 'SCategoryGroups':
         try:
-
             solution = getSolution(getPath('solution')) + '$QA'
         except Exception as e:
             error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
@@ -120,7 +119,7 @@ def main(argv):
 
 if __name__ == "__main__":
     main(sys.argv[1:])
-    
+
     # 0 excel file
     # 1 num_of_lang
     # 2 list of languages
