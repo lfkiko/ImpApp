@@ -6,6 +6,23 @@ import sys
 import zipfile
 
 
+def removeDeactivated(Sinsights, ucList):
+	recursive = False
+	ucs = ucList
+	ucToRemove = int()
+	for uc in range(len(Sinsights['useCases'])):
+		if Sinsights['useCases'][uc]['id'] in ucs:
+			ucToRemove = uc
+			recursive = True
+			break
+	if recursive:
+		ucs.remove(Sinsights['useCases'][uc]['id'])
+		Sinsights['useCases'].remove(ucToRemove)
+		if len(ucs) > 0:
+			return removeDeactivated(Sinsights, ucs)
+	return Sinsights
+
+
 def cleanSInsight(ucsList, SInsightPath):
 	try:
 		SInsightData = readJson(SInsightPath)
@@ -17,47 +34,62 @@ def cleanSInsight(ucsList, SInsightPath):
 		SInsightData.pop('dependencies')
 
 	keysToRemove = list(SInsightData['insightMetadata'].keys())
-	for key in ['activated', 'name', 'description']:
+	for key in ['activated', 'name']:
 		keysToRemove.remove(key)
 
 	for key in keysToRemove:
 		SInsightData['insightMetadata'].pop(key)
 
 	SInsightData['insightMetadata']['activated'] = 'TRUE'
+
 	ucs = len(SInsightData['useCases'])
 	toRemove = []
 	for uc in range(ucs):
 		if SInsightData['useCases'][uc]['id'] in ucsList:
 			SInsightData['useCases'][uc]['activated'] = 'TRUE'
+			for k in ['insightId', 'storyId', 'description']:
+				if k in SInsightData['useCases'][uc].keys():
+					SInsightData['useCases'][uc].pop(k)
 		else:
-			toRemove.append(uc)
+			toRemove.append(SInsightData['useCases'][uc]['id'])
 	if len(toRemove) == 0:
+		# SInsightData = removeDeactivated(SInsightData, toRemove)
 		for i in reversed(toRemove):
 			SInsightData['useCases'].remove(i)
 	updateJson(SInsightPath, SInsightData)
 
 
-def createInsightDirectory(solutionPath, insights):
+def createInsightDirectory(solutionPath, insights, client):
 	for i in insights:
 		try:
 			os.mkdir(os.path.join(solutionPath, i))
+			if client != "":
+				os.mkdir(os.path.join(solutionPath, i, client))
 		except Exception as e:
 			if 'already exists' in e.__str__():
 				warning('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
 
 
-def createUcDirectory(solutionPath, ucs):
+def createUcDirectory(solutionPath, ucs, client):
 	for u in ucs:
 		try:
 			insight = u[0: u.rindex('_')]
 		except Exception as e:
 			error(e + "for " + u)
 
-		try:
-			os.mkdir(os.path.join(solutionPath, insight, u))
-		except Exception as e:
-			if 'already exists' in e.__str__():
-				warning('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
+		if client != "":
+			try:
+				os.mkdir(os.path.join(solutionPath, insight, client, u))
+			except Exception as e:
+				if 'already exists' in e.__str__():
+					warning('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
+		else:
+			try:
+
+				os.mkdir(os.path.join(solutionPath, insight, u))
+			except Exception as e:
+				if 'already exists' in e.__str__():
+					warning('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
 
 
 def ucsDict(insights, ucs):
@@ -70,7 +102,7 @@ def ucsDict(insights, ucs):
 	return tmpDict
 
 
-def overwriteInsight(solution, corePath, insight, allUcs, starterVersion):
+def overwriteInsight(solution, corePath, insight, allUcs, client):
 	insightCorePath = ""
 	try:
 		insightZipDir = searchInsightInCore(corePath, insight)
@@ -100,8 +132,7 @@ def overwriteInsight(solution, corePath, insight, allUcs, starterVersion):
 						error(e.__str__())
 					cleanSInsight(allUcs[insight], os.path.join(insightPath, 'SInsight.json'))
 				if file.split('/')[-2] in allUcs[insight] and file.split('/')[-1] != '':
-					if int(starterVersion[0]) > 7 or (int(starterVersion[0]) == 7 and int(starterVersion[1]) >= 7):
-						client = chooseClient()
+					if client != "":
 						tempInsightPath = os.path.join(insightPath, client, file.split('/')[-2], file.split('/')[-1])
 					else:
 						tempInsightPath = os.path.join(insightPath, file.split('/')[-2], file.split('/')[-1])
@@ -133,6 +164,10 @@ def main(argv):
 		return
 
 	starterVersion = getStarterVersion(getPath('solution'))
+	if int(starterVersion[0]) > 7 or (int(starterVersion[0]) == 7 and int(starterVersion[2]) >= 7):
+		client = chooseClient()
+	else:
+		client = ""
 
 	channels = getChannels(solution)
 	if len(channels) > 3:
@@ -164,11 +199,11 @@ def main(argv):
 	insights = tmpInsights
 	ucs = tmpUcs
 	insights = set(insights)
-	createInsightDirectory(solution, insights)
-	createUcDirectory(solution, ucs)
+	createInsightDirectory(solution, insights, client)
+	createUcDirectory(solution, ucs, client)
 	ucsDictionary = ucsDict(list(insights), ucs)
 	for insight in insights:
-		overwriteInsight(solution, corePath, insight, ucsDictionary, starterVersion)
+		overwriteInsight(solution, corePath, insight, ucsDictionary, client)
 	endLog()
 
 

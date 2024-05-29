@@ -184,7 +184,8 @@ def chooseClient():
 
 def searchInsightInCore(corePath, insightName):
 	zips = os.listdir(corePath)
-	zips.remove('perso-biz.zip')
+	if 'perso-biz.zip' in zips:
+		zips.remove('perso-biz.zip')
 	zipToRemove = list()
 	for dirZip in zips:
 		if 'bank' in dirZip or 'docs' in dirZip:
