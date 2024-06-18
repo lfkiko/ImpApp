@@ -1,8 +1,10 @@
 from logging import warning
 
 from Scripts.toolBoox import *
+import shutil
 import os
 import sys
+from tkinter.messagebox import askyesno
 import zipfile
 
 
@@ -65,6 +67,7 @@ def createInsightDirectory(solutionPath, insights, client):
 			os.mkdir(os.path.join(solutionPath, i))
 			if client != "":
 				os.mkdir(os.path.join(solutionPath, i, client))
+				os.mkdir(os.path.join(solutionPath, i, "facts"))
 		except Exception as e:
 			if 'already exists' in e.__str__():
 				warning('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
@@ -80,12 +83,12 @@ def createUcDirectory(solutionPath, ucs, client):
 		if client != "":
 			try:
 				os.mkdir(os.path.join(solutionPath, insight, client, u))
+				os.mkdir(os.path.join(solutionPath, insight, "facts", u))
 			except Exception as e:
 				if 'already exists' in e.__str__():
 					warning('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
 		else:
 			try:
-
 				os.mkdir(os.path.join(solutionPath, insight, u))
 			except Exception as e:
 				if 'already exists' in e.__str__():
@@ -115,6 +118,7 @@ def overwriteInsight(solution, corePath, insight, allUcs, client):
 
 	finally:
 		insightPath = os.path.join(solution, insight)
+		insightFacts = os.path.join(solution, insight, 'facts')
 		if insightCorePath == "":
 			return
 		with zipfile.ZipFile(insightCorePath) as z:
@@ -131,12 +135,23 @@ def overwriteInsight(solution, corePath, insight, allUcs, client):
 					except Exception as e:
 						error(e.__str__())
 					cleanSInsight(allUcs[insight], os.path.join(insightPath, 'SInsight.json'))
-				if file.split('/')[-2] in allUcs[insight] and file.split('/')[-1] != '':
-					if client != "":
+				uc = file.split('/')[-2]
+				fileName = file.split('/')[-1]
+				copy = False
+				if client in file.split('/'):
+					if uc in allUcs[insight] and fileName != '':
 						tempInsightPath = os.path.join(insightPath, client, file.split('/')[-2], file.split('/')[-1])
-					else:
+						copy = True
+				elif client == '':
+					if uc in allUcs[insight] and fileName != '':
 						tempInsightPath = os.path.join(insightPath, file.split('/')[-2], file.split('/')[-1])
+						copy = True
+				elif 'facts' in file.split('/'):
+					if uc in allUcs[insight] and fileName != '':
+						tempInsightPath = os.path.join(insightFacts, file.split('/')[-2], file.split('/')[-1])
+						copy = True
 
+				if copy:
 					try:
 						with z.open(file) as ucj:
 							jsonFile = jsonifyZip(ucj.read())
@@ -147,6 +162,40 @@ def overwriteInsight(solution, corePath, insight, allUcs, client):
 					except Exception as e:
 						print('here - ' + file.split('/')[-2] + '/' + file.split('/')[-1])
 						error(e.__str__())
+
+
+def removeLayer(solution, client):
+	insights = list(os.listdir(solution))
+	insights.remove("SEntities")
+	for insight in insights:
+		insightPath = os.path.join(solution, insight)
+		clientPath = os.path.join(solution, insight, client)
+		shutil.copytree(clientPath, insightPath, dirs_exist_ok=True)
+		for uc in os.listdir(clientPath):
+			ucPath = os.path.join(clientPath, uc)
+			for file in os.listdir(ucPath):
+				os.remove(os.path.join(ucPath, file))
+			if len(os.listdir(ucPath)) == 0:
+				os.rmdir(ucPath)
+		if len(os.listdir(clientPath)) == 0:
+			os.rmdir(clientPath)
+	endLog()
+
+
+def removeFacts(solution):
+	insights = list(os.listdir(solution))
+	insights.remove("SEntities")
+	for insight in insights:
+		insightPath = os.path.join(solution, insight)
+		factsPath = os.path.join(insightPath, "facts")
+		for uc in os.listdir(factsPath):
+			shutil.copy2(os.path.join(factsPath, uc, 'JInsightFacts.json'), os.path.join(insightPath, uc))
+			os.remove(os.path.join(factsPath, uc, 'JInsightFacts.json'))
+			if len(os.listdir(os.path.join(factsPath, uc))) == 0:
+				os.rmdir(os.path.join(factsPath, uc))
+		if len(os.listdir(factsPath)) == 0:
+			os.rmdir(factsPath)
+	endLog()
 
 
 def main(argv):
@@ -183,7 +232,7 @@ def main(argv):
 		except Exception as e:
 			error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
 			return
-	print(argv[0])
+	# print(argv[0])
 	insights = getCol(argv[0], 'Insight')
 	ucs = getCol(argv[0], 'UC')
 	# print(insights)
@@ -204,6 +253,9 @@ def main(argv):
 	ucsDictionary = ucsDict(list(insights), ucs)
 	for insight in insights:
 		overwriteInsight(solution, corePath, insight, ucsDictionary, client)
+	if client != '' and askyesno('Confirmation', 'Would you like to remove the clinet layer?'):
+		removeLayer(solution, client)
+		removeFacts(solution)
 	endLog()
 
 
