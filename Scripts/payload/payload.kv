@@ -1,0 +1,112 @@
+#:import utils kivy.utils
+#:import Factory kivy.factory.Factory
+<payloadWindow>
+    name: "payload"
+    BoxLayout:
+        padding: 10
+        spacing: 20
+        orientation: "vertical"
+        size: root.width, root.height
+        pos_hint:{'center_y': 0.5}
+
+        HeaderLabel:
+            text: "Payload configuration"
+
+        GridLayout:
+            cols:2
+            MySpinner:
+                id: widgetType
+                size_hint_x: None
+                width: 300
+                text: "Selecet widget type"
+                values: ['story-widget','story','recap','Carousel', 'trackersDashboard', 'Hub', 'singleTeaser', 'singleTrackerTeaser', 'Inbox']
+            UserInputBox:
+                UserInputLabel:
+                    text: "Language"
+                UserInput:
+                    id: Lang
+                    text: "en"
+
+            UserInputLabel:
+                text: "Use remote assets?"
+            MyCheckBox:
+                id: RemoteAssetsActivation
+                active: False
+                on_release: root.dataAssetsUrl(RemoteAssetsActivation.active)
+
+            UserInputBox:
+                UserInputLabel:
+                    text: "Remote assets URL: "
+                UserInput:
+                    id: RemoteAssetsUrl
+                    text: "https://ra.personetics.io/product-react-assets/assets/"
+                    disabled: True
+
+            UserInputLabel:
+                text: "Use dark mode?"
+            MyCheckBox:
+                id: darkMode
+                active: False
+
+            UserInputLabel:
+                text: "Add your JSON --> "
+            openFileButton:
+                on_release: Factory.payloadPopup().open()
+
+
+        #menu
+        tailBoxLayout:
+            RoundedButton:
+                text: "Back"
+                pos_hint: {'center_x': 0.5}
+                on_release:
+                    app.root.current = "menu"
+                    root.manager.transition.direction = "right"
+
+            RoundedButton:
+                text: "Help"
+                pos_hint: {'center_x': 0.5}
+                on_release: root.openKB()
+
+            RoundedButton:
+                text: "Run"
+                pos_hint: {'center_x': 0.5}
+                on_release: root.runFunc()
+
+<payloadPopup@Popup>
+    auto_dismiss: False
+    size_hint: 0.8,0.8
+    title:"Payload JSON input"
+    BoxLayout:
+        padding: 10
+        spacing: 20
+        orientation: "vertical"
+        size: root.width, root.height
+        pos_hint:{'center_y': 0.5}
+        HeaderLabel:
+            text: "Please enter your data in here"
+            color: (1,1,1,1)
+
+        TextInput:
+            id: jsonData
+#                    text: "https://ra.personetics.io/product-react-assets/assets/"
+#                    disabled: True
+
+        tailBoxLayout:
+#            spacing: 10
+
+            height: 100
+            RoundedButton:
+                text: "Cancel"
+                pos_hint: {'center_x': 0.5,'center_y': 0.5}
+                on_release: root.dismiss()
+
+
+            RoundedButton:
+                text: "Submit"
+                pos_hint: {'center_x': 0.5,'center_y': 0.5}
+                on_release: Factory.payloadWindow().getPayload(jsonData.text)
+#        Button:
+#            text: "Cancel"
+#            font_size: 24
+#            on_release: root.dismiss()

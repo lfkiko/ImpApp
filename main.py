@@ -4,7 +4,8 @@ import subprocess
 import time
 import tkinter as tk
 from logging import error
-from tkinter import filedialog
+from tkinter import *
+from tkinter import simpledialog, filedialog
 from tkinter.messagebox import askyesno, showwarning, showinfo
 from datetime import datetime
 import openpyxl
@@ -23,8 +24,10 @@ from Scripts.expressionsFormats import expressionsFormats
 from Scripts.mergeCategories import mergeCategories
 from Scripts.newFactField import newFactField
 from Scripts.newProject import newProject
+from Scripts.payload import payload, payload_json
 from Scripts.thFactor import thFactor
 from Scripts.postMan import postManRequests
+from Scripts.toolBoox import verify_json
 from Scripts.toolBoox.toolBoox import rewriteText, verifyPath, openKB, getFile, readJson, getPath, getSolution, \
 	getChannels
 from Scripts.updateFactAttribute import updateFactAttribute
@@ -175,12 +178,8 @@ class batchesWindow(Screen):
 			self.ids.method.text = methodType
 
 	def batchType(self, batchType):
-		flows = {
-			"data-assets": "data-assets-flow",
-			"push-notification-only-send": "push-notification-only-send-flow",
-			"act-data-assets": "data-assets-microsavings-eligibility-flow",
-			"purging": "purging-flow"
-		}
+		flows = {"data-assets": "data-assets-flow", "push-notification-only-send": "push-notification-only-send-flow",
+				 "act-data-assets": "data-assets-microsavings-eligibility-flow", "purging": "purging-flow"}
 		try:
 			self.ids.channel.text = getChannels(getSolution(App.get_running_app().root.ids.Menu_Window.ids.solutionPath.text), True)
 		except Exception as e:
@@ -238,30 +237,19 @@ class batchesWindow(Screen):
 	pass
 
 	def runFunc(self):
-		batchData = {
-			"method": self.ids.method.text,
-			"id": self.ids.batch.text,
-			"active": True,
-			"channel": self.ids.channel.text,
-			"QA": self.ids.QaBatch.active,
-			"startingTime": self.ids.startingTime.text,
-			"endingTime": self.ids.endingTime.text,
-			"excludeDays": self.ids.excludeDays.text,
-			"recurrencePattern": self.ids.recurrencePattern.text,
-			"flowId": self.ids.flowId.text,
-			"maxResult": int(self.ids.maxResult.text),
-			"importPagingSize": int(self.ids.importPagingSize.text),
-			"threadSplitter": int(self.ids.threadSplitter.text),
-			"importMethods": [self.ids.importMethods.text],
-			"taskType": self.ids.taskType.text,
-			"intervalInMin": int(self.ids.intervalInMin.text),
-			"pushNotificationOptIn": self.ids.pushNotificationOptIn.text,
-			"groupName": self.ids.groupName.text,
-			"autoGenerate": self.ids.autoGenerate.text,
-			"serverSynchronization": self.ids.serverSynchronization.text,
-			"API": self.ids.API.text,
-			"context": self.ids.Context.text
-		}
+		batchData = {"method": self.ids.method.text, "id": self.ids.batch.text, "active": True,
+					 "channel": self.ids.channel.text, "QA": self.ids.QaBatch.active,
+					 "startingTime": self.ids.startingTime.text, "endingTime": self.ids.endingTime.text,
+					 "excludeDays": self.ids.excludeDays.text, "recurrencePattern": self.ids.recurrencePattern.text,
+					 "flowId": self.ids.flowId.text, "maxResult": int(self.ids.maxResult.text),
+					 "importPagingSize": int(self.ids.importPagingSize.text),
+					 "threadSplitter": int(self.ids.threadSplitter.text),
+					 "importMethods": [self.ids.importMethods.text], "taskType": self.ids.taskType.text,
+					 "intervalInMin": int(self.ids.intervalInMin.text),
+					 "pushNotificationOptIn": self.ids.pushNotificationOptIn.text, "groupName": self.ids.groupName.text,
+					 "autoGenerate": self.ids.autoGenerate.text,
+					 "serverSynchronization": self.ids.serverSynchronization.text, "API": self.ids.API.text,
+					 "context": self.ids.Context.text}
 		if batchData["pushNotificationOptIn"] == "True":
 			batchData["pushNotificationOptIn"] = True
 		else:
@@ -334,6 +322,35 @@ class newProjectWindow(Screen):
 
 	def runFunc(self):
 		newProject.main([self.ids.channel.text])
+
+	pass
+
+
+class payloadWindow(Screen):
+	Builder.load_file('Scripts/payload/payload.kv')
+	payloadJson = str()
+
+	def getPayload(self, jsonText: str()):
+		if verify_json(jsonText):
+			payloadWindow.payloadJson = jsonText
+			self.dismiss()
+		else:
+			showwarning("Json verification", "The JSON You entered is not validated. \nPlease check the JSON")
+		pass
+
+	def dataAssetsUrl(self, value: bool):
+		self.ids.RemoteAssetsUrl.disabled = not value
+
+		pass
+
+	def runFunc(self):
+		print(payloadWindow.payloadJson)
+		# theFile = "{}"
+		# if self.ids.widgetType.text == "Selecet widget type":
+		# 	print("NO GO")
+		# else:
+		# 	payload.main([self.ids.widgetType.text, self.ids.Lang.text, self.ids.RemoteAssetsActivation.active,
+		# 				  self.ids.RemoteAssetsUrl.text, self.ids.darkMode.active, theFile])
 
 	pass
 

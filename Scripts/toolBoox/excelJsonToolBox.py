@@ -2,7 +2,6 @@ import json
 import os
 import zipfile
 import pandas as pd
-
 from logging import error
 
 fileManger = 'Scripts/Source/fileManger.json'
@@ -175,3 +174,13 @@ def jsonifyZip(text):
 
 def isNan(val):
 	return pd.isna(val)
+
+
+def verify_json(text: str()):
+	verified = False
+	# json_data = json.loads(text)
+	if text.count('{') == text.count('}') and text.count('{') > 0:
+		verified = True
+	return verified
+
+

@@ -15,6 +15,7 @@ WindowManger:
     dataLibraryWindow:
     sEditorVisibleWindow:
     newProjectWindow:
+    payloadWindow:
     breakingChangeWindow:
     PostManWindow:
     RequestsWindow:
@@ -97,10 +98,10 @@ WindowManger:
                     root.manager.transition.direction = "left"
             RoundedButton:
                 markup: True
-                text: "[s][color=FFFFFF]Breaking Changes[/color][/s]"
-#                on_release:
-#                    app.root.current = "breakingChange"
-#                    root.manager.transition.direction = "left"
+                text: "[s][color=FFFFFF]Payload[/color][/s]"
+                on_release:
+                    app.root.current = "payload"
+                    root.manager.transition.direction = "left"
             RoundedButton:
                 markup: True
                 text: "[s][color=FFFFFF]Post-man[/color][/s]"
@@ -114,10 +115,11 @@ WindowManger:
                     root.manager.transition.direction = "left"
             RoundedButton:
                 markup: True
-                text: "[s][color=FFFFFF]A-2-A[/color][/s]"
+                text: "[s][color=FFFFFF]Breaking Changes[/color][/s]"
 #                on_release:
 #                    app.root.current = "breakingChange"
 #                    root.manager.transition.direction = "left"
+
 
 
         tailBoxLayout:
