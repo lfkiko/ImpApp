@@ -7,19 +7,21 @@
         spacing: 20
         orientation: "vertical"
         size: root.width, root.height
-        pos_hint:{'center_y': 0.5}
+#        pos_hint:{'center_y': 0.5}
 
         HeaderLabel:
             text: "Payload configuration"
 
         GridLayout:
             cols:2
-            MySpinner:
-                id: widgetType
-                size_hint_x: None
-                width: 300
-                text: "Selecet widget type"
-                values: ['story-widget','story','recap','Carousel', 'trackersDashboard', 'Hub', 'singleTeaser', 'singleTrackerTeaser', 'Inbox']
+            padding:20
+            UserInputBox:
+                MySpinner:
+                    id: widgetType
+                    size_hint_x: None
+                    width: 300
+                    text: "Selecet widget type"
+                    values: ['story-widget','story','recap','Carousel', 'trackersDashboard', 'Hub', 'singleTeaser', 'singleTrackerTeaser', 'Inbox']
             UserInputBox:
                 UserInputLabel:
                     text: "Language"
@@ -27,12 +29,13 @@
                     id: Lang
                     text: "en"
 
-            UserInputLabel:
-                text: "Use remote assets?"
-            MyCheckBox:
-                id: RemoteAssetsActivation
-                active: False
-                on_release: root.dataAssetsUrl(RemoteAssetsActivation.active)
+            UserInputBox:
+                UserInputLabel:
+                    text: "Use remote assets?"
+                MyCheckBox:
+                    id: RemoteAssetsActivation
+                    active: False
+                    on_release: root.dataAssetsUrl(RemoteAssetsActivation.active)
 
             UserInputBox:
                 UserInputLabel:
@@ -42,16 +45,18 @@
                     text: "https://ra.personetics.io/product-react-assets/assets/"
                     disabled: True
 
-            UserInputLabel:
-                text: "Use dark mode?"
-            MyCheckBox:
-                id: darkMode
-                active: False
+            UserInputBox:
+                UserInputLabel:
+                    text: "Use dark mode?"
+                MyCheckBox:
+                    id: darkMode
+                    active: False
 
-            UserInputLabel:
-                text: "Add your JSON --> "
-            openFileButton:
-                on_release: Factory.payloadPopup().open()
+            UserInputBox:
+                UserInputLabel:
+                    text: "Add your JSON --> "
+                openFileButton:
+                    on_release: Factory.payloadPopup().open()
 
 
         #menu
@@ -105,7 +110,7 @@
             RoundedButton:
                 text: "Submit"
                 pos_hint: {'center_x': 0.5,'center_y': 0.5}
-                on_release: Factory.payloadWindow().getPayload(jsonData.text)
+                on_release: Factory.payloadWindow().getPayload(jsonData.text, root)
 #        Button:
 #            text: "Cancel"
 #            font_size: 24

@@ -1,6 +1,8 @@
 import os
 import sys
 
+import pyperclip
+
 from Scripts.payload import payload_json
 from Scripts.toolBoox import startLog, endLog
 
@@ -32,11 +34,13 @@ def main(argv):
 	theme = "\"theme\": {\"darkMode\":" + darkMode + "  }"
 	configurations = "\"configurations\": {\"deviceType\": \"web\",\"widgetType\": \"" + widgetType + "\",\"selectorString\": \"#root\",\"params\": {\"payload\": {\"" + apiType + "\": " + json + "}}}"
 	payloadString = "window.personetics.startWidget({" + internationalization + "," + assets + "," + theme + "," + configurations + "});"
+	pyperclip.copy(payloadString)
+
 	# print(internationalization+"\n\n")
 	# print(assets+"\n\n")
 	# print(theme+"\n\n")
 	# print(configurations+"\n\n")
-	print(payloadString)
+	# print(payloadString)
 	endLog()
 
 

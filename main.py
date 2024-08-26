@@ -4,8 +4,7 @@ import subprocess
 import time
 import tkinter as tk
 from logging import error
-from tkinter import *
-from tkinter import simpledialog, filedialog
+from tkinter import filedialog
 from tkinter.messagebox import askyesno, showwarning, showinfo
 from datetime import datetime
 import openpyxl
@@ -24,7 +23,7 @@ from Scripts.expressionsFormats import expressionsFormats
 from Scripts.mergeCategories import mergeCategories
 from Scripts.newFactField import newFactField
 from Scripts.newProject import newProject
-from Scripts.payload import payload, payload_json
+from Scripts.payload import payload
 from Scripts.thFactor import thFactor
 from Scripts.postMan import postManRequests
 from Scripts.toolBoox import verify_json
@@ -330,10 +329,10 @@ class payloadWindow(Screen):
 	Builder.load_file('Scripts/payload/payload.kv')
 	payloadJson = str()
 
-	def getPayload(self, jsonText: str()):
+	def getPayload(self, jsonText: str(), popUpSelf):
 		if verify_json(jsonText):
 			payloadWindow.payloadJson = jsonText
-			self.dismiss()
+			popUpSelf.dismiss()
 		else:
 			showwarning("Json verification", "The JSON You entered is not validated. \nPlease check the JSON")
 		pass
@@ -344,13 +343,11 @@ class payloadWindow(Screen):
 		pass
 
 	def runFunc(self):
-		print(payloadWindow.payloadJson)
-		# theFile = "{}"
-		# if self.ids.widgetType.text == "Selecet widget type":
-		# 	print("NO GO")
-		# else:
-		# 	payload.main([self.ids.widgetType.text, self.ids.Lang.text, self.ids.RemoteAssetsActivation.active,
-		# 				  self.ids.RemoteAssetsUrl.text, self.ids.darkMode.active, theFile])
+		if self.ids.widgetType.text == "Selecet widget type":
+			print("NO GO")
+		else:
+			payload.main([self.ids.widgetType.text, self.ids.Lang.text, self.ids.RemoteAssetsActivation.active,
+						  self.ids.RemoteAssetsUrl.text, self.ids.darkMode.active, payloadWindow.payloadJson])
 
 	pass
 

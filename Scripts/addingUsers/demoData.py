@@ -1,9 +1,9 @@
-from Scripts.toolBoox import *
 import os
 import sys
 import zipfile
 from logging import info, warning, error
 from Scripts.addingUsers import categoriesAdaptation
+from Scripts.toolBoox import filesInZip, createPath, readCsv, writeCsv, startLog, getSolution, getPath, getCol, endLog
 
 
 def findRelevantUsers(corePath, extraUsers, bUsers, modified):
