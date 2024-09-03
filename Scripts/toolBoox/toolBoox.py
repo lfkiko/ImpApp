@@ -2,15 +2,12 @@ import os
 import webbrowser
 import zipfile
 from logging import error
-
 import PySimpleGUI as Sg
-
 import xml.etree.ElementTree as ET
-
 from bs4 import BeautifulSoup
 from kivy.app import App
 
-from Scripts.toolBoox.excelJsonToolBox import readJson, updateJson
+from .excelJsonToolBox import readJson, updateJson
 
 fileManger = 'Scripts/Source/fileManger.json'
 

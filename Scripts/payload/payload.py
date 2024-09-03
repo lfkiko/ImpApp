@@ -2,13 +2,7 @@ import os
 import sys
 
 import pyperclip
-
-from Scripts.payload import payload_json
-from Scripts.toolBoox import startLog, endLog
-
-
-def run_payload_json():
-	return payload_json.py
+import Scripts.toolBoox as Tool
 
 
 def getType(widgetType):
@@ -21,7 +15,7 @@ def getType(widgetType):
 
 
 def main(argv):
-	startLog()
+	Tool.startLog()
 	widgetType = argv[0]
 	language = argv[1]
 	remoteAssetBool = "true" if argv[2] else "false"
@@ -32,16 +26,13 @@ def main(argv):
 	internationalization = "\"internationalization\":{\"language\": \"" + language + "\"}"
 	assets = "\"assets\":{\"useRemoteAssets\":" + remoteAssetBool + ",\"baseUrl\": \"" + remoteAssetUrl + "\"}"
 	theme = "\"theme\": {\"darkMode\":" + darkMode + "  }"
-	configurations = "\"configurations\": {\"deviceType\": \"web\",\"widgetType\": \"" + widgetType + "\",\"selectorString\": \"#root\",\"params\": {\"payload\": {\"" + apiType + "\": " + json + "}}}"
-	payloadString = "window.personetics.startWidget({" + internationalization + "," + assets + "," + theme + "," + configurations + "});"
+	configurations = "\"configurations\": {\"deviceType\": \"web\",\"widgetType\": \"" + widgetType
+	params = "\",\"selectorString\": \"#root\",\"params\": {\"payload\": {\"" + apiType + "\": " + json + "}}}"
+	part1 = internationalization + "," + assets + "," + theme
+	payloadString = "window.personetics.startWidget({" + part1 + "," + configurations + params + "});"
 	pyperclip.copy(payloadString)
 
-	# print(internationalization+"\n\n")
-	# print(assets+"\n\n")
-	# print(theme+"\n\n")
-	# print(configurations+"\n\n")
-	# print(payloadString)
-	endLog()
+	Tool.endLog()
 
 
 if __name__ == "__main__":

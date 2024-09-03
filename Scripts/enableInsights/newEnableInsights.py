@@ -1,11 +1,11 @@
 from logging import warning
-
-from Scripts.toolBoox import *
 import shutil
 import os
 import sys
 from tkinter.messagebox import askyesno
 import zipfile
+import Scripts.toolBoox as Tool
+
 
 
 def removeDeactivated(Sinsights, ucList):
@@ -27,10 +27,10 @@ def removeDeactivated(Sinsights, ucList):
 
 def cleanSInsight(ucsList, SInsightPath):
 	try:
-		SInsightData = readJson(SInsightPath)
+		SInsightData = Tool.readJson(SInsightPath)
 	except Exception as e:
 		print(SInsightPath)
-		error(e.__str__())
+		Tool.error(e.__str__())
 		return
 	if 'dependencies' in SInsightData.keys():
 		SInsightData.pop('dependencies')
@@ -58,7 +58,7 @@ def cleanSInsight(ucsList, SInsightPath):
 		# SInsightData = removeDeactivated(SInsightData, toRemove)
 		for i in reversed(toRemove):
 			SInsightData['useCases'].remove(i)
-	updateJson(SInsightPath, SInsightData)
+	Tool.updateJson(SInsightPath, SInsightData)
 
 
 def createInsightDirectory(solutionPath, insights, client):
@@ -78,7 +78,7 @@ def createUcDirectory(solutionPath, ucs, client):
 		try:
 			insight = u[0: u.rindex('_')]
 		except Exception as e:
-			error(e + "for " + u)
+			Tool.error(e + "for " + u)
 
 		if client != "":
 			try:
@@ -108,12 +108,12 @@ def ucsDict(insights, ucs):
 def overwriteInsight(solution, corePath, insight, allUcs, client):
 	insightCorePath = ""
 	try:
-		insightZipDir = searchInsightInCore(corePath, insight)
+		insightZipDir = Tool.searchInsightInCore(corePath, insight)
 		insightCorePath = os.path.join(corePath, insightZipDir)
 		if insightZipDir == FileNotFoundError:
 			return
 	except Exception as e:
-		error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
+		Tool.error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
 		return
 
 	finally:
@@ -122,18 +122,18 @@ def overwriteInsight(solution, corePath, insight, allUcs, client):
 		if insightCorePath == "":
 			return
 		with zipfile.ZipFile(insightCorePath) as z:
-			srcFiles = filesInZip(corePath, insightZipDir, 'Core/Insights/' + insight + '/')
+			srcFiles = Tool.filesInZip(corePath, insightZipDir, 'Core/Insights/' + insight + '/')
 			for file in srcFiles:
 				if file.split('/')[-1] == 'SInsight.json':
 					try:
 						with z.open(file) as j:
-							sInsight = jsonifyZip(j.read())
+							sInsight = Tool.jsonifyZip(j.read())
 							if os.path.exists(os.path.join(insightPath, 'SInsight.json')):
-								updateJson(os.path.join(insightPath, 'SInsight.json'), sInsight)
+								Tool.updateJson(os.path.join(insightPath, 'SInsight.json'), sInsight)
 							else:
-								writeJson(os.path.join(insightPath, 'SInsight.json'), sInsight)
+								Tool.writeJson(os.path.join(insightPath, 'SInsight.json'), sInsight)
 					except Exception as e:
-						error(e.__str__())
+						Tool.error(e.__str__())
 					cleanSInsight(allUcs[insight], os.path.join(insightPath, 'SInsight.json'))
 				uc = file.split('/')[-2]
 				fileName = file.split('/')[-1]
@@ -154,14 +154,14 @@ def overwriteInsight(solution, corePath, insight, allUcs, client):
 				if copy:
 					try:
 						with z.open(file) as ucj:
-							jsonFile = jsonifyZip(ucj.read())
+							jsonFile = Tool.jsonifyZip(ucj.read())
 							if os.path.exists(tempInsightPath):
-								updateJsonMultiLang(tempInsightPath, jsonFile)
+								Tool.updateJsonMultiLang(tempInsightPath, jsonFile)
 							else:
-								writeJsonMultiLang(tempInsightPath, jsonFile)
+								Tool.writeJsonMultiLang(tempInsightPath, jsonFile)
 					except Exception as e:
 						print('here - ' + file.split('/')[-2] + '/' + file.split('/')[-1])
-						error(e.__str__())
+						Tool.error(e.__str__())
 
 
 def removeLayer(solution, client):
@@ -179,7 +179,7 @@ def removeLayer(solution, client):
 				os.rmdir(ucPath)
 		if len(os.listdir(clientPath)) == 0:
 			os.rmdir(clientPath)
-	endLog()
+	Tool.endLog()
 
 
 def removeFacts(solution):
@@ -195,50 +195,50 @@ def removeFacts(solution):
 				os.rmdir(os.path.join(factsPath, uc))
 		if len(os.listdir(factsPath)) == 0:
 			os.rmdir(factsPath)
-	endLog()
+	Tool.endLog()
 
 
 def main(argv):
-	startLog()
+	Tool.startLog()
 	try:
-		solution = getSolution(getPath('solution'))
+		solution = Tool.getSolution(Tool.getPath('solution'))
 	except:
-		error(getPath('solution') + ' is not a correct path Demo data didn\'t run')
+		Tool.error(Tool.getPath('solution') + ' is not a correct path Demo data didn\'t run')
 		return
 
 	try:
-		corePath = createPath(getPath('solution'), 'package\\target\\DataLoad')
+		corePath = Tool.createPath(Tool.getPath('solution'), 'package\\target\\DataLoad')
 	except Exception as e:
-		error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
+		Tool.error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
 		return
 
-	starterVersion = getStarterVersion(getPath('solution'))
+	starterVersion = Tool.getStarterVersion(Tool.getPath('solution'))
 	if int(starterVersion[0]) > 7 or (int(starterVersion[0]) == 7 and int(starterVersion[2]) >= 7):
-		client = chooseClient()
+		client = Tool.chooseClient()
 	else:
 		client = ""
 
-	channels = getChannels(solution)
+	channels = Tool.getChannels(solution)
 	if len(channels) > 3:
-		theChannel = chooseChanel(channels)
+		theChannel = Tool.chooseChanel(channels)
 		try:
 			solution = os.path.join(solution + theChannel, 'Insights')
 		except Exception as e:
-			error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
+			Tool.error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
 			return
 	else:
 		try:
-			solution = os.path.join(getSolution(getPath('solution')), 'Insights')
+			solution = os.path.join(Tool.getSolution(Tool.getPath('solution')), 'Insights')
 		except Exception as e:
-			error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
+			Tool.error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
 			return
 	# print(argv[0])
-	insights = getCol(argv[0], 'Insight')
-	ucs = getCol(argv[0], 'UC')
+	insights = Tool.getCol(argv[0], 'Insight')
+	ucs = Tool.getCol(argv[0], 'UC')
 	# print(insights)
 	# print(ucs)
 
-	activated = getCol(argv[0], 'Activated')
+	activated = Tool.getCol(argv[0], 'Activated')
 	tmpInsights = list()
 	tmpUcs = list()
 	for i in range(len(insights)):
@@ -256,7 +256,7 @@ def main(argv):
 	if client != '' and askyesno('Confirmation', 'Would you like to remove the clinet layer?'):
 		removeLayer(solution, client)
 		removeFacts(solution)
-	endLog()
+	Tool.endLog()
 
 
 if __name__ == "__main__":

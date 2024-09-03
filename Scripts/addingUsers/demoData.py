@@ -1,14 +1,14 @@
 import os
 import sys
 import zipfile
+import Scripts.toolBoox as Tool
 from logging import info, warning, error
-from Scripts.addingUsers import categoriesAdaptation
-from Scripts.toolBoox import filesInZip, createPath, readCsv, writeCsv, startLog, getSolution, getPath, getCol, endLog
 
+from Scripts.addingUsers import categoriesAdaptation
 
 def findRelevantUsers(corePath, extraUsers, bUsers, modified):
 	relevantUser = []
-	coreUsers = filesInZip(corePath, 'product-data-and-assets-biz-unit.zip', 'Core/DemoData')
+	coreUsers = Tool.filesInZip(corePath, 'product-data-and-assets-biz-unit.zip', 'Core/DemoData')
 	if bUsers:
 		for d in coreUsers:
 			user = os.path.normpath(d).replace('Core' + os.sep + 'DemoData' + os.sep, '').split(os.sep)[0]
@@ -23,7 +23,7 @@ def findRelevantUsers(corePath, extraUsers, bUsers, modified):
 
 def copyUsers(relevantUser, corePath, solutionQaPath):
 	errors = False
-	solutionDemoData = createPath(solutionQaPath, 'DemoData')
+	solutionDemoData = Tool.createPath(solutionQaPath, 'DemoData')
 	coreDemoDataPath = os.path.join(corePath, 'product-data-and-assets-biz-unit.zip')
 	try:
 		os.mkdir(solutionDemoData)
@@ -39,7 +39,7 @@ def copyUsers(relevantUser, corePath, solutionQaPath):
 				warning("User: " + user + " is all ready exists in the solution level from ")
 			finally:
 				with zipfile.ZipFile(coreDemoDataPath) as z:
-					srcFiles = filesInZip(corePath, 'product-data-and-assets-biz-unit.zip', 'Core/DemoData/' + user + '/')
+					srcFiles = Tool.filesInZip(corePath, 'product-data-and-assets-biz-unit.zip', 'Core/DemoData/' + user + '/')
 					for file in srcFiles:
 						try:
 							with z.open(file) as f:
@@ -96,17 +96,17 @@ def modifyUser(usersPath, user, localCurrency, foreignCurrency, countryName, cou
 
 	def updateColumn(column, file, func):
 		try:
-			df = readCsv(os.path.join(usersPath, file))
+			df = Tool.readCsv(os.path.join(usersPath, file))
 		except:
 			warning('col ' + column + ' don\'t exists in - ' + os.path.join(usersPath, file))
 			return
 
 		df[column] = df[column].apply(func)
-		writeCsv(os.path.join(usersPath, file), df)
+		Tool.writeCsv(os.path.join(usersPath, file), df)
 
 	for thisFile in os.listdir(usersPath):
 		try:
-			csvFile = readCsv(os.path.join(usersPath, thisFile))
+			csvFile = Tool.readCsv(os.path.join(usersPath, thisFile))
 		except:
 			error('Problem opening ' + thisFile + ' for ' + user)
 			continue
@@ -135,23 +135,23 @@ def modifyUsersInSolution(solutionDemoDataPath, input_json, relevantUser):
 
 
 def main(argv):
-	startLog()
+	Tool.startLog()
 	try:
-		solution = getSolution(getPath('solution')) + '$QA'
+		solution = Tool.getSolution(Tool.getPath('solution')) + '$QA'
 	except Exception as e:
 		error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
 		return
 	try:
-		corePath = createPath(getPath('solution'), 'package\\target\\DataLoad')
+		corePath = Tool.createPath(Tool.getPath('solution'), 'package\\target\\DataLoad')
 	except Exception as e:
 		error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
 		return
-	extraUsers = getCol(argv[3], 'USERS')
+	extraUsers = Tool.getCol(argv[3], 'USERS')
 	relevantUser = findRelevantUsers(corePath, extraUsers, argv[1], argv[2])
 	err: bool = copyUsers(relevantUser, corePath, solution)
 	modifyUsersInSolution(os.path.join(solution, 'DemoData'), argv[0], relevantUser)
 	categoriesAdaptation.main([solution])
-	endLog(err)
+	Tool.endLog(err)
 
 
 if __name__ == "__main__":

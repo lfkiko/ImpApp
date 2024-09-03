@@ -2,15 +2,12 @@ import os
 import shutil
 import sys
 from logging import error, warning
-
-from Scripts.enableInsights.newEnableInsights import getChannels, chooseChanel
-from Scripts.toolBoox.excelJsonToolBox import readCsv, readJson, updateJson
-from Scripts.toolBoox.logs import startLog, endLog
-from Scripts.toolBoox.toolBoox import getSolution, modelVersion, getPath
+import Scripts.toolBoox as Tool
 
 searchedCoreFolders = ["product-subscriptions-biz-unit", "product-budgets-biz-unit", "product-debt-biz-unit",
                        os.path.join("product-engage-biz-unit", "Projects"), "product-pa-biz-unit"]
 searchedModelFolders = ['product-subscriptions-biz-unit', 'product-portfolio-biz-unit']
+
 
 def validInsight(insightName):
     try:
@@ -34,7 +31,7 @@ def getUcsList(insightName, ucs):
 def buildSinsights(insightName, ucs, insightProductPath):
     filePath = os.path.join(insightProductPath, "SInsight.json")
     if os.path.exists(filePath):
-        insightData = readJson(filePath)
+        insightData = Tool.readJson(filePath)
         useCases = list()
         wasUpdate = False
         for case in insightData["useCases"]:
@@ -44,9 +41,9 @@ def buildSinsights(insightName, ucs, insightProductPath):
                 wasUpdate = True
                 insightData["useCases"].append({"id": uc, "activated": "TRUE"})
         if wasUpdate:
-            updateJson(filePath, insightData)
+            Tool.updateJson(filePath, insightData)
         # else:
-    
+
     else:
         Sinsight = {"id": insightName,
                     "insightMetadata": {
@@ -56,8 +53,8 @@ def buildSinsights(insightName, ucs, insightProductPath):
                     }
         for uc in ucs:
             Sinsight["useCases"].append({"id": uc, "activated": "TRUE"})
-        
-        updateJson(filePath, Sinsight)
+
+        Tool.updateJson(filePath, Sinsight)
 
 
 def searchInsightInCore(core, modelPath, insightName, useModel):
@@ -85,7 +82,7 @@ def overwriteInsight(solution, core, modelPath, insightName, ucs, useModel, notF
     except Exception as e:
         error('Path Error:' + e.__str__()[e.__str__().index(']') + 1:])
         return
-    
+
     ucsList = getUcsList(insightName, ucs)
     for uc in ucsList:
         try:
@@ -96,7 +93,7 @@ def overwriteInsight(solution, core, modelPath, insightName, ucs, useModel, notF
             else:
                 notFound.append(uc)
                 error('{} can\'t be found in: unknown path'.format(uc))
-    
+
     buildSinsights(insightName, ucsList, os.path.join(solution, insightName))
 
 
@@ -115,33 +112,33 @@ def runOverInsights(core, solution, modelPath, enableCsv, useModel):
 
 
 def main(argv):
-    startLog()
-    corePath = os.path.join(getPath('corePath'), 'product-bizpack')
-    modelPath = os.path.join(getPath('modelPath'), 'product-models-bizpack')
+    Tool.startLog()
+    corePath = os.path.join(Tool.getPath('corePath'), 'product-bizpack')
+    modelPath = os.path.join(Tool.getPath('modelPath'), 'product-models-bizpack')
     try:
-        solutionPath = getSolution(getPath('solution'))
+        solutionPath = Tool.getSolution(Tool.getPath('solution'))
     except:
-        error(getPath('solution') + ' is not a correct path Demo data didn\'t run')
+        error(Tool.getPath('solution') + ' is not a correct path Demo data didn\'t run')
         return
-    channels = getChannels(solutionPath)
+    channels = Tool.getChannels(solutionPath)
     if len(channels) > 3:
-        theChannel = chooseChanel(channels)
+        theChannel = Tool.chooseChanel(channels)
         solutionPath = solutionPath + theChannel
-    
+
     if not os.path.exists(solutionPath):
         error(solutionPath + ' dosn\'t exists')
         return
-    useModel = modelVersion(getPath('solution'))
+    useModel = Tool.modelVersion(Tool.getPath('solution'))
     inputFile = argv[0]
-    enableCsv = readCsv(inputFile)
+    enableCsv = Tool.readCsv(inputFile)
     notFound = runOverInsights(corePath, solutionPath, modelPath, enableCsv, useModel)
     for i in notFound:
         warning("Not Found: " + i + " wasn't found")
-    endLog()
+    Tool.endLog()
     return 'notFound'
 
 
 if __name__ == "__main__":
     main(sys.argv[1:])
-    
+
     # 0 file with the list of insights to enable
