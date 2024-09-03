@@ -2,7 +2,8 @@ import os
 import webbrowser
 import zipfile
 from logging import error
-import PySimpleGUI as Sg
+import tkinter as tk
+from tkinter import simpledialog, messagebox
 import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
 from kivy.app import App
@@ -160,24 +161,55 @@ def getChannels(solution, getLive: bool = False):
 	return channels
 
 
-def chooseChanel(channels):
-	listLayout = [[Sg.Text('Select one->'), Sg.Listbox(channels, size=(30, 10), key='LB')], [Sg.Button('Ok')]]
-	event, values = Sg.Window('Choose an option', listLayout).read(close=True)
-	channel = values["LB"][0]
-	if '$' in channel:
-		channel = channel[channel.index('$'):]
-	else:
-		channel = ""
 
-	return channel
+def chooseChanel(channels):
+    def on_select(event):
+        selected = listbox.get(listbox.curselection())
+        window.selected_value = selected
+        window.destroy()
+
+    window = tk.Tk()
+    window.title("Choose an option")
+    tk.Label(window, text="Select one->").pack()
+    listbox = tk.Listbox(window, height=10)
+    for channel in channels:
+        listbox.insert(tk.END, channel)
+
+    listbox.pack()
+    listbox.bind('<Double-1>', on_select)
+    tk.Button(window, text="Ok", command=lambda: on_select(None)).pack()
+    window.selected_value = None
+    window.mainloop()
+    channel = window.selected_value
+    if channel is not None and '$' in channel:
+        channel = channel[channel.index('$'):]
+    else:
+        channel = ""
+
+    return channel
 
 def chooseClient():
-	listLayout = [[Sg.Text('Select one->'), Sg.Listbox(['V1','V2','V3'], size=(30, 10), key='LB')], [Sg.Button('Ok')]]
-	event, values = Sg.Window('Choose an option', listLayout).read(close=True)
-	client = values["LB"][0]
+    def on_select(event):
+        selected = listbox.get(listbox.curselection())
+        window.selected_value = selected
+        window.destroy()
 
-	return client
+    window = tk.Tk()
+    window.title("Choose an option")
+    tk.Label(window, text="Select one->").pack()
+    listbox = tk.Listbox(window, height=10)
 
+    for client in ['V1', 'V2', 'V3']:
+        listbox.insert(tk.END, client)
+
+    listbox.pack()
+    listbox.bind('<Double-1>', on_select)
+    tk.Button(window, text="Ok", command=lambda: on_select(None)).pack()
+    window.selected_value = None
+    window.mainloop()
+    client = window.selected_value
+
+    return client
 
 def searchInsightInCore(corePath, insightName):
 	zips = os.listdir(corePath)
